@@ -24,6 +24,7 @@ Thư mục này chứa toàn bộ các tài liệu đặc tả yêu cầu sản 
 | 📌 **[Chuẩn Phạm vi Phát hành v0.1](./v0.1-scope-baseline.md)** | `PROD-BASELINE-v0.1` | Tài liệu nguồn sự thật chốt phạm vi phiên bản v0.1 (`PROPOSED_FOR_APPROVAL`). |
 | 📑 **[Tài liệu PRD Tổng thể MVP](./prd-mvp.md)** | `PROD-PRD-01` | Bản tổng hợp yêu cầu sản phẩm MVP v0.1. |
 | 🔗 **[Ma trận Truy vết Toàn diện](./traceability-matrix.md)** | `PROD-TRACE-01` | Ma trận truy vết từ Mục tiêu $\rightarrow$ Vấn đề $\rightarrow$ UC $\rightarrow$ FR $\rightarrow$ US $\rightarrow$ AC $\rightarrow$ SM $\rightarrow$ Phase. |
+| 🧬 **[Tài liệu Phân tích Nghiệp vụ Gia phả (P02)](./domain/README.md)** | `DOM-OVERVIEW-01` | Phân hệ 21 tài liệu nghiệp vụ phả hệ: Identity, Relationships, Invariants, Glossary, Test Scenarios. |
 
 ---
 

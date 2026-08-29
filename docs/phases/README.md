@@ -44,8 +44,8 @@ docs/phases/PXX/
 | Phase | Tên giai đoạn | Trạng thái | Ghi chú |
 | :--- | :--- | :--- | :--- |
 | **[P00](./P00/00-overview.md)** | Quản trị dự án (Project Governance) | `ACCEPTED` | Khung tài liệu, Git workflow, tiêu chuẩn DoR/DoD. |
-| **[P01](./P01/00-overview.md)** | Yêu cầu sản phẩm (PRD & Scope) | `PROPOSED_FOR_APPROVAL` | Định nghĩa PRD MVP v0.1, Personas, Scope Baseline. |
-| **P02** | Thuật ngữ & Mô hình dữ liệu gia phả | `NOT_STARTED` | Thiết kế schema gia phả, glossary. |
+| **[P01](./P01/00-overview.md)** | Yêu cầu sản phẩm (PRD & Scope) | `ACCEPTED` | Định nghĩa PRD MVP v0.1, Personas, Scope Baseline. |
+| **[P02](./P02/00-overview.md)** | Thuật ngữ & Mô hình dữ liệu gia phả | `PROVISIONAL` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
 | **P03** | Thiết kế kiến trúc & Setup kỹ thuật | `NOT_STARTED` | Khởi tạo Next.js, Tailwind, Supabase schema. |
 | **P04** | Xác thực & Quản lý người dùng | `NOT_STARTED` | Supabase Auth, phân quyền RLS ban đầu. |
 | **P05** | Quản lý cây & Thành viên gia phả | `NOT_STARTED` | CRUD Person, Tree, Relationship. |
