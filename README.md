@@ -57,10 +57,10 @@ Chi tiết xem tại: 👉 **[`docs/development/local-setup.md`](./docs/developm
 
 ## 3. Trạng thái Dự án Hiện tại
 
-- **Giai đoạn hiện tại:** `Phase P06: Thiết lập Supabase & Môi trường Ban đầu (Supabase Setup)`
-- **Trạng thái:** `ACCEPTED_WITH_MANUAL_CLOUD_ACTION` (Đã hoàn tất cấu hình Supabase local CLI, foundation migration, seed, clients, generated types).
-- **Phân hệ Kế tiếp:** `Phase P07: CSDL Lõi & DDL Schema`.
-- **Cảnh báo phát triển:** Mã nguồn đang trong giai đoạn khởi tạo nền tảng; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P07 đến P25.
+- **Giai đoạn hiện tại:** `Phase P07: Thiết kế cơ sở dữ liệu lõi (Core Database Schema)`
+- **Trạng thái:** `ACCEPTED` (Đã hoàn tất khởi tạo 7 bảng core, 12 enums, same-tree isolation, partial dates, types và database test suites).
+- **Phân hệ Kế tiếp:** `Phase P08: Phân quyền Row Level Security (RLS)`.
+- **Cảnh báo phát triển:** Mã nguồn đang trong giai đoạn xây dựng nền tảng CSDL; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P08 đến P25.
 
 ---
 
