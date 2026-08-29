@@ -109,5 +109,16 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Xây dựng GitHub Actions CI workflow `.github/workflows/ci.yml` kiểm tra tự động format, lint, typecheck, unit tests, build và e2e.
   - Thiết lập cấu trúc thư mục feature-based và phân tầng theo P04 (`src/app`, `src/features`, `src/server`, `src/lib`, `src/types`).
   - Ban hành Báo cáo an ninh dependency và kiểm toán bản vá framework (`docs/security/dependency-security-baseline.md`).
-  - Cập nhật tài liệu Hướng dẫn thiết lập môi trường local (`docs/development/local-setup.md`) và `README.md`.
   - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P05 tại `docs/phases/P05/` và gói bàn giao kỹ thuật cho Phase P06.
+- **Phase P06 (Thiết lập Supabase & Môi trường Ban đầu):**
+  - Khóa phiên bản Supabase CLI cục bộ trong `devDependencies` (`supabase@^2.116.0`).
+  - Khởi tạo cấu hình Supabase Local Development (`supabase/config.toml`, `supabase/.gitignore`).
+  - Tạo migration nền tảng đầu tiên `20260829152230_p06_initialize_supabase_foundation.sql` (extensions `pgcrypto`, `uuid-ossp`, schema `_system`).
+  - Tạo tệp tin `supabase/seed.sql` an toàn, không chứa dữ liệu giả mạo hay PII.
+  - Ban hành bộ 10 tài liệu quản trị CSDL tại `docs/database/` (Local development, Migration policy, Environment strategy, Type generation, Backup policy, Production runbook, Schema change policy, Credential management, Cloud setup guide).
+  - Xây dựng Zod schema mở rộng cho biến môi trường Supabase (`src/lib/env/index.ts`) và tệp mẫu `.env.example`.
+  - Triển khai bộ client factories hoàn chỉnh theo `@supabase/ssr`: `client.ts` (Browser), `server.ts` (Server cookie adapter), `admin.ts` (Server-only privileged client).
+  - Thiết lập cơ chế tự động sinh TypeScript Database Types (`src/lib/supabase/database.types.ts`).
+  - Xây dựng bộ 13 scripts tự động hóa trong `package.json` và `scripts/supabase/` (`check-migrations.mjs`, `verify-generated-types.mjs`, `backup-before-migrate.mjs`).
+  - Bổ sung unit tests cho Supabase client factories (`tests/unit/supabase-clients.test.ts`) đạt 100% PASS.
+  - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P06 tại `docs/phases/P06/` và gói bàn giao kỹ thuật cho Phase P07.

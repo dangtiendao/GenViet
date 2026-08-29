@@ -1,31 +1,17 @@
-# Database Documentation
+# Quản trị Cơ sở Dữ liệu & Môi trường Supabase (Database Management)
 
-Thư mục này chứa tài liệu thiết kế cơ sở dữ liệu, sơ đồ thực thể quan hệ (ERD), định nghĩa bảng, chỉ mục (indexes), quy tắc phân quyền dữ liệu (RLS) và quy trình di chuyển dữ liệu (Migrations) cho dự án **GenViet**.
-
----
-
-## 1. Mục đích & Phạm vi
-
-- Quản lý mô hình dữ liệu quan hệ gia phả (Genealogy Data Model) trên PostgreSQL.
-- Định nghĩa chi tiết các thực thể: `users`, `trees`, `persons`, `relationships`, `media_records`.
-- Lưu trữ tài liệu chính sách Row Level Security (RLS) bảo vệ dữ liệu độc lập cho từng cây gia phả.
-- Lưu trữ quy trình và nguyên tắc viết SQL Migrations an toàn, có phương án rollback.
+Thư mục này chứa toàn bộ các quy chuẩn kiến trúc, chính sách di chuyển schema (migration), chiến lược phân tách môi trường và cẩm nang vận hành an toàn CSDL PostgreSQL của dự án **GenViet**.
 
 ---
 
-## 2. Cấu trúc tài liệu dự kiến
+## Danh mục Tài liệu Quản trị CSDL
 
-- `README.md`: Chỉ mục và hướng dẫn tài liệu database (file này).
-- `schema-overview.md`: Sơ đồ ERD và mô tả chi tiết các bảng trong cơ sở dữ liệu.
-- `relationships-model.md`: Thiết kế mô hình quan hệ phức tạp (Cha-Con, Mẹ-Con, Đa thê, Nhận con nuôi...).
-- `rls-policies.md`: Danh sách và logic kiểm tra của các chính sách Row Level Security.
-- `migration-guidelines.md`: Quy chuẩn đặt tên migration, quy trình deploy và rollback migration.
-
----
-
-## 3. Nguyên tắc quản lý Database
-
-1. **Khóa quyết định tách biệt thực thể:** Tài khoản người dùng (`users`) và Thành viên gia phả (`persons`) phải là hai bảng riêng biệt.
-2. **Bắt buộc RLS trên mọi bảng nghiệp vụ:** Không một bảng nào chứa dữ liệu người dùng/gia phả được phép vô hiệu hóa RLS.
-3. **Mọi migration phải có Forward & Rollback script:** Không chạy migration trực tiếp trên production mà không qua kiểm thử local/staging.
-4. **Không chứa dữ liệu cá nhân thật trong tài liệu hay test fixtures.**
+1. 💻 **[`local-development.md`](./local-development.md):** Hướng dẫn khởi chạy, reset và kiểm thử Supabase stack trên môi trường local.
+2. 🔄 **[`migration-policy.md`](./migration-policy.md):** Quy tắc đặt tên, quản lý và kiểm soát tính bất biến của migration.
+3. 🌐 **[`environment-strategy.md`](./environment-strategy.md):** Chiến lược phân tách 4 môi trường (Local, Dev Cloud, Preview, Production).
+4. 🏷️ **[`type-generation.md`](./type-generation.md):** Quy trình tự động sinh TypeScript Database Types từ PostgreSQL schema.
+5. 🛡️ **[`backup-before-migration.md`](./backup-before-migration.md):** Chính sách và yêu cầu sao lưu bắt buộc trước khi chạy migration.
+6. 🚀 **[`production-migration-runbook.md`](./production-migration-runbook.md):** Cẩm nang 19 bước triển khai migration an toàn lên môi trường Production.
+7. 📜 **[`schema-change-policy.md`](./schema-change-policy.md):** Quy định cấm thay đổi schema thủ công ngoài Git migration.
+8. 🔒 **[`credential-management.md`](./credential-management.md):** Quản lý, phân cấp và quy trình luân chuyển khóa bí mật (Secret Rotation).
+9. ☁️ **[`supabase-cloud-setup.md`](./supabase-cloud-setup.md):** Hướng dẫn thiết lập và liên kết Supabase Cloud Development Project (`genviet-dev`).

@@ -49,6 +49,6 @@ docs/phases/PXX/
 | **[P03](./P03/00-overview.md)** | Thiết kế UX và luồng màn hình | `ACCEPTED` | Sitemap, 25 màn hình, 12 flows, 10 wireframes, WCAG 2.2 AA. |
 | **[P04](./P04/00-overview.md)** | Thiết kế kiến trúc (System Architecture) | `ACCEPTED` | C4 Context/Container, 4-tier graph, RLS, 16 ADRs, STRIDE Threat Model. |
 | **[P05](./P05/00-overview.md)** | Khởi tạo mã nguồn (Source Bootstrap) | `ACCEPTED` | Next.js 16 App Router, Tailwind v4, shadcn, Vitest, Playwright, CI. |
-| **P06** | Thiết lập Supabase & Môi trường Ban đầu | `NOT_STARTED` | Supabase Local CLI, Auth, Storage bucket setup. |
+| **[P06](./P06/00-overview.md)** | Thiết lập Supabase & Môi trường Ban đầu | `ACCEPTED_WITH_MANUAL_CLOUD_ACTION` | Supabase Local CLI, config, foundation migration, seed, clients, types. |
 | **P07** | CSDL Lõi & DDL Schema | `NOT_STARTED` | Bảng Trees, Persons, Relationships, Constraints. |
 | **P08** | Phân quyền Row Level Security (RLS) | `NOT_STARTED` | RLS Policies cho toàn bộ các bảng nghiệp vụ. |

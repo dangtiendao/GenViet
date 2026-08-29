@@ -47,19 +47,20 @@ npm run typecheck      # Kiểm tra kiểu dữ liệu nghiêm ngặt (TypeScrip
 npm run test:run       # Chạy toàn bộ Unit test suite (Vitest non-watch)
 npm run test:e2e       # Chạy bộ kiểm thử E2E (Playwright)
 npm run build          # Đóng gói Next.js Production Build
-npm run check          # Chạy toàn bộ chuỗi kiểm tra tổng thể
+npm run supabase:check # Kiểm tra tính hợp lệ của migration và types
+npm run check          # Chạy toàn bộ chuỗi kiểm tra tổng thể (Quality + Supabase)
 ```
 
-Chi tiết xem tại: 👉 **[`docs/development/local-setup.md`](./docs/development/local-setup.md)**.
+Chi tiết xem tại: 👉 **[`docs/development/local-setup.md`](./docs/development/local-setup.md)** và **[`docs/database/README.md`](./docs/database/README.md)**.
 
 ---
 
 ## 3. Trạng thái Dự án Hiện tại
 
-- **Giai đoạn hiện tại:** `Phase P05: Khởi tạo mã nguồn (Source Bootstrap & Project Scaffolding)`
-- **Trạng thái:** `ACCEPTED` (Đã hoàn tất khởi tạo mã nguồn, App Router, tooling, testing foundation).
-- **Phân hệ Kế tiếp:** `Phase P06: Thiết lập Supabase & Môi trường Ban đầu`.
-- **Cảnh báo phát triển:** Mã nguồn đang trong giai đoạn khởi tạo nền tảng; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P06 đến P25.
+- **Giai đoạn hiện tại:** `Phase P06: Thiết lập Supabase & Môi trường Ban đầu (Supabase Setup)`
+- **Trạng thái:** `ACCEPTED_WITH_MANUAL_CLOUD_ACTION` (Đã hoàn tất cấu hình Supabase local CLI, foundation migration, seed, clients, generated types).
+- **Phân hệ Kế tiếp:** `Phase P07: CSDL Lõi & DDL Schema`.
+- **Cảnh báo phát triển:** Mã nguồn đang trong giai đoạn khởi tạo nền tảng; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P07 đến P25.
 
 ---
 
