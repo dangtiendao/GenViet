@@ -84,6 +84,33 @@ Các quyết định dưới đây tạo thành khung nguyên tắc nền tảng
   - *Nội dung:* Số đời là nhãn hiển thị tương đối theo Mốc (Anchor = 1); thêm tổ tiên phía trên không ép đổi số đời toàn cây.
   - *Lý do:* Tránh việc cập nhật hàng loạt số đời trong CSDL mỗi khi thêm cụ tổ mới.
 
+### Phase P03: Thiết kế UX và luồng màn hình (UX Design & Screen Flows)
+
+- **P03-DEC-001 (Cấu trúc Bottom Navigation 4 Mục Cố định trên Mobile):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Khóa cố định 4 mục: Cây (`NAV-M01`), Tìm kiếm (`NAV-M02`), Cài đặt (`NAV-M03`), Tôi (`NAV-M04`).
+  - *Lý do:* Tối ưu hóa không gian hiển thị, dễ chạm bằng ngón cái và tuân thủ Safe Area.
+
+- **P03-DEC-002 (Ngăn Kéo Đáy 3 Nấc - Bottom Sheet cho Hồ sơ Di động):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Sử dụng Bottom Sheet với 3 nấc: Peek (80px), Half (45%), Full (90%) thay vì mở trang full-screen.
+  - *Lý do:* Giữ nguyên ngữ cảnh quan sát đồ thị cây phía sau khi người dùng xem thông tin thành viên.
+
+- **P03-DEC-003 (Mẫu Form Quan hệ 2 Tab - Tạo Mới vs Chọn Có Sẵn):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Mọi form thêm Cha, Mẹ, Vợ/Chồng, Con đều chia 2 Tab rõ ràng: Tạo người mới và Chọn người có sẵn.
+  - *Lý do:* Tách biệt rạch ròi 2 ý định người dùng và loại bỏ nhầm lẫn giữa Nối quan hệ và Gộp hồ sơ.
+
+- **P03-DEC-004 (Bộ chọn Date Precision Trực tiếp trong Biểu mẫu):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Tích hợp bộ chọn độ chính xác ngày tháng (Chính xác, Tháng/Năm, Chỉ năm, Ước tính), không ép chọn `01/01`.
+  - *Lý do:* Tuân thủ nguyên tắc tôn trọng dữ liệu lịch sử và Invariant `INV-010`.
+
+- **P03-DEC-005 (Xem trước Tác động Bắt buộc khi Xóa Mềm):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Hộp thoại xóa mềm luôn liệt kê số lượng quan hệ bị ngắt và cam kết bảo toàn dữ liệu người thân (`INV-015`).
+  - *Lý do:* Loại bỏ nỗi sợ mất dữ liệu của người dùng khi xóa 1 nhân vật trung gian.
+
 ---
 
 ## 3. Danh sách các Quyết định mở / Đang thảo luận (Open Decisions)

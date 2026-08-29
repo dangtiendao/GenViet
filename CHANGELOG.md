@@ -53,3 +53,19 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Thiết lập Bộ 80 Kịch bản kiểm thử quan hệ bằng 100% Mock Data (`docs/product/domain/relationship-test-cases.md`).
   - Hoàn thiện Ma trận truy vết từ Yêu cầu P01 sang Nghiệp vụ P02 (`docs/product/domain/domain-traceability-matrix.md`).
   - Hoàn thiện bộ hồ sơ nghiệm thu Phase P02 tại `docs/phases/P02/` và gói bàn giao cho Phase P03 & P04.
+- **Phase P03 (Thiết kế UX và luồng màn hình):**
+  - Thiết lập 10 Nguyên tắc thiết kế UX cốt lõi cho GenViet v0.1 (`docs/ux/ux-principles.md`).
+  - Xây dựng Sitemap phân cấp toàn diện và Danh mục 25 màn hình / overlays (`docs/ux/sitemap.md`, `docs/ux/screen-inventory.md`).
+  - Thiết kế hệ thống điều hướng Responsive: Top Header Desktop và Bottom Navigation Mobile 4 mục (`docs/ux/navigation-model.md`, `docs/ux/responsive-behavior.md`).
+  - Đặc tả Ngăn kéo đáy Mobile Bottom Sheet 3 nấc (Peek, Half, Full) bảo toàn ngữ cảnh cây (`docs/ux/mobile-bottom-sheet.md`).
+  - Thiết kế 12 User Flows cốt lõi với sơ đồ Mermaid chi tiết trong `docs/ux/flows/` (Auth, Tree setup, Initial person, Add parents, Add spouse, Add child, Link existing, Edit, Soft-delete, Search, Center, Backup).
+  - Xây dựng 10 bộ Wireframe low-fidelity ASCII trong `docs/ux/wireframes/` cho toàn bộ các màn hình cốt lõi.
+  - Đặc tả Node thành viên kích thước chuẩn `220x90px` và tương tác Canvas React Flow (`docs/ux/person-node-spec.md`, `docs/ux/tree-interaction-spec.md`).
+  - Thiết kế Menu thao tác Node phân 3 nhóm hành động rõ ràng (`docs/ux/node-action-menu.md`).
+  - Xây dựng Bộ mẫu giao diện cảnh báo quan hệ và xác nhận thao tác nguy hiểm (`docs/ux/relationship-warning-patterns.md`, `docs/ux/dangerous-action-patterns.md`).
+  - Hoàn thiện Danh mục trạng thái UI (Loading Skeleton, Empty State có CTA, Error Recovery) và Mẫu biểu mẫu Date Precision (`docs/ux/state-catalogue.md`, `docs/ux/form-patterns.md`).
+  - Ban hành Hướng dẫn văn phong phả học tiếng Việt chuẩn mực (`docs/ux/content-guidelines.md`).
+  - Kiểm toán 100% mục tiêu cảm ứng Touch Targets đạt chuẩn $\ge 44\times 44\text{px}$ (`docs/ux/touch-target-audit.md`).
+  - Thiết lập Tiêu chuẩn khả năng tiếp cận nền tảng định hướng WCAG 2.2 AA (`docs/ux/accessibility-baseline.md`).
+  - Xây dựng Ma trận truy vết UX khép kín từ Yêu cầu P01/P02 sang Thiết kế P03 (`docs/ux/ux-traceability-matrix.md`).
+  - Hoàn thiện bộ hồ sơ nghiệm thu Phase P03 tại `docs/phases/P03/` và gói bàn giao kỹ thuật cho Phase P04, P10 và P15.
