@@ -129,6 +129,14 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Thiết lập trigger tự động cập nhật thời gian UTC `_system.set_updated_at()` và trigger chuẩn hóa họ tên `_system.maintain_person_normalized_name()`.
   - Bật bảo vệ Row Level Security (RLS deny-by-default) trên toàn bộ 7 bảng public.
   - Xây dựng 5 database test suites (`supabase/tests/00000_*.sql` đến `00400_*.sql`).
-  - Cập nhật TypeScript Database Types đồng bộ trong `src/lib/supabase/database.types.ts` và unit test suite.
-  - Ban hành bộ 8 tài liệu thiết kế CSDL tại `docs/database/` (Core schema, ERD, Data dictionary, Enum decisions, Referential actions, Indexing strategy, Timestamp/Actor policy, Test catalogue).
   - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P07 tại `docs/phases/P07/` và gói bàn giao kỹ thuật cho Phase P08.
+- **Phase P08 (RLS và phân quyền):**
+  - Tạo migration `20260829160221_p08_add_rls_authorization_policies.sql` thiết lập 17 chính sách Row Level Security (RLS) bảo vệ toàn diện 7 bảng CSDL cốt lõi (`profiles`, `family_trees`, `tree_memberships`, `persons`, `parent_child_relationships`, `unions`, `union_members`).
+  - Khởi tạo 3 helper authorization functions an toàn (`_system.is_active_tree_member`, `_system.is_tree_owner`, `_system.can_write_tree`) với thuộc tính `STABLE` và `SECURITY DEFINER` ngăn chặn policy recursion.
+  - Thiết lập Trigger `_system.prevent_immutable_columns_mutation()` trên toàn bộ 7 bảng để ngăn chặn việc thay đổi các cột bất biến (`tree_id`, `id`, `user_id`, `created_by`, `created_at`).
+  - Cấu hình Table Grants theo nguyên tắc Least Privilege (revoke toàn bộ từ `anon`, revoke hard `DELETE` trên bảng soft-delete).
+  - Cưỡng chế các thao tác dành riêng cho Owner (quản lý membership, cấu hình cây, xóa mềm cây) và ngăn chặn Viewer ghi dữ liệu.
+  - Tạo 2 composite partial indexes hỗ trợ tra cứu phân quyền thời gian thực (`idx_tree_memberships_auth_lookup`, `idx_tree_memberships_tree_owner_lookup`).
+  - Xây dựng 10 database test suites trong `supabase/tests/` (70 assertions) và 1 TypeScript security test suite (`tests/security/service-role-exposure.test.ts`) kiểm tra cách ly Service-Role.
+  - Ban hành bộ 8 tài liệu bảo mật và phân quyền tại `docs/security/` và `docs/database/`.
+  - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P08 tại `docs/phases/P08/` và gói bàn giao kỹ thuật cho Phase P09.
