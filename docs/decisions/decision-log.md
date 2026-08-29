@@ -53,9 +53,36 @@ Các quyết định dưới đây tạo thành khung nguyên tắc nền tảng
   - *Lý do:* Đảm bảo an toàn dữ liệu cho người dùng trước, tránh phát sinh lỗi phức tạp khâu parse schema.
 
 - **P01-DEC-004 (Ngưỡng Quy mô 1.000 người & Cửa sổ Hiển thị 2-3 đời):**
-  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED_FOR_APPROVAL`
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `ACCEPTED`
   - *Nội dung:* CSDL hỗ trợ lưu 1.000 người/cây; Canvas đồ thị hiển thị cửa sổ 50-80 node (2-3 thế hệ) quanh người trung tâm.
   - *Lý do:* Đảm bảo hiệu năng mượt mà $\ge 45\text{ FPS}$ trên điện thoại thông minh.
+
+### Phase P02: Phân tích nghiệp vụ gia phả (Genealogy Domain Analysis)
+
+- **P02-DEC-001 (Phân định Rạch ròi 4 Loại Người Mốc):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Tách biệt 4 khái niệm độc lập: Initial Person (thứ tự tạo), Center Person (trọng tâm nhìn), Founding Ancestor (danh hiệu danh dự), Generation Anchor (mốc Đời 1).
+  - *Lý do:* Loại bỏ các giả định sai lầm và cho phép mở rộng cây đa chiều linh hoạt.
+
+- **P02-DEC-002 (Xử lý Cha Mẹ Kế & Giám Hộ trong v0.1):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Cha Mẹ Kế là quan hệ suy ra từ Hôn nhân; Giám Hộ lưu ở dạng ghi chú Profile, không vẽ đường nối trên Canvas chính ở v0.1.
+  - *Lý do:* Giữ đồ thị trực quan, tập trung vào huyết thống và hôn phối trực tiếp.
+
+- **P02-DEC-003 (Cấm Điền Ngày Giả 01/01 & Bảo toàn Date Precision):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Lưu đồng thời giá trị niên đại và mã precision; cấm tự tiện biến năm sinh thành ngày giả `01/01`.
+  - *Lý do:* Tôn trọng tính trung thực của dữ liệu lịch sử phả hệ.
+
+- **P02-DEC-004 (Cấm Tự ý Xóa Lan Truyền - No Silent Cascade):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Xóa một Person chỉ ngắt kết nối trực tiếp của người đó; toàn bộ con cái, cha mẹ, vợ chồng vẫn giữ nguyên vẹn trên cây.
+  - *Lý do:* Bảo vệ dữ liệu phả hệ khỏi các thao tác xóa nhầm tai hại.
+
+- **P02-DEC-005 (Số Đời Tính Tương Đối theo Anchor):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROVISIONAL`
+  - *Nội dung:* Số đời là nhãn hiển thị tương đối theo Mốc (Anchor = 1); thêm tổ tiên phía trên không ép đổi số đời toàn cây.
+  - *Lý do:* Tránh việc cập nhật hàng loạt số đời trong CSDL mỗi khi thêm cụ tổ mới.
 
 ---
 

@@ -35,3 +35,21 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Thiết lập Phân loại ưu tiên MoSCoW (`docs/product/moscow-prioritization.md`), Chuẩn phạm vi v0.1 (`docs/product/v0.1-scope-baseline.md`) và PRD tổng thể (`docs/product/prd-mvp.md`).
   - Xây dựng Ma trận truy vết toàn diện khép kín (`docs/product/traceability-matrix.md`).
   - Hoàn thiện hồ sơ nghiệm thu Phase P01 tại `docs/phases/P01/` và gói bàn giao cho Phase P02.
+- **Phase P02 (Phân tích nghiệp vụ gia phả):**
+  - Xây dựng mô hình định danh tách biệt triệt để User Account và Person Node (`docs/product/domain/identity-model.md`).
+  - Định nghĩa chuẩn xác Cây gia phả, Người trung tâm, Người tạo đầu tiên, Thủy tổ và Mốc đánh số đời (`docs/product/domain/family-tree-concepts.md`).
+  - Thiết lập mô hình dữ liệu khái niệm và phân loại quan hệ nguồn vs suy ra (`docs/product/domain/domain-model.md`).
+  - Chuẩn hóa quan hệ Phụ mẫu - Tử tức, Cha mẹ nuôi, Cha mẹ kế, Giám hộ và Hôn phối (`docs/product/domain/relationship-model.md`, `relationship-rules.md`).
+  - Xây dựng Ma trận tương thích quan hệ phả hệ 2D (`docs/product/domain/relationship-matrix.md`).
+  - Xác lập quy tắc xử lý khuyết phụ mẫu, 4 trạng thái xác minh và mâu thuẫn lịch sử (`docs/product/domain/uncertain-data-rules.md`).
+  - Thiết lập 7 cấp độ chính xác ngày tháng, cấm điền ngày giả và xử lý đã mất không rõ ngày (`docs/product/domain/partial-date-rules.md`).
+  - Ban hành quy tắc mở rộng tổ tiên đa chiều từ node bất kỳ và liên kết người có sẵn (`docs/product/domain/domain-rules.md`).
+  - Xây dựng quy tắc phát hiện trùng 3 mức độ và các bất biến khi gộp hồ sơ an toàn (`docs/product/domain/duplicate-and-merge-rules.md`).
+  - Ban hành quy tắc xóa mềm, cấm xóa lan truyền, xem trước tác động và phục hồi an toàn (`docs/product/domain/deletion-rules.md`).
+  - Xây dựng quy tắc tính số đời tương đối theo Anchor (`docs/product/domain/generation-rules.md`).
+  - Thiết lập 20 Domain Invariants và cơ chế phát hiện chặn đứng chu trình vòng lặp thế hệ DAG (`docs/product/domain/invariants.md`).
+  - Phân loại 4 cấp độ kiểm tra với 8 mã lỗi Blocking, 7 mã Warning có xác nhận, Warning mềm và Info (`docs/product/domain/validation-severity-catalogue.md`).
+  - Xây dựng Bảng thuật ngữ phả hệ song ngữ 40 thuật ngữ chuẩn (`docs/product/domain/glossary.md`).
+  - Thiết lập Bộ 80 Kịch bản kiểm thử quan hệ bằng 100% Mock Data (`docs/product/domain/relationship-test-cases.md`).
+  - Hoàn thiện Ma trận truy vết từ Yêu cầu P01 sang Nghiệp vụ P02 (`docs/product/domain/domain-traceability-matrix.md`).
+  - Hoàn thiện bộ hồ sơ nghiệm thu Phase P02 tại `docs/phases/P02/` và gói bàn giao cho Phase P03 & P04.
