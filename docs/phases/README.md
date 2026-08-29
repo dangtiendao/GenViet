@@ -45,10 +45,10 @@ docs/phases/PXX/
 | :--- | :--- | :--- | :--- |
 | **[P00](./P00/00-overview.md)** | Quản trị dự án (Project Governance) | `ACCEPTED` | Khung tài liệu, Git workflow, tiêu chuẩn DoR/DoD. |
 | **[P01](./P01/00-overview.md)** | Yêu cầu sản phẩm (PRD & Scope) | `ACCEPTED` | Định nghĩa PRD MVP v0.1, Personas, Scope Baseline. |
-| **[P02](./P02/00-overview.md)** | Thuật ngữ & Mô hình dữ liệu gia phả | `ACCEPTED` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
-| **[P03](./P03/00-overview.md)** | Thiết kế UX và luồng màn hình | `PROVISIONAL` | Sitemap, 25 màn hình, 12 flows, 10 wireframes, WCAG 2.2 AA. |
-| **P04** | Kiến trúc hệ thống & Setup kỹ thuật | `NOT_STARTED` | Next.js App Router, Tailwind, Supabase schema, RLS. |
-| **P05** | Quản lý cây & Thành viên gia phả | `NOT_STARTED` | CRUD Person, Tree, Relationship. |
-| **P06** | Visualization Engine (Cây gia phả) | `NOT_STARTED` | React Flow + ELK.js layout rendering. |
-| **P07** | Kiểm thử tích hợp & Tối ưu hóa | `NOT_STARTED` | E2E Tests, Performance optimization. |
-| **P08** | Chuẩn bị phát hành MVP | `NOT_STARTED` | Deployment guide, UAT, Production release. |
+| **[P02](./P02/00-overview.md)** | Phân tích nghiệp vụ gia phả | `ACCEPTED` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
+| **[P03](./P03/00-overview.md)** | Thiết kế UX và luồng màn hình | `ACCEPTED` | Sitemap, 25 màn hình, 12 flows, 10 wireframes, WCAG 2.2 AA. |
+| **[P04](./P04/00-overview.md)** | Thiết kế kiến trúc (System Architecture) | `PROVISIONAL` | C4 Context/Container, 4-tier graph, RLS, 16 ADRs, STRIDE Threat Model. |
+| **P05** | Khởi tạo mã nguồn & Setup dự án | `NOT_STARTED` | Next.js App Router, Tailwind, TypeScript, cấu trúc phân tầng. |
+| **P06** | Thiết lập Supabase & Môi trường Ban đầu | `NOT_STARTED` | Supabase Local CLI, Auth, Storage bucket setup. |
+| **P07** | CSDL Lõi & DDL Schema | `NOT_STARTED` | Bảng Trees, Persons, Relationships, Constraints. |
+| **P08** | Phân quyền Row Level Security (RLS) | `NOT_STARTED` | RLS Policies cho toàn bộ các bảng nghiệp vụ. |

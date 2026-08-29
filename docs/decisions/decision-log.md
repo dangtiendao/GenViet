@@ -111,9 +111,92 @@ Các quyết định dưới đây tạo thành khung nguyên tắc nền tảng
   - *Nội dung:* Hộp thoại xóa mềm luôn liệt kê số lượng quan hệ bị ngắt và cam kết bảo toàn dữ liệu người thân (`INV-015`).
   - *Lý do:* Loại bỏ nỗi sợ mất dữ liệu của người dùng khi xóa 1 nhân vật trung gian.
 
+### Phase P04: Thiết kế kiến trúc (System Architecture)
+
+- **ADR-0001 (Next.js App Router làm Kiến trúc Định tuyến & Render chính):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0001-app-router.md`](./ADR-0001-app-router.md)
+  - *Nội dung:* Lựa chọn App Router hỗ trợ Server-First SSR, tối ưu bundle mobile $< 150\text{KB}$.
+
+- **ADR-0002 (Quy tắc Server-First & Phân định Ranh giới Client Components):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0002-server-client-boundaries.md`](./ADR-0002-server-client-boundaries.md)
+  - *Nội dung:* Server Components mặc định; Client Components chỉ dùng cho lá tương tác (Canvas, Sheet, Form).
+
+- **ADR-0003 (Phân định Server Actions vs Route Handlers):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0003-server-actions-and-route-handlers.md`](./ADR-0003-server-actions-and-route-handlers.md)
+  - *Nội dung:* Server Actions cho Form Mutations nội bộ; Route Handlers cho HTTP API / File Streams.
+
+- **ADR-0004 (Supabase Auth làm Nền tảng Định danh cho MVP v0.1):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0004-supabase-auth.md`](./ADR-0004-supabase-auth.md)
+  - *Nội dung:* Sử dụng Supabase Auth email/password, cookie SSR, tách biệt User và Person (`INV-001`).
+
+- **ADR-0005 (PostgreSQL là Nguồn Sự Thật Duy Nhất):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0005-postgresql-source-of-truth.md`](./ADR-0005-postgresql-source-of-truth.md)
+  - *Nội dung:* PostgreSQL (Supabase) là Single Source of Truth cho toàn bộ thực thể; React Flow chỉ là view model.
+
+- **ADR-0006 (Row Level Security RLS là Lớp Phân quyền Cuối cùng):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0006-rls-authorization-boundary.md`](./ADR-0006-rls-authorization-boundary.md)
+  - *Nội dung:* Kích hoạt 100% RLS tại CSDL, ngăn chặn triệt để tấn công IDOR và truy cập chéo cây.
+
+- **ADR-0007 (Supabase Storage Private Bucket cho Avatar MVP v0.1):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0007-supabase-storage-for-mvp.md`](./ADR-0007-supabase-storage-for-mvp.md)
+  - *Nội dung:* Bucket private, cấp Signed URL ngắn hạn $\le 15$ phút, dọn dẹp file rác tự động.
+
+- **ADR-0008 (React Flow làm Thư viện Trình bày Đồ thị Tương tác):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0008-react-flow-presentation.md`](./ADR-0008-react-flow-presentation.md)
+  - *Nội dung:* React Flow chỉ phụ trách Presentation Canvas; cung cấp màn hình Danh sách/Tìm kiếm cho Screen Reader.
+
+- **ADR-0009 (ELK.js làm Thuật toán Tính toán Bố cục Phân tầng Tự động):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0009-elkjs-layout-engine.md`](./ADR-0009-elkjs-layout-engine.md)
+  - *Nội dung:* Thuật toán `elk.layered` tính tọa độ `(x, y)`; hỗ trợ Web Worker chạy ngầm $\ge 45\text{ FPS}$.
+
+- **ADR-0010 (Phân tách Triệt để 4 Lớp Đồ thị Phả hệ):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0010-domain-presentation-graph-separation.md`](./ADR-0010-domain-presentation-graph-separation.md)
+  - *Nội dung:* Tách Domain Graph, Query Graph Slice, Layout Graph (ELK) và Presentation Graph (React Flow).
+
+- **ADR-0011 (Kiến trúc Phân tầng Repository Layer và Service Layer):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0011-repository-and-service-layers.md`](./ADR-0011-repository-and-service-layers.md)
+  - *Nội dung:* 7 Repository Interfaces và 8 Domain Service Interfaces độc lập hoàn toàn khỏi UI framework.
+
+- **ADR-0012 (Thiết kế Adapter Seams cho Storage và Email):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0012-storage-and-email-adapters.md`](./ADR-0012-storage-and-email-adapters.md)
+  - *Nội dung:* Cô lập Supabase Storage / Cloudflare R2 qua `IStorageAdapter` và Email qua `IEmailAdapter`.
+
+- **ADR-0013 (Chiến lược Bộ nhớ Đệm Caching Cách ly Dữ liệu Riêng tư):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0013-cache-strategy-private-data.md`](./ADR-0013-cache-strategy-private-data.md)
+  - *Nội dung:* Cấm Public CDN cache dữ liệu cá nhân; Server Cache gắn khóa `uid` và `tree_id`.
+
+- **ADR-0014 (Nguyên tắc Không Phụ thuộc vào Dịch vụ Dữ liệu Độc quyền Vercel):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0014-zero-vercel-data-services-lock-in.md`](./ADR-0014-zero-vercel-data-services-lock-in.md)
+  - *Nội dung:* Cấm dùng Vercel Blob/KV/Postgres, cấm import `@vercel/*` SDK trong Service Layer.
+
+- **ADR-0015 (Tính Linh động Runtime và Sẵn sàng Chuyển sang Cloudflare):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0015-runtime-portability-cloudflare-readiness.md`](./ADR-0015-runtime-portability-cloudflare-readiness.md)
+  - *Nội dung:* Tuân thủ Web APIs chuẩn (Fetch, Crypto, Cookies), quy trình 10 bước chuyển sang Workers.
+
+- **ADR-0016 (Kiến trúc Ghi nhận Nhật ký Kiểm toán Nghiệp vụ):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED`
+  - *Tệp tin:* [`ADR-0016-audit-architecture.md`](./ADR-0016-audit-architecture.md)
+  - *Nội dung:* Ghi sự kiện phả hệ vào bảng `audit_logs` cùng transaction, cấm ghi secret/token.
+
 ---
 
 ## 3. Danh sách các Quyết định mở / Đang thảo luận (Open Decisions)
 
 1. **OPEN-DEC-01 (Giấy phép mã nguồn - License):** Quyết định lựa chọn giữa AGPLv3, MIT hoặc Proprietary (Bản quyền đóng). Tạm hoãn xem xét ở giai đoạn trước khi phát hành MVP.
-2. **OPEN-DEC-02 (Provider gửi Email):** Lựa chọn giữa Supabase Built-in Auth Emails, Resend hoặc SendGrid. Sẽ quyết định tại Phase P04 (Auth).
+2. **OPEN-DEC-02 (Provider gửi Email Giao dịch khi Nâng cấp v0.2+):** Lựa chọn giữa Resend và Postmark cho phân hệ `IEmailAdapter`. Đề xuất Resend, quyết định chính thức khi làm v0.2.
+
