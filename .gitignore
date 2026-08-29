@@ -37,8 +37,11 @@ coverage/
 playwright-report/
 test-results/
 
-# Supabase Local
+# Supabase Local & Backups
 .supabase/local/
+.backups/
+.branches/
+.temp/
 
 # OS Files
 .DS_Store

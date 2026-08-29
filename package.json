@@ -17,7 +17,20 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:run"
+    "supabase:init": "supabase init",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status",
+    "supabase:reset": "supabase db reset",
+    "supabase:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
+    "supabase:types:check": "node scripts/supabase/verify-generated-types.mjs",
+    "supabase:migrations:new": "supabase migration new",
+    "supabase:migrations:check": "node scripts/supabase/check-migrations.mjs",
+    "supabase:db:lint": "supabase db lint",
+    "supabase:db:push:dev": "supabase db push",
+    "supabase:backup": "node scripts/supabase/backup-before-migrate.mjs",
+    "supabase:check": "npm run supabase:migrations:check && npm run supabase:types:check",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:run && npm run supabase:check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -46,6 +59,7 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "supabase": "^2.116.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.0",
     "vitest": "^3.0.0"
