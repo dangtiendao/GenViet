@@ -47,8 +47,8 @@ docs/phases/PXX/
 | **[P01](./P01/00-overview.md)** | Yêu cầu sản phẩm (PRD & Scope) | `ACCEPTED` | Định nghĩa PRD MVP v0.1, Personas, Scope Baseline. |
 | **[P02](./P02/00-overview.md)** | Phân tích nghiệp vụ gia phả | `ACCEPTED` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
 | **[P03](./P03/00-overview.md)** | Thiết kế UX và luồng màn hình | `ACCEPTED` | Sitemap, 25 màn hình, 12 flows, 10 wireframes, WCAG 2.2 AA. |
-| **[P04](./P04/00-overview.md)** | Thiết kế kiến trúc (System Architecture) | `PROVISIONAL` | C4 Context/Container, 4-tier graph, RLS, 16 ADRs, STRIDE Threat Model. |
-| **P05** | Khởi tạo mã nguồn & Setup dự án | `NOT_STARTED` | Next.js App Router, Tailwind, TypeScript, cấu trúc phân tầng. |
+| **[P04](./P04/00-overview.md)** | Thiết kế kiến trúc (System Architecture) | `ACCEPTED` | C4 Context/Container, 4-tier graph, RLS, 16 ADRs, STRIDE Threat Model. |
+| **[P05](./P05/00-overview.md)** | Khởi tạo mã nguồn (Source Bootstrap) | `ACCEPTED` | Next.js 16 App Router, Tailwind v4, shadcn, Vitest, Playwright, CI. |
 | **P06** | Thiết lập Supabase & Môi trường Ban đầu | `NOT_STARTED` | Supabase Local CLI, Auth, Storage bucket setup. |
 | **P07** | CSDL Lõi & DDL Schema | `NOT_STARTED` | Bảng Trees, Persons, Relationships, Constraints. |
 | **P08** | Phân quyền Row Level Security (RLS) | `NOT_STARTED` | RLS Policies cho toàn bộ các bảng nghiệp vụ. |

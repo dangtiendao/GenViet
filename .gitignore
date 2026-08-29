@@ -8,6 +8,7 @@ node_modules/
 # Environment Variables & Secrets (CRITICAL: Never commit secrets)
 .env
 .env*.local
+!.env.example
 .env.development
 .env.test
 .env.production
@@ -21,6 +22,7 @@ node_modules/
 out/
 build/
 dist/
+*.tsbuildinfo
 
 # Logs
 npm-debug.log*
