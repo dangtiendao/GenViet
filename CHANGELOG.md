@@ -94,4 +94,20 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Thiết lập toàn bộ 16 Architecture Decision Records tại `docs/decisions/` (`ADR-0001` đến `ADR-0016`).
   - Xây dựng Ma trận truy vết kiến trúc khép kín (`docs/architecture/architecture-traceability-matrix.md`), Giả định (`assumptions.md`) và Câu hỏi mở (`open-questions.md`).
   - Hoàn thiện bộ hồ sơ nghiệm thu Phase P04 tại `docs/phases/P04/` và gói bàn giao kỹ thuật chi tiết cho các Phase P05 đến P25.
-
+- **Phase P05 (Khởi tạo mã nguồn):**
+  - Khởi tạo dự án Next.js 16 Active LTS (`16.3.3`) với App Router, React 19, TypeScript strict mode.
+  - Cấu hình Package Manager `npm@12.0.2` với lockfile `package-lock.json` duy nhất và `.nvmrc` Node 24 LTS.
+  - Thiết lập Tailwind CSS v4 (`@tailwindcss/postcss`) và khởi tạo cấu hình `components.json` shadcn/ui.
+  - Tạo smoke component `Button` (`src/components/ui/button.tsx`) và trang chủ scaffold `src/app/page.tsx`.
+  - Cấu hình ESLint 9 Flat Config (`eslint.config.mjs`) và Prettier code formatting (`.prettierrc`, `.prettierignore`).
+  - Cấu hình Import Alias `@/*` trỏ tới `src/*` cho TypeScript, Next.js và Vitest.
+  - Thiết lập lớp xác thực biến môi trường bằng Zod (`src/lib/env/index.ts`) và tệp mẫu an toàn `.env.example`.
+  - Cài đặt đầy đủ các dependency nền tảng: `react-hook-form`, `zod`, `@supabase/supabase-js`, `@supabase/ssr`, `@xyflow/react`, `elkjs`.
+  - Thiết lập Vitest test runner (`vitest.config.ts`) và 3 bộ unit tests (`env.test.ts`, `utils.test.ts`, `health.test.ts`) đạt 100% PASS.
+  - Thiết lập Playwright runner (`playwright.config.ts`) và E2E smoke tests (`tests/e2e/smoke.spec.ts`).
+  - Tạo Route Handler Health Check `/api/health` trả về HTTP 200 JSON trạng thái.
+  - Xây dựng GitHub Actions CI workflow `.github/workflows/ci.yml` kiểm tra tự động format, lint, typecheck, unit tests, build và e2e.
+  - Thiết lập cấu trúc thư mục feature-based và phân tầng theo P04 (`src/app`, `src/features`, `src/server`, `src/lib`, `src/types`).
+  - Ban hành Báo cáo an ninh dependency và kiểm toán bản vá framework (`docs/security/dependency-security-baseline.md`).
+  - Cập nhật tài liệu Hướng dẫn thiết lập môi trường local (`docs/development/local-setup.md`) và `README.md`.
+  - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P05 tại `docs/phases/P05/` và gói bàn giao kỹ thuật cho Phase P06.
