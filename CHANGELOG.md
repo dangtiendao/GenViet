@@ -69,3 +69,29 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Thiết lập Tiêu chuẩn khả năng tiếp cận nền tảng định hướng WCAG 2.2 AA (`docs/ux/accessibility-baseline.md`).
   - Xây dựng Ma trận truy vết UX khép kín từ Yêu cầu P01/P02 sang Thiết kế P03 (`docs/ux/ux-traceability-matrix.md`).
   - Hoàn thiện bộ hồ sơ nghiệm thu Phase P03 tại `docs/phases/P03/` và gói bàn giao kỹ thuật cho Phase P04, P10 và P15.
+- **Phase P04 (Thiết kế kiến trúc):**
+  - Xây dựng Tổng quan kiến trúc hệ thống và 12 nguyên tắc vàng (`docs/architecture/system-overview.md`, `architecture-principles.md`).
+  - Thiết lập Sơ đồ bối cảnh C4 Context (`docs/architecture/context-diagram.md`) và Sơ đồ khối C4 Container (`docs/architecture/container-diagram.md`).
+  - Phân định Ranh giới thành phần 4 tầng (`docs/architecture/component-boundaries.md`) và 6 Sequence diagrams chi tiết (`docs/architecture/request-and-data-flow.md`).
+  - Chốt kiến trúc Next.js App Router, Server-First SSR (`docs/architecture/rendering-architecture.md`, `ADR-0001`).
+  - Phân định ranh giới Server Components vs Client Components theo 25 màn hình P03 (`docs/architecture/server-client-boundaries.md`, `ADR-0002`).
+  - Phân định rạch ròi giữa Server Actions và Route Handlers (`docs/architecture/actions-and-route-handlers.md`, `ADR-0003`).
+  - Chốt Supabase Auth làm IdP với phiên SSR Cookie an toàn, phân định User vs Person (`docs/architecture/authentication-architecture.md`, `ADR-0004`).
+  - Chốt PostgreSQL là Nguồn Sự Thật duy nhất, cấm lưu binary trong CSDL (`docs/architecture/data-ownership.md`, `ADR-0005`).
+  - Chốt Row Level Security (RLS) là lớp cưỡng chế phân quyền dữ liệu cuối, chống IDOR chéo cây (`docs/architecture/authorization-architecture.md`, `ADR-0006`).
+  - Chốt Supabase Storage Private Bucket cho avatar, cấp Signed URLs và cơ chế dọn file rác (`docs/architecture/storage-architecture.md`, `ADR-0007`).
+  - Chốt React Flow cho presentation canvas và ELK.js cho layout phân tầng tự động (`docs/architecture/graph-architecture.md`, `ADR-0008`, `ADR-0009`).
+  - Phân tách triệt để 4 lớp đồ thị: Domain Graph, Query Graph, Layout Graph, Presentation Graph (`docs/architecture/graph-architecture.md`, `ADR-0010`).
+  - Đặc tả 7 Repository Interfaces và 8 Domain Service Interfaces độc lập UI (`docs/architecture/repository-layer.md`, `service-layer.md`, `ADR-0011`).
+  - Thiết kế Storage Adapter Seam và Email Adapter Seam cô lập dịch vụ đám mây (`docs/architecture/adapter-architecture.md`, `email-architecture.md`, `ADR-0012`).
+  - Thiết lập Chiến lược Caching cách ly dữ liệu riêng tư theo ngữ cảnh người dùng (`docs/architecture/caching-strategy.md`, `ADR-0013`).
+  - Ban hành chính sách Cấm phụ thuộc vào dịch vụ dữ liệu độc quyền Vercel Blob/KV/Postgres (`docs/architecture/platform-portability.md`, `ADR-0014`).
+  - Đánh giá khả năng tương thích và quy trình 10 bước chuyển sang Cloudflare Workers (`docs/architecture/cloudflare-readiness.md`, `ADR-0015`).
+  - Thiết kế Kiến trúc Kiểm toán Nghiệp vụ ghi `audit_logs` cùng transaction (`docs/architecture/audit-architecture.md`, `ADR-0016`).
+  - Đặc tả 6 thao tác bắt buộc nguyên tử trong PostgreSQL và chiến lược bù trừ (`docs/architecture/transaction-boundaries.md`).
+  - Đặc tả Hồ sơ thực thi phi trạng thái Stateless (`docs/architecture/runtime-profile.md`).
+  - Xây dựng Mô hình Đe dọa An ninh 14 mối nguy STRIDE và 10 Yêu cầu an ninh bắt buộc (`docs/security/threat-model.md`, `trust-boundaries.md`, `security-requirements.md`).
+  - Thiết lập toàn bộ 16 Architecture Decision Records tại `docs/decisions/` (`ADR-0001` đến `ADR-0016`).
+  - Xây dựng Ma trận truy vết kiến trúc khép kín (`docs/architecture/architecture-traceability-matrix.md`), Giả định (`assumptions.md`) và Câu hỏi mở (`open-questions.md`).
+  - Hoàn thiện bộ hồ sơ nghiệm thu Phase P04 tại `docs/phases/P04/` và gói bàn giao kỹ thuật chi tiết cho các Phase P05 đến P25.
+
