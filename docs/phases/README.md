@@ -52,4 +52,5 @@ docs/phases/PXX/
 | **[P06](./P06/00-overview.md)** | Thiết lập Supabase & Môi trường Ban đầu | `ACCEPTED_WITH_MANUAL_CLOUD_ACTION` | Supabase Local CLI, config, foundation migration, seed, clients, types. |
 | **[P07](./P07/00-overview.md)** | CSDL Lõi & DDL Schema | `ACCEPTED` | 7 bảng core, 12 enums, same-tree isolation, partial dates, types. |
 | **[P08](./P08/00-overview.md)** | Phân quyền Row Level Security (RLS) | `ACCEPTED` | 17 policies RLS, least-privilege grants, immutable trigger, isolation. |
-| **P09** | Thiết kế Xác thực (Authentication) | `NOT_STARTED` | Đăng ký, đăng nhập, bảo vệ session, middleware. |
+| **[P09](./P09/00-overview.md)** | Xác thực Người dùng (Authentication) | `ACCEPTED` | Email/password, email confirm, session sync, proxy, profile trigger. |
+| **P10** | Thiết kế Hệ thống UI/UX & Design Tokens | `NOT_STARTED` | Cấu hình theme, design tokens, responsive layout, component library. |
