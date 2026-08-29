@@ -51,4 +51,5 @@ docs/phases/PXX/
 | **[P05](./P05/00-overview.md)** | Khởi tạo mã nguồn (Source Bootstrap) | `ACCEPTED` | Next.js 16 App Router, Tailwind v4, shadcn, Vitest, Playwright, CI. |
 | **[P06](./P06/00-overview.md)** | Thiết lập Supabase & Môi trường Ban đầu | `ACCEPTED_WITH_MANUAL_CLOUD_ACTION` | Supabase Local CLI, config, foundation migration, seed, clients, types. |
 | **[P07](./P07/00-overview.md)** | CSDL Lõi & DDL Schema | `ACCEPTED` | 7 bảng core, 12 enums, same-tree isolation, partial dates, types. |
-| **P08** | Phân quyền Row Level Security (RLS) | `NOT_STARTED` | RLS Policies cho toàn bộ các bảng nghiệp vụ. |
+| **[P08](./P08/00-overview.md)** | Phân quyền Row Level Security (RLS) | `ACCEPTED` | 17 policies RLS, least-privilege grants, immutable trigger, isolation. |
+| **P09** | Thiết kế Xác thực (Authentication) | `NOT_STARTED` | Đăng ký, đăng nhập, bảo vệ session, middleware. |

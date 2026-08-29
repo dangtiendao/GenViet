@@ -16,8 +16,14 @@ Thư mục này quản lý toàn bộ các chính sách, quy chuẩn và hướn
 ## 2. Tài liệu cốt lõi
 
 - [project-security-rules.md](./project-security-rules.md): **Quy tắc bảo mật bắt buộc và quản lý secret** (Áp dụng cho toàn bộ thành viên và AI Agents).
-- `threat-model.md`: Mô hình đánh giá hiểm họa bảo mật (Dự kiến thực hiện ở Phase Kiến trúc/Bảo mật).
-- `incident-response.md`: Quy trình xử lý sự cố an ninh mạng và thu hồi khóa khẩn cấp.
+- [rls-authorization-model.md](./rls-authorization-model.md): **Mô hình phân quyền Row Level Security (RLS)** theo vai trò và membership.
+- [rls-policy-catalogue.md](./rls-policy-catalogue.md): **Danh mục 17 chính sách RLS** bảo vệ 7 bảng CSDL cốt lõi.
+- [authorization-matrix.md](./authorization-matrix.md): **Ma trận phân quyền chi tiết** cho từng role và thực thể.
+- [grants-matrix.md](./grants-matrix.md): **Ma trận quyền bảng CSDL (Grants)** theo nguyên tắc Least Privilege.
+- [owner-only-actions.md](./owner-only-actions.md): **Danh mục thao tác độc quyền của Chủ sở hữu (Owner)**.
+- [cross-tree-isolation.md](./cross-tree-isolation.md): **Cơ chế 3 lớp cách ly dữ liệu giữa các cây gia phả**.
+- [service-role-isolation.md](./service-role-isolation.md): **Chính sách cách ly khóa đặc quyền Service-Role**.
+- [rls-performance-review.md](./rls-performance-review.md): **Báo cáo đánh giá hiệu năng và chỉ mục RLS**.
 
 ---
 
