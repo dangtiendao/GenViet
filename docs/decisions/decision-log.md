@@ -35,6 +35,28 @@ Các quyết định dưới đây tạo thành khung nguyên tắc nền tảng
   - *Nội dung:* Bắt buộc áp dụng Conventional Commits có scope phase: `<type>(PXX): <mô tả>`.
   - *Lý do:* Giúp truy vết lịch sử commit tương ứng chính xác với từng phase và dễ dàng tự động hóa việc xuất changelog.
 
+### Phase P01: Chốt phạm vi sản phẩm (Product Scope Definition)
+
+- **P01-DEC-001 (Mô hình Single-Owner cho MVP v0.1):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED_FOR_APPROVAL`
+  - *Nội dung:* v0.1 tập trung vào trải nghiệm một cá nhân tự quản lý gia phả; hoãn phân quyền cộng tác đa người dùng sang v0.2+.
+  - *Lý do:* Giữ kiến trúc đơn giản, giảm thiểu rủi ro xung đột ghi đè đồng thời và tăng tốc độ ra mắt MVP.
+
+- **P01-DEC-002 (Khởi tạo từ Node Bất kỳ & Mở rộng Tổ tiên Đa chiều):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED_FOR_APPROVAL`
+  - *Nội dung:* Cho phép bắt đầu cây từ bất kỳ nhân vật nào và bổ sung cha mẹ lên trên hoặc con cháu xuống dưới linh hoạt.
+  - *Lý do:* Phù hợp với thực tế thu thập dữ liệu chắp vá của người dùng Việt Nam.
+
+- **P01-DEC-003 (Xuất JSON là Must-Have, Nhập JSON là Should-Have):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED_FOR_APPROVAL`
+  - *Nội dung:* Bắt buộc tính năng Xuất JSON sao lưu trong v0.1; tính năng Nhập JSON xếp mức Should.
+  - *Lý do:* Đảm bảo an toàn dữ liệu cho người dùng trước, tránh phát sinh lỗi phức tạp khâu parse schema.
+
+- **P01-DEC-004 (Ngưỡng Quy mô 1.000 người & Cửa sổ Hiển thị 2-3 đời):**
+  - *Ngày:* 2026-08-29 | *Trạng thái:* `PROPOSED_FOR_APPROVAL`
+  - *Nội dung:* CSDL hỗ trợ lưu 1.000 người/cây; Canvas đồ thị hiển thị cửa sổ 50-80 node (2-3 thế hệ) quanh người trung tâm.
+  - *Lý do:* Đảm bảo hiệu năng mượt mà $\ge 45\text{ FPS}$ trên điện thoại thông minh.
+
 ---
 
 ## 3. Danh sách các Quyết định mở / Đang thảo luận (Open Decisions)
