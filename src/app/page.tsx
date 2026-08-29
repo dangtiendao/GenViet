@@ -18,15 +18,18 @@ export default function HomePage() {
           tạo mã nguồn nền tảng thành công (App Router, Tailwind CSS, TypeScript strict, Testing
           Foundation).
         </div>
-        <div className="flex justify-center gap-3">
-          <Button variant="default" size="sm">
-            Nền tảng Đã sẵn sàng
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button asChild size="sm">
+            <a href="/login">Đăng nhập</a>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <a href="/sign-up">Đăng ký</a>
           </Button>
           <a
             href="/api/health"
             className="inline-flex items-center justify-center rounded-md border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            Health Check API
+            Health Check
           </a>
         </div>
       </div>

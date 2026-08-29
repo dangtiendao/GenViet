@@ -138,5 +138,13 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Cưỡng chế các thao tác dành riêng cho Owner (quản lý membership, cấu hình cây, xóa mềm cây) và ngăn chặn Viewer ghi dữ liệu.
   - Tạo 2 composite partial indexes hỗ trợ tra cứu phân quyền thời gian thực (`idx_tree_memberships_auth_lookup`, `idx_tree_memberships_tree_owner_lookup`).
   - Xây dựng 10 database test suites trong `supabase/tests/` (70 assertions) và 1 TypeScript security test suite (`tests/security/service-role-exposure.test.ts`) kiểm tra cách ly Service-Role.
-  - Ban hành bộ 8 tài liệu bảo mật và phân quyền tại `docs/security/` và `docs/database/`.
   - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P08 tại `docs/phases/P08/` và gói bàn giao kỹ thuật cho Phase P09.
+- **Phase P09 (Xác thực người dùng):**
+  - Xây dựng hoàn chỉnh hệ thống xác thực người dùng v0.1: Đăng ký email/mật khẩu, Xác minh email, Đăng nhập, Đăng xuất, Quên mật khẩu và Đặt lại mật khẩu mới.
+  - Tạo migration `20260829163000_p09_provision_profiles.sql` khởi tạo Database Trigger `_system.handle_new_user()` trên `auth.users` tự động tạo Profile người dùng an toàn và idempotent.
+  - Triển khai Next.js 16 Proxy (`src/proxy.ts`) tự động làm mới Supabase Auth cookies và bảo vệ sơ bộ các protected routes.
+  - Xây dựng Server Guard `requireUser()` xác minh trực tiếp phiên người dùng phía máy chủ và bảo vệ trang Dashboard (`/dashboard`) cùng Cài đặt tài khoản (`/account`).
+  - Triển khai helper `getSafeRedirectUrl()` loại bỏ triệt để nguy cơ tấn công Open-Redirect và CRLF Injection.
+  - Xây dựng bảng phân loại lỗi xác thực (`AUTH_ERROR_TAXONOMY`) với 17 mã lỗi được ánh xạ sang thông điệp tiếng Việt an toàn và thân thiện.
+  - Ban hành bộ 8 tài liệu bảo mật và vận hành xác thực tại `docs/security/`, `docs/operations/`, `docs/testing/`.
+  - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P09 tại `docs/phases/P09/` và gói bàn giao kỹ thuật cho Phase P10 & P11.

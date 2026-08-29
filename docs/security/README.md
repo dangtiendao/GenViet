@@ -24,6 +24,10 @@ Thư mục này quản lý toàn bộ các chính sách, quy chuẩn và hướn
 - [cross-tree-isolation.md](./cross-tree-isolation.md): **Cơ chế 3 lớp cách ly dữ liệu giữa các cây gia phả**.
 - [service-role-isolation.md](./service-role-isolation.md): **Chính sách cách ly khóa đặc quyền Service-Role**.
 - [rls-performance-review.md](./rls-performance-review.md): **Báo cáo đánh giá hiệu năng và chỉ mục RLS**.
+- [authentication-model.md](./authentication-model.md): **Mô hình định danh và xác thực người dùng (P09)**.
+- [session-management.md](./session-management.md): **Quản trị phiên làm việc và đồng bộ Server SSR**.
+- [auth-redirect-security.md](./auth-redirect-security.md): **Cơ chế an toàn chuyển hướng và chống Open-Redirect**.
+- [auth-threat-review.md](./auth-threat-review.md): **Đánh giá hiểm họa bảo mật xác thực (STRIDE Model)**.
 
 ---
 
