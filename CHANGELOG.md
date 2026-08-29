@@ -119,6 +119,16 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Xây dựng Zod schema mở rộng cho biến môi trường Supabase (`src/lib/env/index.ts`) và tệp mẫu `.env.example`.
   - Triển khai bộ client factories hoàn chỉnh theo `@supabase/ssr`: `client.ts` (Browser), `server.ts` (Server cookie adapter), `admin.ts` (Server-only privileged client).
   - Thiết lập cơ chế tự động sinh TypeScript Database Types (`src/lib/supabase/database.types.ts`).
-  - Xây dựng bộ 13 scripts tự động hóa trong `package.json` và `scripts/supabase/` (`check-migrations.mjs`, `verify-generated-types.mjs`, `backup-before-migrate.mjs`).
   - Bổ sung unit tests cho Supabase client factories (`tests/unit/supabase-clients.test.ts`) đạt 100% PASS.
   - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P06 tại `docs/phases/P06/` và gói bàn giao kỹ thuật cho Phase P07.
+- **Phase P07 (Thiết kế cơ sở dữ liệu lõi):**
+  - Tạo migration `20260829154907_p07_create_core_genealogy_schema.sql` khởi tạo 7 bảng CSDL cốt lõi: `profiles`, `family_trees`, `tree_memberships`, `persons`, `parent_child_relationships`, `unions`, `union_members`.
+  - Khởi tạo 12 domain enums (`tree_status`, `tree_privacy_level`, `membership_role`, `membership_status`, `gender_type`, `living_status_type`, `date_precision_type`, `verification_status_type`, `parent_role_type`, `relationship_kind_type`, `union_status_type`, `union_member_role_type`).
+  - Thiết lập cơ chế cô lập cùng cây gia phả (Same-Tree Isolation) thông qua Composite Foreign Keys.
+  - Hỗ trợ mô hình ngày tháng không đầy đủ (Partial Dates) và ước tính theo chuẩn domain P02.
+  - Thiết lập trigger tự động cập nhật thời gian UTC `_system.set_updated_at()` và trigger chuẩn hóa họ tên `_system.maintain_person_normalized_name()`.
+  - Bật bảo vệ Row Level Security (RLS deny-by-default) trên toàn bộ 7 bảng public.
+  - Xây dựng 5 database test suites (`supabase/tests/00000_*.sql` đến `00400_*.sql`).
+  - Cập nhật TypeScript Database Types đồng bộ trong `src/lib/supabase/database.types.ts` và unit test suite.
+  - Ban hành bộ 8 tài liệu thiết kế CSDL tại `docs/database/` (Core schema, ERD, Data dictionary, Enum decisions, Referential actions, Indexing strategy, Timestamp/Actor policy, Test catalogue).
+  - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P07 tại `docs/phases/P07/` và gói bàn giao kỹ thuật cho Phase P08.
