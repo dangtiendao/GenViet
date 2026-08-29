@@ -1,0 +1,54 @@
+name: "Nghiệm thu & Review Phase (Phase Review Issue)"
+description: "Mở issue để theo dõi quá trình review và nghiệm thu một phase dự án"
+title: "[REVIEW-PXX]: Đánh giá và nghiệm thu Phase PXX"
+labels: ["phase-review", "governance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issue này dùng để theo dõi quá trình đánh giá chất lượng (Review & Acceptance) cho một Phase cụ thể theo quy trình kiểm soát chất lượng của GenViet.
+  - type: input
+    id: phase_id
+    attributes:
+      label: Mã Phase & Tên Phase
+      description: Nhập mã phase cần review.
+      placeholder: "P00: Quản trị dự án"
+    validations:
+      required: true
+  - type: input
+    id: branch_name
+    attributes:
+      label: Nhánh thực hiện
+      placeholder: "phase/p00-project-governance"
+    validations:
+      required: true
+  - type: dropdown
+    id: review_result
+    attributes:
+      label: Kết luận Review
+      options:
+        - "ACCEPTED (Đạt toàn bộ tiêu chí, sẵn sàng bàn giao / merge)"
+        - "ACCEPTED_WITH_MINOR_FIXES (Đạt yêu cầu, chỉ cần sửa một vài lỗi nhỏ không chặn)"
+        - "NEEDS_FIX (Có lỗi MAJOR/CRITICAL, cần sửa và re-review)"
+        - "REJECTED (Không đạt tiêu chí hoặc sai phạm vi nghiêm trọng)"
+    validations:
+      required: true
+  - type: textarea
+    id: findings_summary
+    attributes:
+      label: Tóm tắt các phát hiện (Findings Summary)
+      placeholder: |
+        - BLOCKER: 0
+        - CRITICAL: 0
+        - MAJOR: 0
+        - MINOR: 0
+        - SUGGESTION: 0
+    validations:
+      required: true
+  - type: textarea
+    id: handover_notes
+    attributes:
+      label: Ghi chú bàn giao sang phase tiếp theo
+      placeholder: "Các tài liệu và điều kiện đầu vào cho phase kế tiếp..."
+    validations:
+      required: true

@@ -1,0 +1,63 @@
+name: "Báo cáo lỗi (Bug Report)"
+description: "Tạo báo cáo lỗi phát sinh trong mã nguồn hoặc tài liệu của GenViet"
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã báo cáo lỗi! Vui lòng điền thông tin chi tiết bên dưới để đội ngũ phát triển dễ dàng tái hiện và xử lý.
+        **LƯU Ý BẢO MẬT:** Tuyệt đối KHÔNG dán mật khẩu, API key, access token hoặc thông tin gia phả thực tế vào đây!
+  - type: input
+    id: phase_task_id
+    attributes:
+      label: Mã Phase / Task liên quan
+      description: Nhập mã phase hoặc task phát hiện lỗi (Ví dụ: P00, P01-T03).
+      placeholder: "Ví dụ: P00-BUG-001"
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Mức độ nghiêm trọng (Severity)
+      options:
+        - "BLOCKER (Chặn hệ thống / hỏng toàn bộ luồng chính)"
+        - "CRITICAL (Lỗi bảo mật / rò rỉ dữ liệu / mất dữ liệu)"
+        - "MAJOR (Chức năng quan trọng không hoạt động đúng)"
+        - "MINOR (Lỗi giao diện nhỏ / sai chính tả / không ảnh hưởng luồng chính)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Mô tả chi tiết lỗi
+      description: Mô tả rõ ràng về lỗi xảy ra.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Các bước tái hiện (Steps to Reproduce)
+      description: Liệt kê chi tiết từng bước để tạo lại lỗi.
+      placeholder: |
+        1. Đi tới trang '...'
+        2. Nhấp chuột vào '....'
+        3. Cuộn xuống và thấy lỗi '....'
+    validations:
+      required: true
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: Kết quả mong đợi vs Kết quả thực tế
+      placeholder: |
+        - Mong đợi: Thành viên mới được thêm vào cây gia phả.
+        - Thực tế: Ném ra lỗi 500 trên console.
+    validations:
+      required: true
+  - type: textarea
+    id: logs_or_screenshots
+    attributes:
+      label: Log / Ảnh chụp màn hình (Không chứa thông tin nhạy cảm)
+      description: Dán stacktrace hoặc ảnh chụp lỗi tại đây.
+    validations:
+      required: false

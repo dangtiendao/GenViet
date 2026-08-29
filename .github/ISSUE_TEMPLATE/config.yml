@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "GenViet Documentation"
+    url: "https://github.com/dangtiendao/GenViet/tree/main/docs"
+    about: "Tra cứu tài liệu kiến trúc, quản trị và hướng dẫn dự án"
+  - name: "Hỏi đáp & Thảo luận"
+    url: "https://github.com/dangtiendao/GenViet/discussions"
+    about: "Thảo luận về ý tưởng hoặc đặt câu hỏi phi kỹ thuật"

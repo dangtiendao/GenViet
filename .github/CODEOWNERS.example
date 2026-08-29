@@ -1,0 +1,23 @@
+# ==============================================================================
+# CODEOWNERS.example - Hướng dẫn cấu hình người sở hữu mã nguồn (Code Owners)
+# ==============================================================================
+#
+# Hướng dẫn sử dụng:
+# 1. Đổi tên file này thành CODEOWNERS (đặt tại thư mục .github/CODEOWNERS).
+# 2. Thay thế `@maintainer-username` bằng GitHub username hoặc tên team thực tế.
+# 3. GitHub sẽ tự động yêu cầu review từ những người được chỉ định khi có Pull Request.
+#
+# Lưu ý: Tránh gán username không tồn tại để không gây lỗi kiểm tra của GitHub.
+
+# Mặc định: Toàn bộ repository do Maintainer chính phụ trách
+# * @maintainer-username
+
+# Tài liệu quản trị & kiến trúc
+# /docs/ @maintainer-username
+
+# Cấu hình bảo mật & quy tắc RLS
+# /docs/security/ @security-lead
+# /supabase/ @security-lead
+
+# Cấu hình CI/CD & GitHub Actions
+# /.github/ @devops-lead

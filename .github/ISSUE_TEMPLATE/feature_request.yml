@@ -1,0 +1,39 @@
+name: "Đề xuất tính năng (Feature Request)"
+description: "Đề xuất ý tưởng hoặc tính năng mới cho dự án GenViet"
+title: "[FEAT]: "
+labels: ["enhancement", "feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã đóng góp ý tưởng phát triển GenViet! Vui lòng cung cấp chi tiết đề xuất.
+  - type: input
+    id: phase_target
+    attributes:
+      label: Phase đề xuất áp dụng
+      description: Giai đoạn dự kiến đưa tính năng này vào (Ví dụ: P01, P02, Post-MVP...).
+      placeholder: "Ví dụ: P02 hoặc Post-MVP"
+    validations:
+      required: false
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: Vấn đề bạn muốn giải quyết
+      description: Mô tả bối cảnh và lý do tại sao tính năng này là cần thiết cho người dùng.
+      placeholder: "Tôi cảm thấy khó khăn khi..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Đề xuất giải pháp chi tiết
+      description: Mô tả cách tính năng nên hoạt động hoặc giao diện mong muốn.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Các giải pháp thay thế đã cân nhắc
+      description: Liệt kê các cách tiếp cận khác (nếu có).
+    validations:
+      required: false
