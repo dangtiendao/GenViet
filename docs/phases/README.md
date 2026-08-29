@@ -45,9 +45,9 @@ docs/phases/PXX/
 | :--- | :--- | :--- | :--- |
 | **[P00](./P00/00-overview.md)** | Quản trị dự án (Project Governance) | `ACCEPTED` | Khung tài liệu, Git workflow, tiêu chuẩn DoR/DoD. |
 | **[P01](./P01/00-overview.md)** | Yêu cầu sản phẩm (PRD & Scope) | `ACCEPTED` | Định nghĩa PRD MVP v0.1, Personas, Scope Baseline. |
-| **[P02](./P02/00-overview.md)** | Thuật ngữ & Mô hình dữ liệu gia phả | `PROVISIONAL` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
-| **P03** | Thiết kế kiến trúc & Setup kỹ thuật | `NOT_STARTED` | Khởi tạo Next.js, Tailwind, Supabase schema. |
-| **P04** | Xác thực & Quản lý người dùng | `NOT_STARTED` | Supabase Auth, phân quyền RLS ban đầu. |
+| **[P02](./P02/00-overview.md)** | Thuật ngữ & Mô hình dữ liệu gia phả | `ACCEPTED` | Phân tích nghiệp vụ, 20 Domain Invariants, 40 thuật ngữ, 80 test cases. |
+| **[P03](./P03/00-overview.md)** | Thiết kế UX và luồng màn hình | `PROVISIONAL` | Sitemap, 25 màn hình, 12 flows, 10 wireframes, WCAG 2.2 AA. |
+| **P04** | Kiến trúc hệ thống & Setup kỹ thuật | `NOT_STARTED` | Next.js App Router, Tailwind, Supabase schema, RLS. |
 | **P05** | Quản lý cây & Thành viên gia phả | `NOT_STARTED` | CRUD Person, Tree, Relationship. |
 | **P06** | Visualization Engine (Cây gia phả) | `NOT_STARTED` | React Flow + ELK.js layout rendering. |
 | **P07** | Kiểm thử tích hợp & Tối ưu hóa | `NOT_STARTED` | E2E Tests, Performance optimization. |
