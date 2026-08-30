@@ -4,6 +4,7 @@ import { CheckCircle2, AlertCircle, HelpCircle, Plus, Crown, MoreVertical } from
 import type { ReactFlowPersonNode } from "../types/tree-presentation.types";
 import { TREE_LAYOUT_CONFIG } from "../config/tree-layout.config";
 import { RelationshipActionMenu } from "@/features/relationships/components/relationship-action-menu";
+import { AvatarThumbnail } from "@/features/media/components/avatar-thumbnail";
 
 export const PersonNode = memo(function PersonNode({
   data,
@@ -122,18 +123,16 @@ export const PersonNode = memo(function PersonNode({
       {/* Thông tin phần đầu: Avatar + Tên + Action Menu */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 overflow-hidden">
-          {/* Avatar Initial Placeholder */}
-          <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-              isMale
-                ? "bg-blue-100 text-blue-800"
-                : isFemale
-                  ? "bg-rose-100 text-rose-800"
-                  : "bg-neutral-100 text-neutral-800"
-            } ${isDeceased ? "opacity-75" : ""}`}
-          >
-            {initials || "GV"}
-          </div>
+          {/* Avatar / Thumbnail */}
+          <AvatarThumbnail
+            treeId={treeId}
+            personId={person.id}
+            fullName={person.fullName}
+            avatarPath={person.avatarPath}
+            gender={person.gender}
+            isDeceased={isDeceased}
+            size="sm"
+          />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1">

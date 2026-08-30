@@ -4,6 +4,7 @@ import { User, GitFork, CheckCircle2, AlertCircle, HelpCircle, MapPin } from "lu
 import { Button } from "@/components/ui/button";
 import { SearchHighlight } from "./search-highlight";
 import { ParentContext } from "./parent-context";
+import { AvatarThumbnail } from "@/features/media/components/avatar-thumbnail";
 import type { PersonSearchResultItem } from "../types/person-search.types";
 
 export interface PersonSearchResultItemProps {
@@ -29,46 +30,62 @@ export function PersonSearchResultItemComponent({
   return (
     <div className="flex flex-col justify-between rounded-xl border border-neutral-200 bg-white p-4 shadow-2xs transition-all hover:border-emerald-300 hover:shadow-xs">
       <div className="space-y-3">
-        {/* Header: Name + Badges */}
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-bold text-neutral-900">
-                <SearchHighlight text={person.fullName} query={searchQuery} />
-              </span>
+        {/* Header: Avatar + Name + Badges */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <AvatarThumbnail
+              treeId={person.treeId}
+              personId={person.id}
+              fullName={person.fullName}
+              avatarPath={person.avatarPath}
+              gender={person.gender}
+              isDeceased={isDeceased}
+              size="md"
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-neutral-900">
+                  <SearchHighlight text={person.fullName} query={searchQuery} />
+                </span>
 
-              {/* Verification badge */}
-              {isVerified ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="Đã xác minh" />
-              ) : isDisputed ? (
-                <AlertCircle className="h-4 w-4 text-rose-600" aria-label="Tranh chấp thông tin" />
-              ) : (
-                <HelpCircle className="h-4 w-4 text-amber-500" aria-label="Chưa xác minh" />
-              )}
-            </div>
+                {/* Verification badge */}
+                {isVerified ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-label="Đã xác minh" />
+                ) : isDisputed ? (
+                  <AlertCircle
+                    className="h-4 w-4 text-rose-600"
+                    aria-label="Tranh chấp thông tin"
+                  />
+                ) : (
+                  <HelpCircle className="h-4 w-4 text-amber-500" aria-label="Chưa xác minh" />
+                )}
+              </div>
 
-            <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-neutral-500">
-              <span
-                className={`py-0.2 rounded px-1.5 font-medium ${
-                  isMale
-                    ? "bg-blue-50 text-blue-700"
-                    : isFemale
-                      ? "bg-rose-50 text-rose-700"
-                      : "bg-neutral-100 text-neutral-600"
-                }`}
-              >
-                {isMale ? "Nam" : isFemale ? "Nữ" : "Khác"}
-              </span>
+              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-neutral-500">
+                <span
+                  className={`py-0.2 rounded px-1.5 font-medium ${
+                    isMale
+                      ? "bg-blue-50 text-blue-700"
+                      : isFemale
+                        ? "bg-rose-50 text-rose-700"
+                        : "bg-neutral-100 text-neutral-600"
+                  }`}
+                >
+                  {isMale ? "Nam" : isFemale ? "Nữ" : "Khác"}
+                </span>
 
-              <span className="font-mono font-medium text-neutral-600">{lifespanText}</span>
+                <span className="font-mono font-medium text-neutral-600">{lifespanText}</span>
 
-              <span
-                className={`py-0.2 rounded px-1.5 text-[10px] font-medium ${
-                  isDeceased ? "bg-neutral-100 text-neutral-600" : "bg-emerald-50 text-emerald-700"
-                }`}
-              >
-                {isDeceased ? "Đã mất" : "Còn sống"}
-              </span>
+                <span
+                  className={`py-0.2 rounded px-1.5 text-[10px] font-medium ${
+                    isDeceased
+                      ? "bg-neutral-100 text-neutral-600"
+                      : "bg-emerald-50 text-emerald-700"
+                  }`}
+                >
+                  {isDeceased ? "Đã mất" : "Còn sống"}
+                </span>
+              </div>
             </div>
           </div>
         </div>

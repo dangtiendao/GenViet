@@ -24,6 +24,7 @@ export interface RawSearchRow {
   hometown_text: string | null;
   occupation_text: string | null;
   verification_status: "verified" | "unverified" | "disputed";
+  avatar_path?: string | null;
   parents_json: ParentSummary[] | null;
   match_tier: number;
   similarity_score: number;
@@ -48,6 +49,7 @@ export function mapRawRowToPersonSearchResult(row: RawSearchRow): PersonSearchRe
     hometownText: row.hometown_text,
     occupationText: row.occupation_text,
     verificationStatus: row.verification_status,
+    avatarPath: row.avatar_path || null,
     parents: Array.isArray(row.parents_json) ? row.parents_json : [],
     matchTier: row.match_tier,
     similarityScore: row.similarity_score,

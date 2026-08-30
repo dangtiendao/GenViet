@@ -63,6 +63,11 @@ export class TreeGraphMapper {
         deathIsEstimated: Boolean(pObj.deathIsEstimated),
         verificationStatus:
           (pObj.verificationStatus as GraphPersonDto["verificationStatus"]) || "unverified",
+        avatarPath: pObj.avatarPath
+          ? String(pObj.avatarPath)
+          : pObj.avatar_path
+            ? String(pObj.avatar_path)
+            : null,
         isCenter: Boolean(pObj.isCenter),
       });
     }

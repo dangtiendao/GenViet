@@ -35,6 +35,7 @@ export interface GraphPersonDto {
   deathDatePrecision: DatePrecision;
   deathIsEstimated: boolean;
   verificationStatus: VerificationStatus;
+  avatarPath?: string | null;
   isCenter: boolean;
   isGenerationAnchor?: boolean;
 }

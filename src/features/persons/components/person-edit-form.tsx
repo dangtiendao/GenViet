@@ -10,6 +10,7 @@ import { mapDatabaseToPartialDate } from "../utils/partial-date-mapper";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { AlertCircle, Trash2, Save, RotateCcw } from "lucide-react";
+import { AvatarUploader } from "@/features/media/components/avatar-uploader";
 import type { Person } from "../types/person.types";
 
 export function PersonEditForm({ person }: { person: Person }) {
@@ -51,6 +52,15 @@ export function PersonEditForm({ person }: { person: Person }) {
 
   return (
     <div className="max-w-2xl space-y-8">
+      {/* Avatar Uploader Section */}
+      <AvatarUploader
+        treeId={person.treeId}
+        personId={person.id}
+        fullName={person.fullName}
+        avatarPath={person.avatarPath}
+        expectedVersion={person.version}
+      />
+
       <form
         action={formAction}
         className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-xs sm:p-8"

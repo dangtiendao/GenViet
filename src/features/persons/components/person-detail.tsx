@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { formatGenealogyDate } from "../utils/partial-date-mapper";
 import { PersonRelationshipList } from "./person-relationship-list";
 import { RelationshipActionMenu } from "@/features/relationships/components/relationship-action-menu";
+import { AvatarPreview } from "@/features/media/components/avatar-preview";
 import type { PersonDetail as PersonDetailType } from "../types/person.types";
 
 const GENDER_LABELS: Record<string, string> = {
@@ -62,9 +63,13 @@ export function PersonDetail({ person }: { person: PersonDetailType }) {
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-xs sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start space-x-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-xl font-bold text-emerald-800">
-              {person.fullName.charAt(0).toUpperCase()}
-            </div>
+            <AvatarPreview
+              treeId={person.treeId}
+              personId={person.id}
+              fullName={person.fullName}
+              avatarPath={person.avatarPath}
+              size="xl"
+            />
 
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">

@@ -38,6 +38,7 @@ export class PersonRepository {
       occupationText: row.occupation_text,
       biography: row.biography,
       verificationStatus: row.verification_status,
+      avatarPath: row.avatar_path,
       createdBy: row.created_by,
       updatedBy: row.updated_by,
       deletedBy: row.deleted_by,
@@ -74,6 +75,7 @@ export class PersonRepository {
         hometown_text,
         occupation_text,
         verification_status,
+        avatar_path,
         version
       `
       )
@@ -105,6 +107,7 @@ export class PersonRepository {
       hometownText: p.hometown_text,
       occupationText: p.occupation_text,
       verificationStatus: p.verification_status,
+      avatarPath: p.avatar_path,
       version: p.version,
     }));
   }

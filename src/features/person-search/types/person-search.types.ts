@@ -29,6 +29,7 @@ export interface PersonSearchResultItem {
   hometownText: string | null;
   occupationText: string | null;
   verificationStatus: "verified" | "unverified" | "disputed";
+  avatarPath?: string | null;
   parents: ParentSummary[];
   matchTier: number;
   similarityScore: number;
