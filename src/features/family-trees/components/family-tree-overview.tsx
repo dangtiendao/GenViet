@@ -144,9 +144,13 @@ export function FamilyTreeOverview({ tree }: { tree: TreeOverviewType }) {
             </p>
           </div>
           <div className="mt-6 border-t border-neutral-100 pt-4">
-            <span className="inline-flex cursor-not-allowed items-center text-xs font-medium text-neutral-400">
-              Quản lý Nhân vật (Phase P12)
-            </span>
+            <Link
+              href={`/trees/${tree.id}/people`}
+              className="inline-flex min-h-[44px] items-center text-xs font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              Quản lý nhân vật
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
           </div>
         </div>
 

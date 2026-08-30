@@ -499,6 +499,13 @@ export type Database = {
         };
         Returns: boolean;
       };
+      restore_person: {
+        Args: {
+          p_person_id: string;
+          p_expected_version?: number | null;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       tree_status: "active" | "archived";
