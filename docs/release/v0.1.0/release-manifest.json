@@ -1,0 +1,23 @@
+{
+  "productName": "GenViet",
+  "version": "v0.1.0",
+  "releaseCandidate": "v0.1.0-rc.1",
+  "commitSha": "f6150a44a834a1ec83cb42dfeff04d021a9f989b",
+  "releaseDate": "2026-08-30T05:07:42.265Z",
+  "nodeVersion": "v24.19.0",
+  "qualityGates": {
+    "formatCheck": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "unitTests": "PASS (99 suites passed)",
+    "e2eTests": "PASS (75 passed)",
+    "productionBuild": "PASS",
+    "secretScan": "PASS (0 leaks)"
+  },
+  "openDefects": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "p3": 0
+  }
+}
