@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/require-user";
 import { TreeGraphService } from "@/features/tree-graph/services/tree-graph.service";
-import { TreeGraphDomainError, TREE_GRAPH_ERROR_CODES } from "@/features/tree-graph/errors/tree-graph.errors";
+import {
+  TreeGraphDomainError,
+  TREE_GRAPH_ERROR_CODES,
+} from "@/features/tree-graph/errors/tree-graph.errors";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +12,7 @@ const NO_CACHE_HEADERS = {
   "Cache-Control": "private, no-cache, no-store, must-revalidate",
 };
 
-export async function GET(
-  request: NextRequest,
-  props: { params: Promise<{ treeId: string }> }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ treeId: string }> }) {
   try {
     let userId: string;
     try {
