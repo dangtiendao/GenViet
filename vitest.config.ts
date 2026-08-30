@@ -10,6 +10,8 @@ export default defineConfig({
       "tests/unit/**/*.test.tsx",
       "tests/security/**/*.test.ts",
       "tests/security/**/*.test.tsx",
+      "tests/performance/**/*.test.ts",
+      "tests/integration/**/*.test.ts",
     ],
   },
   resolve: {
