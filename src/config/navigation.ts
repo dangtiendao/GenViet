@@ -25,7 +25,7 @@ export const MAIN_NAVIGATION: NavigationItem[] = [
     label: "Cây gia phả",
     href: "/trees",
     icon: GitFork,
-    isImplemented: false, // Phase P11
+    isImplemented: true,
     showInMobileNav: true,
     showInDesktopSidebar: true,
   },

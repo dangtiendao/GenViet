@@ -485,7 +485,20 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      create_family_tree: {
+        Args: {
+          p_name: string;
+          p_description?: string | null;
+          p_privacy_level?: Database["public"]["Enums"]["tree_privacy_level"];
+        };
+        Returns: string;
+      };
+      restore_family_tree: {
+        Args: {
+          p_tree_id: string;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       tree_status: "active" | "archived";

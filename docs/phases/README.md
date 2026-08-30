@@ -54,4 +54,4 @@ docs/phases/PXX/
 | **[P08](./P08/00-overview.md)** | Phân quyền Row Level Security (RLS) | `ACCEPTED` | 17 policies RLS, least-privilege grants, immutable trigger, isolation. |
 | **[P09](./P09/00-overview.md)** | Xác thực Người dùng (Authentication) | `ACCEPTED` | Email/password, email confirm, session sync, proxy, profile trigger. |
 | **[P10](./P10/00-overview.md)** | Khung Giao diện Responsive (UI Shell) | `ACCEPTED` | Design tokens, UI primitives, AppShell responsive, PartialDateInput, WCAG. |
-| **P11** | Quản trị Cây Gia phả (Tree Management) | `NOT_STARTED` | Khởi tạo gia phả, phân quyền thành viên, CRUD cây phả hệ. |
+| **[P11](./P11/00-overview.md)** | Quản trị Cây Gia phả (Tree Management) | `ACCEPTED` | Khởi tạo gia phả nguyên tử, quản lý cây, overview, settings, switcher, soft delete, restore. |
