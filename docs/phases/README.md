@@ -53,4 +53,5 @@ docs/phases/PXX/
 | **[P07](./P07/00-overview.md)** | CSDL Lõi & DDL Schema | `ACCEPTED` | 7 bảng core, 12 enums, same-tree isolation, partial dates, types. |
 | **[P08](./P08/00-overview.md)** | Phân quyền Row Level Security (RLS) | `ACCEPTED` | 17 policies RLS, least-privilege grants, immutable trigger, isolation. |
 | **[P09](./P09/00-overview.md)** | Xác thực Người dùng (Authentication) | `ACCEPTED` | Email/password, email confirm, session sync, proxy, profile trigger. |
-| **P10** | Thiết kế Hệ thống UI/UX & Design Tokens | `NOT_STARTED` | Cấu hình theme, design tokens, responsive layout, component library. |
+| **[P10](./P10/00-overview.md)** | Khung Giao diện Responsive (UI Shell) | `ACCEPTED` | Design tokens, UI primitives, AppShell responsive, PartialDateInput, WCAG. |
+| **P11** | Quản trị Cây Gia phả (Tree Management) | `NOT_STARTED` | Khởi tạo gia phả, phân quyền thành viên, CRUD cây phả hệ. |

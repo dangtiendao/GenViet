@@ -57,10 +57,10 @@ Chi tiết xem tại: 👉 **[`docs/development/local-setup.md`](./docs/developm
 
 ## 3. Trạng thái Dự án Hiện tại
 
-- **Giai đoạn hiện tại:** `Phase P09: Xác thực người dùng (User Authentication)`
-- **Trạng thái:** `ACCEPTED` (Đã hoàn tất đăng ký, xác minh email, đăng nhập, quên mật khẩu, Server session SSR, Proxy, Profile provisioning trigger và 42 unit/security + 9 E2E tests).
-- **Phân hệ Kế tiếp:** `Phase P10: Thiết kế hệ thống UI/UX & Design Tokens`.
-- **Cảnh báo phát triển:** Mã nguồn đang trong giai đoạn xây dựng giao diện nền tảng; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P11 đến P25.
+- **Giai đoạn hiện tại:** `Phase P10: Khung giao diện responsive (Responsive UI Shell & Design System)`
+- **Trạng thái:** `ACCEPTED` (Đã hoàn tất Design tokens, 12 UI primitives, PartialDateInput, Responsive AppShell, và 58 unit + 14 E2E tests).
+- **Phân hệ Kế tiếp:** `Phase P11: Quản trị Cây gia phả (Family Tree Management)`.
+- **Cảnh báo phát triển:** Mã nguồn đã hoàn thiện khung giao diện nền tảng; các chức năng nghiệp vụ phả hệ sẽ được thi công tuần tự từ Phase P11 đến P25.
 
 ---
 
