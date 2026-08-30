@@ -109,6 +109,7 @@ describe("Person UI Components (P12)", () => {
     const html = renderToStaticMarkup(
       <PersonRelationshipList
         treeId="t1"
+        personId="p1"
         relationships={{ parents: [], children: [], spouses: [] }}
       />
     );
