@@ -67,7 +67,9 @@ export function DeleteRelationshipDialog({
           <div className="flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
             <div>
-              <span className="font-semibold">Lưu ý an toàn:</span> Thao tác này chỉ gỡ bỏ liên kết quan hệ. Hồ sơ cá nhân của <span className="font-medium">{targetName}</span> vẫn tồn tại đầy đủ trong cây gia phả.
+              <span className="font-semibold">Lưu ý an toàn:</span> Thao tác này chỉ gỡ bỏ liên kết
+              quan hệ. Hồ sơ cá nhân của <span className="font-medium">{targetName}</span> vẫn tồn
+              tại đầy đủ trong cây gia phả.
             </div>
           </div>
         </div>

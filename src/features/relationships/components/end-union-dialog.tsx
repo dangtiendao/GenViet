@@ -26,7 +26,9 @@ export function EndUnionDialog({
   partnerName: string;
   expectedVersion: number;
 }) {
-  const [newStatus, setNewStatus] = useState<"divorced" | "widowed" | "separated" | "former">("divorced");
+  const [newStatus, setNewStatus] = useState<"divorced" | "widowed" | "separated" | "former">(
+    "divorced"
+  );
   const [endDateVal, setEndDateVal] = useState<PartialDateValue>({
     precision: "unknown",
     year: null,
@@ -70,7 +72,9 @@ export function EndUnionDialog({
           <label className="text-xs font-medium text-neutral-700">Trạng thái mới *</label>
           <Select
             value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value as "divorced" | "widowed" | "separated" | "former")}
+            onChange={(e) =>
+              setNewStatus(e.target.value as "divorced" | "widowed" | "separated" | "former")
+            }
             className="mt-1"
           >
             <option value="divorced">Ly hôn (Divorced)</option>

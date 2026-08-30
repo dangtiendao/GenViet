@@ -90,7 +90,9 @@ export function AddRelativeDialog({
   };
 
   const targetName =
-    tab === "new" ? fullName.trim() || "(Người mới)" : selectedCandidate?.fullName || "(Chọn nhân vật)";
+    tab === "new"
+      ? fullName.trim() || "(Người mới)"
+      : selectedCandidate?.fullName || "(Chọn nhân vật)";
   const preview = buildRelationshipPreview({
     subjectPersonName,
     relatedPersonName: targetName,
@@ -106,7 +108,11 @@ export function AddRelativeDialog({
       let res;
       const mappedBirth = mapPartialDateToDatabase(birthDateVal);
 
-      if (actionType === "add_father" || actionType === "add_mother" || actionType === "add_adoptive_parent") {
+      if (
+        actionType === "add_father" ||
+        actionType === "add_mother" ||
+        actionType === "add_adoptive_parent"
+      ) {
         if (tab === "new") {
           res = await addNewParentAction({
             treeId,
@@ -226,7 +232,9 @@ export function AddRelativeDialog({
               setErrorMessage(null);
             }}
             className={`flex items-center justify-center gap-2 rounded-md py-1.5 text-xs font-semibold transition-all ${
-              tab === "new" ? "bg-white text-neutral-900 shadow-xs" : "text-neutral-600 hover:text-neutral-900"
+              tab === "new"
+                ? "bg-white text-neutral-900 shadow-xs"
+                : "text-neutral-600 hover:text-neutral-900"
             }`}
           >
             <UserPlus className="h-3.5 w-3.5" />
@@ -239,7 +247,9 @@ export function AddRelativeDialog({
               setErrorMessage(null);
             }}
             className={`flex items-center justify-center gap-2 rounded-md py-1.5 text-xs font-semibold transition-all ${
-              tab === "existing" ? "bg-white text-neutral-900 shadow-xs" : "text-neutral-600 hover:text-neutral-900"
+              tab === "existing"
+                ? "bg-white text-neutral-900 shadow-xs"
+                : "text-neutral-600 hover:text-neutral-900"
             }`}
           >
             <Link2 className="h-3.5 w-3.5" />
@@ -267,7 +277,9 @@ export function AddRelativeDialog({
                 <label className="text-xs font-medium text-neutral-700">Giới tính</label>
                 <Select
                   value={gender}
-                  onChange={(e) => setGender(e.target.value as "male" | "female" | "other" | "unknown")}
+                  onChange={(e) =>
+                    setGender(e.target.value as "male" | "female" | "other" | "unknown")
+                  }
                   className="mt-1"
                 >
                   <option value="male">Nam</option>
@@ -280,7 +292,9 @@ export function AddRelativeDialog({
                 <label className="text-xs font-medium text-neutral-700">Trạng thái sống</label>
                 <Select
                   value={livingStatus}
-                  onChange={(e) => setLivingStatus(e.target.value as "living" | "deceased" | "unknown")}
+                  onChange={(e) =>
+                    setLivingStatus(e.target.value as "living" | "deceased" | "unknown")
+                  }
                   className="mt-1"
                 >
                   <option value="living">Còn sống</option>
@@ -319,7 +333,11 @@ export function AddRelativeDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isPending || (tab === "new" && !fullName.trim()) || (tab === "existing" && !selectedCandidate)}
+            disabled={
+              isPending ||
+              (tab === "new" && !fullName.trim()) ||
+              (tab === "existing" && !selectedCandidate)
+            }
             className="bg-emerald-700 hover:bg-emerald-800"
           >
             {isPending ? (

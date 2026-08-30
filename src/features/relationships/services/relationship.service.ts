@@ -1,9 +1,6 @@
 import "server-only";
 import { RelationshipRepository } from "../repositories/relationship.repository";
-import {
-  RelationshipDomainError,
-  RELATIONSHIP_ERROR_CODES,
-} from "../errors/relationship.errors";
+import { RelationshipDomainError, RELATIONSHIP_ERROR_CODES } from "../errors/relationship.errors";
 import type {
   AddNewParentInput,
   LinkExistingParentInput,
