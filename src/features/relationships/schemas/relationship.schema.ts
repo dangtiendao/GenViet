@@ -97,11 +97,18 @@ export const linkExistingChildSchema = z
     parentRole: PARENT_ROLE_ENUM.default("unspecified"),
     relationshipKind: RELATIONSHIP_KIND_ENUM.default("biological"),
     verificationStatus: VERIFICATION_STATUS_ENUM.default("unverified"),
+    otherParentId: z.string().uuid().nullable().optional(),
+    otherParentRole: PARENT_ROLE_ENUM.default("unspecified"),
+    otherRelationshipKind: RELATIONSHIP_KIND_ENUM.default("biological"),
     confirmWarnings: z.boolean().default(false),
   })
   .refine((data) => data.parentId !== data.childId, {
     message: "Một nhân vật không thể tự làm con của chính mình",
     path: ["childId"],
+  })
+  .refine((data) => !data.otherParentId || data.otherParentId !== data.childId, {
+    message: "Một nhân vật không thể tự làm con của chính mình",
+    path: ["otherParentId"],
   });
 
 export const createUnionWithNewPersonSchema = z.object({
@@ -195,10 +202,58 @@ export const replaceParentRelationshipSchema = z
     path: ["newParentId"],
   });
 
+export const addNewSiblingSchema = z.object({
+  treeId: z.string().uuid("Tree ID không hợp lệ"),
+  siblingId: z.string().uuid("Sibling ID không hợp lệ"),
+  fullName: z
+    .string({ required_error: "Họ và tên không được để trống" })
+    .trim()
+    .min(1, "Họ và tên không được để trống")
+    .max(100, "Họ và tên không được vượt quá 100 ký tự")
+    .refine(
+      (val) => !/[\r\n\t\x00-\x1F\x7F]/.test(val),
+      "Họ và tên không được chứa ký tự điều khiển"
+    ),
+  gender: GENDER_ENUM.default("unknown"),
+  livingStatus: LIVING_STATUS_ENUM.default("living"),
+  birthPrecision: DATE_PRECISION_ENUM.default("unknown"),
+  birthDate: z.string().nullable().optional(),
+  birthYear: z.number().int().min(100).max(2500).nullable().optional(),
+  birthIsEstimated: z.boolean().default(false),
+  deathPrecision: DATE_PRECISION_ENUM.default("unknown"),
+  deathDate: z.string().nullable().optional(),
+  deathYear: z.number().int().min(100).max(2500).nullable().optional(),
+  deathIsEstimated: z.boolean().default(false),
+  hometownText: z.string().max(255).nullable().optional(),
+  occupationText: z.string().max(255).nullable().optional(),
+  biography: z.string().max(5000).nullable().optional(),
+  parentIds: z.array(z.string().uuid("Parent ID không hợp lệ")).default([]),
+  relationshipKind: RELATIONSHIP_KIND_ENUM.default("biological"),
+  verificationStatus: VERIFICATION_STATUS_ENUM.default("unverified"),
+  confirmWarnings: z.boolean().default(false),
+});
+
+export const linkExistingSiblingSchema = z
+  .object({
+    treeId: z.string().uuid("Tree ID không hợp lệ"),
+    siblingId: z.string().uuid("Sibling ID không hợp lệ"),
+    targetPersonId: z.string().uuid("Target Person ID không hợp lệ"),
+    parentIds: z.array(z.string().uuid("Parent ID không hợp lệ")).default([]),
+    relationshipKind: RELATIONSHIP_KIND_ENUM.default("biological"),
+    verificationStatus: VERIFICATION_STATUS_ENUM.default("unverified"),
+    confirmWarnings: z.boolean().default(false),
+  })
+  .refine((data) => data.siblingId !== data.targetPersonId, {
+    message: "Một nhân vật không thể tự làm anh/em của chính mình",
+    path: ["targetPersonId"],
+  });
+
 export type AddNewParentInput = z.infer<typeof addNewParentSchema>;
 export type LinkExistingParentInput = z.infer<typeof linkExistingParentSchema>;
 export type AddNewChildInput = z.infer<typeof addNewChildSchema>;
 export type LinkExistingChildInput = z.infer<typeof linkExistingChildSchema>;
+export type AddNewSiblingInput = z.infer<typeof addNewSiblingSchema>;
+export type LinkExistingSiblingInput = z.infer<typeof linkExistingSiblingSchema>;
 export type CreateUnionWithNewPersonInput = z.infer<typeof createUnionWithNewPersonSchema>;
 export type CreateUnionWithExistingPersonInput = z.infer<
   typeof createUnionWithExistingPersonSchema

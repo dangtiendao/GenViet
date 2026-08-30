@@ -40,6 +40,7 @@ export const treeGraphQuerySchema = z
     includeUnverified: z
       .boolean({ invalid_type_error: "Tùy chọn includeUnverified phải là boolean." })
       .default(true),
+    fullTree: z.boolean({ invalid_type_error: "Tùy chọn fullTree phải là boolean." }).optional(),
   })
   .strict({ message: "Không chấp nhận các trường truy vấn không xác định." });
 

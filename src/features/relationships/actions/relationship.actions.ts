@@ -7,6 +7,8 @@ import {
   linkExistingParentSchema,
   addNewChildSchema,
   linkExistingChildSchema,
+  addNewSiblingSchema,
+  linkExistingSiblingSchema,
   createUnionWithNewPersonSchema,
   createUnionWithExistingPersonSchema,
   endUnionSchema,
@@ -290,6 +292,82 @@ export async function softDeleteUnionAction(
     return {
       success: false,
       message: err.message || "Đã xảy ra lỗi khi xóa hôn nhân.",
+    };
+  }
+}
+
+export async function getParentsForPersonAction(treeId: string, personId: string) {
+  try {
+    await requireUser();
+    const parents = await RelationshipService.getParentsWithDetails(treeId, personId);
+    return { success: true, parents };
+  } catch (error) {
+    const err = error as Error;
+    return { success: false, message: err.message, parents: [] };
+  }
+}
+
+export async function getSpousesForPersonAction(treeId: string, personId: string) {
+  try {
+    await requireUser();
+    const spouses = await RelationshipService.getSpousesWithDetails(treeId, personId);
+    return { success: true, spouses };
+  } catch (error) {
+    const err = error as Error;
+    return { success: false, message: err.message, spouses: [] };
+  }
+}
+
+export async function addNewSiblingAction(formData: unknown): Promise<RelationshipActionResult> {
+  try {
+    const { user } = await requireUser();
+    const parsed = addNewSiblingSchema.safeParse(formData);
+    if (!parsed.success) {
+      return {
+        success: false,
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    const result = await RelationshipService.addNewSibling(user.id, parsed.data);
+    revalidatePath(`/trees/${parsed.data.treeId}/people`);
+    revalidatePath(`/trees/${parsed.data.treeId}/people/${parsed.data.siblingId}`);
+    return { success: true, data: result };
+  } catch (error) {
+    const err = error as { message?: string; code?: string; severity?: string };
+    return {
+      success: false,
+      message: err.message || "Đã xảy ra lỗi khi thêm anh/chị/em.",
+      isWarning: err.severity === "warning",
+      warningCode: err.code,
+    };
+  }
+}
+
+export async function linkExistingSiblingAction(
+  formData: unknown
+): Promise<RelationshipActionResult> {
+  try {
+    const { user } = await requireUser();
+    const parsed = linkExistingSiblingSchema.safeParse(formData);
+    if (!parsed.success) {
+      return {
+        success: false,
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    const result = await RelationshipService.linkExistingSibling(user.id, parsed.data);
+    revalidatePath(`/trees/${parsed.data.treeId}/people`);
+    revalidatePath(`/trees/${parsed.data.treeId}/people/${parsed.data.siblingId}`);
+    return { success: true, data: result };
+  } catch (error) {
+    const err = error as { message?: string; code?: string; severity?: string };
+    return {
+      success: false,
+      message: err.message || "Đã xảy ra lỗi khi liên kết anh/chị/em.",
+      isWarning: err.severity === "warning",
+      warningCode: err.code,
     };
   }
 }

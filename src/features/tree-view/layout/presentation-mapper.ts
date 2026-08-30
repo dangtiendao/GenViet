@@ -17,6 +17,7 @@ export interface PresentationMapOptions {
   onExpandDescendants?: (personId: string) => void;
   onToggleCollapse?: (personId: string) => void;
   onChangeCenter?: (personId: string) => void;
+  onRefresh?: () => void;
 }
 
 /**
@@ -31,6 +32,12 @@ export function mapLayoutToReactFlow(
   const unionMap = new Map(dto.unions.map((u) => [u.id, u]));
   const relMap = new Map(dto.parentChildRelationships.map((r) => [r.id, r]));
 
+  // Đếm số con trực tiếp trong lát cắt
+  const childrenCountMap = new Map<string, number>();
+  for (const rel of dto.parentChildRelationships) {
+    childrenCountMap.set(rel.parentId, (childrenCountMap.get(rel.parentId) || 0) + 1);
+  }
+
   // 1. Tạo React Flow Nodes
   const nodes: ReactFlowTreeNode[] = [];
 
@@ -43,6 +50,7 @@ export function mapLayoutToReactFlow(
       const isSelected = person.id === options.selectedPersonId;
       const expansion = dto.expansion[person.id];
       const isCollapsed = options.collapsedPersonIds?.has(person.id);
+      const childCount = childrenCountMap.get(person.id) || 0;
 
       const nodeData: PersonNodeData = {
         person,
@@ -50,6 +58,7 @@ export function mapLayoutToReactFlow(
         isSelected,
         expansion,
         isCollapsed,
+        childCount,
         treeId: options.treeId,
         canWrite: options.canWrite,
         onSelect: options.onSelect,
@@ -57,6 +66,7 @@ export function mapLayoutToReactFlow(
         onExpandDescendants: options.onExpandDescendants,
         onToggleCollapse: options.onToggleCollapse,
         onChangeCenter: options.onChangeCenter,
+        onRefresh: options.onRefresh,
       };
 
       nodes.push({
@@ -101,6 +111,8 @@ export function mapLayoutToReactFlow(
         type: "parent-child",
         source: pEdge.source,
         target: pEdge.target,
+        sourceHandle: pEdge.sourcePort || `${pEdge.source}-south`,
+        targetHandle: pEdge.targetPort || `${pEdge.target}-north`,
         data: {
           relationshipId: rawRelId,
           parentRole: rel?.parentRole || "unspecified",
@@ -109,19 +121,20 @@ export function mapLayoutToReactFlow(
         },
       });
     } else if (pEdge.type === "union-member") {
-      // e-um-[unionId]-[personId]
+      // e-um-[unionId]
       const parts = pEdge.id.split("-");
       const unionId = parts[2] || "";
-      const personId = parts[3] || "";
 
       edges.push({
         id: pEdge.id,
         type: "union-member",
         source: pEdge.source,
         target: pEdge.target,
+        sourceHandle: pEdge.sourcePort || `${pEdge.source}-east`,
+        targetHandle: pEdge.targetPort || `${pEdge.target}-west`,
         data: {
           unionId,
-          personId,
+          personId: pEdge.target,
           memberRole: "spouse",
         },
       });

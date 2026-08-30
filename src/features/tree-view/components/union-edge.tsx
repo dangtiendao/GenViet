@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { BaseEdge, getSmoothStepPath, type EdgeProps } from "@xyflow/react";
+import { BaseEdge, getStraightPath, type EdgeProps } from "@xyflow/react";
 import type { ReactFlowUnionEdge } from "../types/tree-presentation.types";
 
 export const UnionEdge = memo(function UnionEdge({
@@ -8,17 +8,12 @@ export const UnionEdge = memo(function UnionEdge({
   sourceY,
   targetX,
   targetY,
-  sourcePosition,
-  targetPosition,
 }: EdgeProps<ReactFlowUnionEdge>) {
-  const [edgePath] = getSmoothStepPath({
+  const [edgePath] = getStraightPath({
     sourceX,
     sourceY,
-    sourcePosition,
     targetX,
     targetY,
-    targetPosition,
-    borderRadius: 4,
   });
 
   return (
@@ -26,9 +21,9 @@ export const UnionEdge = memo(function UnionEdge({
       id={id}
       path={edgePath}
       style={{
-        stroke: "#f43f5e", // rose-500
+        stroke: "#c026d3", // fuchsia-600 (Màu tím hồng đặc trưng cho quan hệ hôn phối)
         strokeWidth: 2,
-        strokeDasharray: "2,2",
+        strokeDasharray: "4,4",
       }}
     />
   );

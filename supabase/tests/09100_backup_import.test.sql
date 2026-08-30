@@ -9,7 +9,7 @@ DECLARE
     v_payload JSONB;
     v_res JSONB;
 BEGIN
-    INSERT INTO public.profiles (id, full_name) VALUES (v_user_id, 'Tester Import')
+    INSERT INTO public.profiles (id, display_name) VALUES (v_user_id, 'Tester Import')
     ON CONFLICT (id) DO NOTHING;
 
     -- Thiết lập JWT context

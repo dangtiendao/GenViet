@@ -42,4 +42,14 @@ describe("Relationship Preview Builder", () => {
 
     expect(preview.summaryText).toContain("Con của «Phạm Văn Cha»");
   });
+
+  it("tạo đúng preview khi thêm anh/chị/em", () => {
+    const preview = buildRelationshipPreview({
+      subjectPersonName: "Đặng Tiến A",
+      relatedPersonName: "Đặng Tiến D",
+      actionType: "add_sibling",
+    });
+
+    expect(preview.summaryText).toContain("Anh/Chị/Em với «Đặng Tiến A»");
+  });
 });

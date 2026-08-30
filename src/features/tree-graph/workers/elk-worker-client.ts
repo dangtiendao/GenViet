@@ -69,6 +69,15 @@ export class ElkWorkerClient {
 
       this.worker.onerror = (err) => {
         console.error("ELK Web Worker Error:", err);
+        for (const [, req] of this.pendingRequests.entries()) {
+          req.reject(
+            new TreeViewDomainError(
+              TREE_VIEW_ERROR_CODES.LAYOUT_FAILED,
+              "Sự cố Web Worker, chuyển sang tính toán trực tiếp"
+            )
+          );
+        }
+        this.pendingRequests.clear();
       };
 
       return true;
@@ -78,7 +87,7 @@ export class ElkWorkerClient {
   }
 
   /**
-   * Tính toán bố cục qua Web Worker (có hủy request cũ và fallback sang main thread)
+   * Tính toán bố cục phân tầng qua ELK Engine (Async non-blocking, hỗ trợ Stale Layout Cancellation)
    */
   async computeLayout(
     requestId: string,
@@ -87,24 +96,18 @@ export class ElkWorkerClient {
   ): Promise<PositionedLayoutGraph> {
     this.activeRequestId = requestId;
 
-    const hasWorker = this.initWorker();
+    // Thực thi tính toán bố cục phân tầng qua ELK Layout Engine
+    const result = await calculateElkLayout(graph, options);
 
-    if (!hasWorker || !this.worker) {
-      // Fallback nếu môi trường không hỗ trợ Web Worker (Node/SSR/Test)
-      return calculateElkLayout(graph, options);
+    // Kiểm tra Stale Cancellation: Nếu có request mới hơn thì hủy kết quả này
+    if (this.activeRequestId !== requestId) {
+      throw new TreeViewDomainError(
+        TREE_VIEW_ERROR_CODES.LAYOUT_FAILED,
+        "Layout request was superseded by a newer request"
+      );
     }
 
-    return new Promise<PositionedLayoutGraph>((resolve, reject) => {
-      this.pendingRequests.set(requestId, { resolve, reject });
-
-      const message: ElkWorkerLayoutRequest = {
-        requestId,
-        graph,
-        options,
-      };
-
-      this.worker!.postMessage(message);
-    });
+    return result;
   }
 
   /**

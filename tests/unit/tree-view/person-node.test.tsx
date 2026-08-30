@@ -70,12 +70,12 @@ describe("PersonNode Component Tests (P15-T02, P15-T19, P15-T20, P15-T26)", () =
     const html = renderToStaticMarkup(<PersonNode {...props} />);
 
     expect(html).toContain("Nguyễn Văn Trưởng");
-    expect(html).toContain("Sinh: 1985");
+    expect(html).toContain("Sinh 1985");
     expect(html).toContain("Xác thực");
     expect(html).toContain("Còn sống");
   });
 
-  it("hiển thị nút mở rộng tổ tiên (+) khi hasMoreAncestors = true", () => {
+  it("hiển thị nút mở rộng tổ tiên khi hasMoreAncestors = true", () => {
     const props = createMockNodeProps({
       expansion: {
         hasMoreAncestors: true,
@@ -90,11 +90,13 @@ describe("PersonNode Component Tests (P15-T02, P15-T19, P15-T20, P15-T26)", () =
     });
 
     const html = renderToStaticMarkup(<PersonNode {...props} />);
-    expect(html).toContain("Mở rộng thêm tổ tiên");
+    expect(html).toContain("Tải thêm tổ tiên");
+    expect(html).toContain("+ Đời trước");
   });
 
-  it("hiển thị nút mở rộng hậu duệ (+) khi hasMoreDescendants = true", () => {
+  it("hiển thị nút mở rộng hậu duệ khi hasMoreDescendants = true và chưa có con trong slice", () => {
     const props = createMockNodeProps({
+      childCount: 0,
       expansion: {
         hasMoreAncestors: false,
         hasMoreDescendants: true,
@@ -108,6 +110,25 @@ describe("PersonNode Component Tests (P15-T02, P15-T19, P15-T20, P15-T26)", () =
     });
 
     const html = renderToStaticMarkup(<PersonNode {...props} />);
-    expect(html).toContain("Mở rộng thêm hậu duệ");
+    expect(html).toContain("Tải thêm con cháu");
+    expect(html).toContain("+ Đời sau");
+  });
+
+  it("hiển thị nút thu gọn / bung nhánh con khi childCount > 0", () => {
+    const propsExpanded = createMockNodeProps({
+      childCount: 3,
+      isCollapsed: false,
+    });
+    const htmlExpanded = renderToStaticMarkup(<PersonNode {...propsExpanded} />);
+    expect(htmlExpanded).toContain("Thu gọn nhánh con");
+    expect(htmlExpanded).toContain("3 con");
+
+    const propsCollapsed = createMockNodeProps({
+      childCount: 3,
+      isCollapsed: true,
+    });
+    const htmlCollapsed = renderToStaticMarkup(<PersonNode {...propsCollapsed} />);
+    expect(htmlCollapsed).toContain("Hiện lại nhánh con");
+    expect(htmlCollapsed).toContain("+3 con");
   });
 });

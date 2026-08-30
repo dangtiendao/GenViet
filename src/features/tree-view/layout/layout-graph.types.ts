@@ -13,6 +13,7 @@ export interface LayoutNode {
   height: number;
   ports?: LayoutPort[];
   labels?: Array<{ text: string }>;
+  layoutOptions?: Record<string, string>;
 }
 
 export interface LayoutEdge {
@@ -22,12 +23,19 @@ export interface LayoutEdge {
   target: string;
   sourcePort?: string;
   targetPort?: string;
+  layoutOptions?: Record<string, string>;
+}
+
+export interface SpousePair {
+  person1Id: string;
+  person2Id: string;
 }
 
 export interface LayoutGraph {
   id: string;
   nodes: LayoutNode[];
   edges: LayoutEdge[];
+  spousePairs?: SpousePair[];
 }
 
 export interface PositionedNode extends LayoutNode {

@@ -3,8 +3,10 @@ import type {
   Person,
   PersonListItem,
   PersonRelationshipSummary,
+  SiblingRelationshipItem,
   SimilarPersonCandidate,
 } from "../types/person.types";
+
 import type { Database } from "@/lib/supabase/database.types";
 
 type PersonRow = Database["public"]["Tables"]["persons"]["Row"];
@@ -139,162 +141,319 @@ export class PersonRepository {
   ): Promise<PersonRelationshipSummary> {
     const supabase = await createClient();
 
-    // 1. Lấy danh sách Cha / Mẹ (người này là child)
-    const { data: parentRelations } = await supabase
-      .from("parent_child_relationships")
-      .select(
-        `
-        id,
-        parent_role,
-        relationship_kind,
-        verification_status,
-        parent:persons!parent_child_relationships_parent_id_fkey (
-          id,
-          full_name,
-          gender,
-          living_status,
-          birth_year,
-          death_year
-        )
-      `
-      )
-      .eq("tree_id", treeId)
-      .eq("child_id", personId)
-      .is("deleted_at", null);
-
-    // 2. Lấy danh sách Con (người này là parent)
-    const { data: childRelations } = await supabase
-      .from("parent_child_relationships")
-      .select(
-        `
-        id,
-        parent_role,
-        relationship_kind,
-        verification_status,
-        child:persons!parent_child_relationships_child_id_fkey (
-          id,
-          full_name,
-          gender,
-          living_status,
-          birth_year,
-          death_year
-        )
-      `
-      )
-      .eq("tree_id", treeId)
-      .eq("parent_id", personId)
-      .is("deleted_at", null);
-
-    // 3. Lấy danh sách Vợ / Chồng (thông qua unions và union_members)
-    // 3a. Tìm các union_id mà personId tham gia
-    const { data: myUnions } = await supabase
-      .from("union_members")
-      .select("union_id, member_role")
-      .eq("tree_id", treeId)
-      .eq("person_id", personId)
-      .is("deleted_at", null);
-
-    const spouseItems: PersonRelationshipSummary["spouses"] = [];
-
-    if (myUnions && myUnions.length > 0) {
-      const unionIds = myUnions.map((u) => u.union_id);
-
-      // 3b. Lấy các union_members khác trong cùng các union đó
-      const { data: partnerMembers } = await supabase
+    // 1. Truy vấn song song tất cả các quan hệ liên quan đến personId
+    const [parentRelsRes, childRelsRes, myUnionsRes] = await Promise.all([
+      supabase
+        .from("parent_child_relationships")
+        .select("id, parent_id, child_id, parent_role, relationship_kind, verification_status")
+        .eq("tree_id", treeId)
+        .eq("child_id", personId)
+        .is("deleted_at", null),
+      supabase
+        .from("parent_child_relationships")
+        .select("id, parent_id, child_id, parent_role, relationship_kind, verification_status")
+        .eq("tree_id", treeId)
+        .eq("parent_id", personId)
+        .is("deleted_at", null),
+      supabase
         .from("union_members")
+        .select("id, union_id, person_id, member_role")
+        .eq("tree_id", treeId)
+        .eq("person_id", personId)
+        .is("deleted_at", null),
+    ]);
+
+    const parentRels = parentRelsRes.data || [];
+    const childRels = childRelsRes.data || [];
+    const myUnions = myUnionsRes.data || [];
+
+    // 2. Lấy partner union members nếu có tham gia union
+    const myUnionIds = myUnions.map((u) => u.union_id);
+    let partnerMembers: Array<{
+      id: string;
+      union_id: string;
+      person_id: string;
+      member_role: "spouse" | "partner" | "unspecified";
+    }> = [];
+    let unionDetails: Array<{
+      id: string;
+      status: "active" | "separated" | "divorced" | "widowed" | "former";
+    }> = [];
+
+    if (myUnionIds.length > 0) {
+      const [partnerRes, unionRes] = await Promise.all([
+        supabase
+          .from("union_members")
+          .select("id, union_id, person_id, member_role")
+          .eq("tree_id", treeId)
+          .in("union_id", myUnionIds)
+          .neq("person_id", personId)
+          .is("deleted_at", null),
+        supabase
+          .from("unions")
+          .select("id, status")
+          .eq("tree_id", treeId)
+          .in("id", myUnionIds)
+          .is("deleted_at", null),
+      ]);
+      partnerMembers = (partnerRes.data as typeof partnerMembers) || [];
+      unionDetails = (unionRes.data as typeof unionDetails) || [];
+    }
+
+    // 3. Tìm anh/chị/em (những người có chung ít nhất một cha hoặc mẹ)
+    const myParentIds = parentRels.map((r) => r.parent_id);
+    let siblingRels: Array<{
+      id: string;
+      parent_id: string;
+      child_id: string;
+      parent_role: "father" | "mother" | "unspecified";
+    }> = [];
+
+    if (myParentIds.length > 0) {
+      const { data: sData } = await supabase
+        .from("parent_child_relationships")
+        .select("id, parent_id, child_id, parent_role")
+        .eq("tree_id", treeId)
+        .in("parent_id", myParentIds)
+        .neq("child_id", personId)
+        .is("deleted_at", null);
+      siblingRels = (sData as typeof siblingRels) || [];
+    }
+
+    const siblingMap = new Map<
+      string,
+      Array<{ id: string; parent_id: string; parent_role: "father" | "mother" | "unspecified" }>
+    >();
+    for (const sr of siblingRels) {
+      if (!siblingMap.has(sr.child_id)) {
+        siblingMap.set(sr.child_id, []);
+      }
+      siblingMap.get(sr.child_id)!.push(sr);
+    }
+
+    // 4. Thu thập tất cả personIds cần lấy thông tin
+    const personIdsToFetch = new Set<string>();
+    for (const r of parentRels) personIdsToFetch.add(r.parent_id);
+    for (const r of childRels) personIdsToFetch.add(r.child_id);
+    for (const pm of partnerMembers) personIdsToFetch.add(pm.person_id);
+    for (const sChildId of siblingMap.keys()) personIdsToFetch.add(sChildId);
+
+    const personMap = new Map<
+      string,
+      {
+        id: string;
+        full_name: string;
+        gender: "male" | "female" | "other" | "unknown";
+        living_status: "living" | "deceased" | "unknown";
+        birth_date: string | null;
+        birth_year: number | null;
+        birth_date_precision: "exact" | "year" | "unknown";
+        birth_is_estimated: boolean;
+        death_date: string | null;
+        death_year: number | null;
+        death_date_precision: "exact" | "year" | "unknown";
+        death_is_estimated: boolean;
+      }
+    >();
+
+    if (personIdsToFetch.size > 0) {
+      const { data: persons } = await supabase
+        .from("persons")
         .select(
-          `
-          id,
-          union_id,
-          member_role,
-          person:persons!union_members_person_id_fkey (
-            id,
-            full_name,
-            gender,
-            living_status,
-            birth_year,
-            death_year
-          ),
-          union:unions!union_members_union_id_fkey (
-            status
-          )
-        `
+          "id, full_name, gender, living_status, birth_date, birth_year, birth_date_precision, birth_is_estimated, death_date, death_year, death_date_precision, death_is_estimated"
         )
         .eq("tree_id", treeId)
-        .in("union_id", unionIds)
-        .neq("person_id", personId)
+        .in("id", Array.from(personIdsToFetch))
         .is("deleted_at", null);
 
-      if (partnerMembers) {
-        partnerMembers.forEach((pm: any) => {
-          if (pm.person) {
-            spouseItems.push({
-              id: pm.id,
-              unionId: pm.union_id,
-              spouse: {
-                id: pm.person.id,
-                fullName: pm.person.full_name,
-                gender: pm.person.gender,
-                livingStatus: pm.person.living_status,
-                birthYear: pm.person.birth_year,
-                deathYear: pm.person.death_year,
-              },
-              role: pm.member_role,
-              unionStatus: pm.union?.status || "active",
-            });
-          }
+      if (persons) {
+        for (const p of persons) {
+          personMap.set(p.id, p as typeof personMap extends Map<string, infer V> ? V : never);
+        }
+      }
+    }
+
+    const unionMap = new Map<string, "active" | "separated" | "divorced" | "widowed" | "former">();
+    for (const u of unionDetails) {
+      unionMap.set(u.id, u.status);
+    }
+
+    // 4. Ghép nối kết quả
+    const parents: PersonRelationshipSummary["parents"] = [];
+    for (const r of parentRels) {
+      const p = personMap.get(r.parent_id);
+      if (p) {
+        const effectiveBirthYear =
+          p.birth_year ?? (p.birth_date ? parseInt(p.birth_date.split("-")[0], 10) : null);
+        const effectiveDeathYear =
+          p.death_year ?? (p.death_date ? parseInt(p.death_date.split("-")[0], 10) : null);
+
+        parents.push({
+          id: r.id,
+          parentRole: r.parent_role as "father" | "mother" | "unspecified",
+          relationshipKind: r.relationship_kind as "biological" | "adoptive" | "step" | "foster",
+          verificationStatus: r.verification_status as "unverified" | "verified" | "disputed",
+          parent: {
+            id: p.id,
+            fullName: p.full_name,
+            gender: p.gender,
+            livingStatus: p.living_status,
+            birthDate: p.birth_date,
+            birthYear: effectiveBirthYear,
+            birthDatePrecision: p.birth_date_precision,
+            birthIsEstimated: p.birth_is_estimated,
+            deathDate: p.death_date,
+            deathYear: effectiveDeathYear,
+            deathDatePrecision: p.death_date_precision,
+            deathIsEstimated: p.death_is_estimated,
+          },
         });
       }
     }
 
-    const parents: PersonRelationshipSummary["parents"] = [];
-    if (parentRelations) {
-      parentRelations.forEach((r: any) => {
-        if (r.parent) {
-          parents.push({
-            id: r.id,
-            parentRole: r.parent_role,
-            relationshipKind: r.relationship_kind,
-            verificationStatus: r.verification_status,
-            parent: {
-              id: r.parent.id,
-              fullName: r.parent.full_name,
-              gender: r.parent.gender,
-              livingStatus: r.parent.living_status,
-              birthYear: r.parent.birth_year,
-              deathYear: r.parent.death_year,
-            },
-          });
-        }
-      });
+    const children: PersonRelationshipSummary["children"] = [];
+    for (const r of childRels) {
+      const c = personMap.get(r.child_id);
+      if (c) {
+        const effectiveBirthYear =
+          c.birth_year ?? (c.birth_date ? parseInt(c.birth_date.split("-")[0], 10) : null);
+        const effectiveDeathYear =
+          c.death_year ?? (c.death_date ? parseInt(c.death_date.split("-")[0], 10) : null);
+
+        children.push({
+          id: r.id,
+          parentRole: r.parent_role as "father" | "mother" | "unspecified",
+          relationshipKind: r.relationship_kind as "biological" | "adoptive" | "step" | "foster",
+          verificationStatus: r.verification_status as "unverified" | "verified" | "disputed",
+          child: {
+            id: c.id,
+            fullName: c.full_name,
+            gender: c.gender,
+            livingStatus: c.living_status,
+            birthDate: c.birth_date,
+            birthYear: effectiveBirthYear,
+            birthDatePrecision: c.birth_date_precision,
+            birthIsEstimated: c.birth_is_estimated,
+            deathDate: c.death_date,
+            deathYear: effectiveDeathYear,
+            deathDatePrecision: c.death_date_precision,
+            deathIsEstimated: c.death_is_estimated,
+          },
+        });
+      }
     }
 
-    const children: PersonRelationshipSummary["children"] = [];
-    if (childRelations) {
-      childRelations.forEach((r: any) => {
-        if (r.child) {
-          children.push({
-            id: r.id,
-            parentRole: r.parent_role,
-            relationshipKind: r.relationship_kind,
-            verificationStatus: r.verification_status,
-            child: {
-              id: r.child.id,
-              fullName: r.child.full_name,
-              gender: r.child.gender,
-              livingStatus: r.child.living_status,
-              birthYear: r.child.birth_year,
-              deathYear: r.child.death_year,
-            },
-          });
-        }
-      });
+    const spouses: PersonRelationshipSummary["spouses"] = [];
+    for (const pm of partnerMembers) {
+      const sp = personMap.get(pm.person_id);
+      if (sp) {
+        const effectiveBirthYear =
+          sp.birth_year ?? (sp.birth_date ? parseInt(sp.birth_date.split("-")[0], 10) : null);
+        const effectiveDeathYear =
+          sp.death_year ?? (sp.death_date ? parseInt(sp.death_date.split("-")[0], 10) : null);
+
+        spouses.push({
+          id: pm.id,
+          unionId: pm.union_id,
+          spouse: {
+            id: sp.id,
+            fullName: sp.full_name,
+            gender: sp.gender,
+            livingStatus: sp.living_status,
+            birthDate: sp.birth_date,
+            birthYear: effectiveBirthYear,
+            birthDatePrecision: sp.birth_date_precision,
+            birthIsEstimated: sp.birth_is_estimated,
+            deathDate: sp.death_date,
+            deathYear: effectiveDeathYear,
+            deathDatePrecision: sp.death_date_precision,
+            deathIsEstimated: sp.death_is_estimated,
+          },
+          role: pm.member_role,
+          unionStatus: unionMap.get(pm.union_id) || "active",
+        });
+      }
     }
+
+    const siblings: PersonRelationshipSummary["siblings"] = [];
+    const myParentRoleMap = new Map<string, "father" | "mother" | "unspecified">();
+    for (const pr of parentRels) {
+      myParentRoleMap.set(pr.parent_id, pr.parent_role as "father" | "mother" | "unspecified");
+    }
+
+    for (const [siblingChildId, sRels] of siblingMap.entries()) {
+      const sp = personMap.get(siblingChildId);
+      if (sp) {
+        const effectiveBirthYear =
+          sp.birth_year ?? (sp.birth_date ? parseInt(sp.birth_date.split("-")[0], 10) : null);
+        const effectiveDeathYear =
+          sp.death_year ?? (sp.death_date ? parseInt(sp.death_date.split("-")[0], 10) : null);
+
+        const sharedParents: SiblingRelationshipItem["sharedParents"] = [];
+        let sharesFather = false;
+        let sharesMother = false;
+
+        for (const sr of sRels) {
+          const pInfo = personMap.get(sr.parent_id);
+          const pRole = sr.parent_role || myParentRoleMap.get(sr.parent_id) || "unspecified";
+          if (pRole === "father") sharesFather = true;
+          if (pRole === "mother") sharesMother = true;
+
+          if (pInfo) {
+            sharedParents.push({
+              id: pInfo.id,
+              fullName: pInfo.full_name,
+              role: pRole,
+            });
+          }
+        }
+
+        let sharedType: SiblingRelationshipItem["sharedType"] = "shared";
+        if (sharesFather && sharesMother) {
+          sharedType = "full";
+        } else if (sharesFather && !sharesMother && myParentIds.length > 1) {
+          sharedType = "paternal";
+        } else if (sharesMother && !sharesFather && myParentIds.length > 1) {
+          sharedType = "maternal";
+        }
+
+        siblings.push({
+          id: siblingChildId,
+          sharedType,
+          sharedParents,
+          sibling: {
+            id: sp.id,
+            fullName: sp.full_name,
+            gender: sp.gender,
+            livingStatus: sp.living_status,
+            birthDate: sp.birth_date,
+            birthYear: effectiveBirthYear,
+            birthDatePrecision: sp.birth_date_precision,
+            birthIsEstimated: sp.birth_is_estimated,
+            deathDate: sp.death_date,
+            deathYear: effectiveDeathYear,
+            deathDatePrecision: sp.death_date_precision,
+            deathIsEstimated: sp.death_is_estimated,
+          },
+        });
+      }
+    }
+
+    siblings.sort((a, b) => {
+      const aYear =
+        a.sibling.birthYear ??
+        (a.sibling.birthDate ? parseInt(a.sibling.birthDate.split("-")[0], 10) : 9999);
+      const bYear =
+        b.sibling.birthYear ??
+        (b.sibling.birthDate ? parseInt(b.sibling.birthDate.split("-")[0], 10) : 9999);
+      return aYear - bYear;
+    });
 
     return {
       parents,
       children,
-      spouses: spouseItems,
+      spouses,
+      siblings,
     };
   }
 

@@ -34,9 +34,11 @@ DECLARE
     v_ancestor_person_ids UUID[];
     v_descendant_person_ids UUID[];
     v_spouse_person_ids UUID[] := ARRAY[]::UUID[];
+    v_children_person_ids UUID[] := ARRAY[]::UUID[];
     v_union_ids UUID[] := ARRAY[]::UUID[];
     
     v_persons_json jsonb;
+
     v_relationships_json jsonb;
     v_unions_json jsonb;
     v_union_members_json jsonb;
@@ -195,7 +197,29 @@ BEGIN
         END IF;
     END IF;
 
+    -- 8.1. Lấy thêm con cái trực tiếp của các Cha/Mẹ (Ancestors, Center & Spouses) có trong slice (Siblings / Children of visible parents)
+    SELECT ARRAY_AGG(DISTINCT r.child_id) INTO v_children_person_ids
+    FROM public.parent_child_relationships r
+    JOIN public.persons p 
+        ON p.id = r.child_id 
+        AND p.tree_id = p_tree_id 
+        AND p.deleted_at IS NULL
+    WHERE r.tree_id = p_tree_id
+      AND r.deleted_at IS NULL
+      AND r.parent_id = ANY(v_slice_person_ids)
+      AND (p_include_unverified OR r.verification_status = 'verified');
+
+    IF v_children_person_ids IS NOT NULL AND ARRAY_LENGTH(v_children_person_ids, 1) > 0 THEN
+        SELECT ARRAY_AGG(DISTINCT pid) INTO v_slice_person_ids
+        FROM (
+            SELECT UNNEST(v_slice_person_ids) AS pid
+            UNION
+            SELECT UNNEST(v_children_person_ids) AS pid
+        ) combined_with_children;
+    END IF;
+
     -- 9. Kiểm tra ngân sách kích thước (Size Budgets)
+
     v_person_count := COALESCE(ARRAY_LENGTH(v_slice_person_ids, 1), 0);
     IF v_person_count > v_max_persons_budget THEN
         v_truncated := true;
@@ -223,8 +247,10 @@ BEGIN
             'deathDatePrecision', p.death_date_precision,
             'deathIsEstimated', p.death_is_estimated,
             'verificationStatus', p.verification_status,
+            'avatarPath', p.avatar_path,
             'isCenter', (p.id = p_center_person_id)
         ) AS p_row
+
         FROM public.persons p
         WHERE p.id = ANY(v_slice_person_ids)
           AND p.tree_id = p_tree_id

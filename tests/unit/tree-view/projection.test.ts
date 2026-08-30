@@ -177,35 +177,48 @@ describe("Tree View Graph Projection Tests (P15-T06, P15-T10, P15-T11, P15-T12)"
     truncated: false,
   };
 
-  it("chuyển đổi đầy đủ PersonNodes và UnionNodes với kích thước chuẩn", () => {
+  it("chuyển đổi đầy đủ PersonNodes và tạm ẩn UnionNodes khi đã có quan hệ cha-con", () => {
+    // 1. Khi có con: 5 person nodes, các union của centerId (có con) được tạm ẩn
     const layoutGraph = projectDtoToLayoutGraph(mockMultiMarriageDto);
 
-    // 5 persons + 2 unions = 7 layout nodes
-    expect(layoutGraph.nodes).toHaveLength(7);
-
+    expect(layoutGraph.nodes).toHaveLength(5);
     const personNodes = layoutGraph.nodes.filter((n) => n.type === "person");
     const unionNodes = layoutGraph.nodes.filter((n) => n.type === "union");
-
     expect(personNodes).toHaveLength(5);
-    expect(unionNodes).toHaveLength(2);
+    expect(unionNodes).toHaveLength(0);
 
     expect(personNodes[0].width).toBe(TREE_LAYOUT_CONFIG.PERSON_NODE_WIDTH);
     expect(personNodes[0].height).toBe(TREE_LAYOUT_CONFIG.PERSON_NODE_HEIGHT);
-    expect(unionNodes[0].width).toBe(TREE_LAYOUT_CONFIG.UNION_NODE_WIDTH);
-    expect(unionNodes[0].height).toBe(TREE_LAYOUT_CONFIG.UNION_NODE_HEIGHT);
+
+    // 2. Khi cặp vợ chồng CHƯA có con: UnionNode được tạo đầy đủ
+    const dtoWithoutChildren: TreeGraphDto = {
+      ...mockMultiMarriageDto,
+      parentChildRelationships: [mockMultiMarriageDto.parentChildRelationships[0]], // chỉ có father -> center
+      persons: mockMultiMarriageDto.persons.filter((p) => p.id !== childId),
+    };
+    const graphNoChildren = projectDtoToLayoutGraph(dtoWithoutChildren);
+    const unNodes = graphNoChildren.nodes.filter((n) => n.type === "union");
+    expect(unNodes).toHaveLength(2);
+    expect(unNodes[0].width).toBe(TREE_LAYOUT_CONFIG.UNION_NODE_WIDTH);
+    expect(unNodes[0].height).toBe(TREE_LAYOUT_CONFIG.UNION_NODE_HEIGHT);
   });
 
-  it("tạo đúng các cạnh quan hệ cha con và cạnh hôn phối (Parent-Child & Union-Member)", () => {
+  it("tạo đúng các cạnh quan hệ: cha-con khi có con và union-member khi chưa có con", () => {
+    // Khi có con: 2 cạnh cha-con
     const layoutGraph = projectDtoToLayoutGraph(mockMultiMarriageDto);
-
-    // 2 parent-child edges + 4 union-member edges = 6 edges
-    expect(layoutGraph.edges).toHaveLength(6);
-
+    expect(layoutGraph.edges).toHaveLength(2);
     const pcEdges = layoutGraph.edges.filter((e) => e.type === "parent-child");
-    const umEdges = layoutGraph.edges.filter((e) => e.type === "union-member");
-
     expect(pcEdges).toHaveLength(2);
-    expect(umEdges).toHaveLength(4);
+
+    // Khi không có con: tạo cạnh union-member nối 2 vợ chồng
+    const dtoWithoutChildren: TreeGraphDto = {
+      ...mockMultiMarriageDto,
+      parentChildRelationships: [mockMultiMarriageDto.parentChildRelationships[0]], // chỉ có father -> center
+      persons: mockMultiMarriageDto.persons.filter((p) => p.id !== childId),
+    };
+    const graphNoChildren = projectDtoToLayoutGraph(dtoWithoutChildren);
+    const umEdges = graphNoChildren.edges.filter((e) => e.type === "union-member");
+    expect(umEdges).toHaveLength(2);
   });
 
   it("hỗ trợ trường hợp thiếu mẹ (chỉ có bố) mà không tạo node rác", () => {

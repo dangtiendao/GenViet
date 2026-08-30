@@ -42,6 +42,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ treeI
     const rawDescendantDepth = searchParams.get("descendantDepth");
     const rawIncludeSpouses = searchParams.get("includeSpouses");
     const rawIncludeUnverified = searchParams.get("includeUnverified");
+    const rawFullTree = searchParams.get("fullTree");
 
     const queryInput = {
       treeId,
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ treeI
       descendantDepth: rawDescendantDepth !== null ? Number(rawDescendantDepth) : undefined,
       includeSpouses: rawIncludeSpouses !== null ? rawIncludeSpouses !== "false" : true,
       includeUnverified: rawIncludeUnverified !== null ? rawIncludeUnverified !== "false" : true,
+      fullTree: rawFullTree === "true",
     };
 
     const { data, cacheKey } = await TreeGraphService.getTreeGraphSlice(userId, queryInput);

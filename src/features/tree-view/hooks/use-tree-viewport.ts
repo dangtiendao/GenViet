@@ -10,59 +10,38 @@ export function useTreeViewport(
   centerPersonId: string | null,
   positionedGraph: PositionedLayoutGraph | null
 ) {
-  const { zoomIn, zoomOut, fitView, setViewport, getViewport, getNode } = useReactFlow();
-
-  const prevCenterPosRef = useRef<{ x: number; y: number } | null>(null);
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
   const isInitialLoadRef = useRef(true);
 
-  // Lưu tọa độ của Center Person trước khi layout thay đổi
-  const snapshotCenterPosition = useCallback(() => {
-    if (!centerPersonId) return;
-    const node = getNode(centerPersonId);
-    if (node) {
-      prevCenterPosRef.current = { x: node.position.x, y: node.position.y };
-    }
-  }, [centerPersonId, getNode]);
-
-  // Sau khi positionedGraph hoàn tất, thực hiện Center Anchoring hoặc Initial Fit View
+  // Chỉ fitView duy nhất một lần khi nạp cây lần đầu tiên
   useEffect(() => {
     if (!positionedGraph || positionedGraph.nodes.length === 0) return;
 
     if (isInitialLoadRef.current) {
       isInitialLoadRef.current = false;
-      // Khởi tạo: Fit toàn bộ cây
+      // Khởi tạo: Fit toàn bộ cây với độ phóng to trực quan
       fitView({
-        padding: TREE_LAYOUT_CONFIG.FIT_VIEW_PADDING,
+        padding: 0.15,
         minZoom: TREE_LAYOUT_CONFIG.MIN_ZOOM,
-        maxZoom: TREE_LAYOUT_CONFIG.DEFAULT_ZOOM,
+        maxZoom: 1.1,
         duration: 300,
       });
-      return;
     }
-
-    if (centerPersonId && prevCenterPosRef.current) {
-      const newCenterNode = positionedGraph.nodes.find((n) => n.id === centerPersonId);
-      if (newCenterNode) {
-        const currentViewport = getViewport();
-        const anchored = calculateAnchoredViewport(prevCenterPosRef.current, currentViewport, {
-          x: newCenterNode.x,
-          y: newCenterNode.y,
-        });
-
-        setViewport(anchored, { duration: 250 });
-        prevCenterPosRef.current = null;
-      }
-    }
-  }, [positionedGraph, centerPersonId, fitView, getViewport, setViewport]);
+  }, [positionedGraph, fitView]);
 
   const handleFitView = useCallback(() => {
     fitView({
-      padding: TREE_LAYOUT_CONFIG.FIT_VIEW_PADDING,
+      padding: 0.15,
       minZoom: TREE_LAYOUT_CONFIG.MIN_ZOOM,
       maxZoom: TREE_LAYOUT_CONFIG.MAX_ZOOM,
       duration: 300,
     });
   }, [fitView]);
+
+  // Giữ nguyên vị trí UI, không tự động focus/pan viewport khi thu gọn/mở rộng
+  const snapshotCenterPosition = useCallback(() => {
+    // Không làm thay đổi viewport của người dùng
+  }, []);
 
   return {
     zoomIn: () => zoomIn({ duration: 200 }),

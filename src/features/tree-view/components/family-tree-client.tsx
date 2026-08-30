@@ -9,6 +9,7 @@ import { useTreeExpansion } from "../hooks/use-tree-expansion";
 import { useTreeViewport } from "../hooks/use-tree-viewport";
 import { useFullscreen } from "../hooks/use-fullscreen";
 import { mapLayoutToReactFlow } from "../layout/presentation-mapper";
+import { mergeTreeGraphDtos } from "../layout/graph-merge";
 import { FamilyTreeCanvas } from "./family-tree-canvas";
 import { TreeToolbar } from "./tree-toolbar";
 import { TreeLoadingState } from "./tree-loading-state";
@@ -17,6 +18,7 @@ import { TreeErrorState } from "./tree-error-state";
 import { PersonDetailSheet } from "./person-detail-sheet";
 import { PersonDetailPanel } from "./person-detail-panel";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import type { TreeGraphDto } from "@/features/tree-graph/types/tree-graph.types";
 
 export interface FamilyTreeClientProps {
   treeId: string;
@@ -32,8 +34,9 @@ function FamilyTreeCanvasInternal({
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 767px)");
 
-  // 1. Quản lý Center Person
+  // 1. Quản lý Center Person & Full Tree Mode
   const [centerPersonId, setCenterPersonId] = useState<string | null>(initialCenterPersonId);
+  const [isFullTree, setIsFullTree] = useState(false);
 
   // 2. Quản lý Mở rộng / Thu gọn nhánh
   const {
@@ -42,13 +45,14 @@ function FamilyTreeCanvasInternal({
     collapsedPersonIds,
     expandAncestors,
     expandDescendants,
+    expandFullTree,
     toggleCollapse,
     resetExpansion,
   } = useTreeExpansion(2, 2);
 
   // 3. Tải dữ liệu DTO từ API P14
   const {
-    data: dto,
+    data: rawDto,
     isLoading: isGraphLoading,
     error: graphError,
     refetch,
@@ -59,10 +63,25 @@ function FamilyTreeCanvasInternal({
     descendantDepth,
     includeSpouses: true,
     includeUnverified: true,
+    fullTree: isFullTree,
   });
 
+  // Tích lũy các lát cắt đồ thị để khi mở rộng đời sau/đời trước vẫn giữ nguyên vẹn toàn bộ cây
+  const [accumulatedDto, setAccumulatedDto] = useState<TreeGraphDto | null>(null);
+
+  React.useEffect(() => {
+    if (rawDto) {
+      setAccumulatedDto((prev) => (isFullTree ? rawDto : mergeTreeGraphDtos(prev, rawDto)));
+    }
+  }, [rawDto, isFullTree]);
+
+  const activeDto = accumulatedDto || rawDto;
+
   // 4. Bố cục không gian ELK (Chỉ chạy khi cấu trúc thay đổi)
-  const { positionedGraph, isLayouting, layoutError } = useTreeLayout(dto, collapsedPersonIds);
+  const { positionedGraph, isLayouting, layoutError } = useTreeLayout(
+    activeDto,
+    collapsedPersonIds
+  );
 
   // 5. Điều khiển Viewport & Center Anchoring
   const { zoomIn, zoomOut, fitView, snapshotCenterPosition } = useTreeViewport(
@@ -83,41 +102,82 @@ function FamilyTreeCanvasInternal({
   // Thao tác đổi Center Person
   const handleChangeCenter = useCallback(
     (newCenterId: string) => {
-      snapshotCenterPosition();
       setCenterPersonId(newCenterId);
+      setIsFullTree(false);
+      setAccumulatedDto(null);
+      resetExpansion();
     },
-    [snapshotCenterPosition]
+    [resetExpansion]
   );
 
-  // Thao tác mở rộng tổ tiên / hậu duệ kèm snapshot tọa độ
-  const handleExpandAncestors = useCallback(() => {
-    snapshotCenterPosition();
-    expandAncestors();
-  }, [snapshotCenterPosition, expandAncestors]);
+  // Thao tác mở rộng tổ tiên / hậu duệ (giữ nguyên viewport góc nhìn hiện tại)
+  const handleExpandAncestors = useCallback(
+    (targetPersonId?: string) => {
+      if (targetPersonId && targetPersonId !== centerPersonId) {
+        setCenterPersonId(targetPersonId);
+      } else {
+        expandAncestors();
+      }
+    },
+    [centerPersonId, expandAncestors]
+  );
 
-  const handleExpandDescendants = useCallback(() => {
-    snapshotCenterPosition();
-    expandDescendants();
-  }, [snapshotCenterPosition, expandDescendants]);
+  const handleExpandDescendants = useCallback(
+    (targetPersonId?: string) => {
+      if (targetPersonId && targetPersonId !== centerPersonId) {
+        setCenterPersonId(targetPersonId);
+      } else {
+        expandDescendants();
+      }
+    },
+    [centerPersonId, expandDescendants]
+  );
+
+  const handleResetExpansion = useCallback(() => {
+    setIsFullTree(false);
+    resetExpansion();
+    setCenterPersonId(initialCenterPersonId);
+    setAccumulatedDto(null);
+  }, [resetExpansion, initialCenterPersonId]);
+
+  const handleExpandFullTree = useCallback(() => {
+    setIsFullTree(true);
+    setAccumulatedDto(null);
+    expandFullTree();
+  }, [expandFullTree]);
+
+  const handleReload = useCallback(() => {
+    setAccumulatedDto(null);
+    refetch();
+  }, [refetch]);
+
+  // Thao tác thu gọn / mở rộng nhánh: đồng bộ phối ngẫu và giữ nguyên viewport (không ghim tâm điểm)
+  const handleToggleCollapse = useCallback(
+    (pId: string) => {
+      toggleCollapse(pId, activeDto);
+    },
+    [toggleCollapse, activeDto]
+  );
 
   // Ánh xạ sang React Flow Nodes/Edges
   const { nodes, edges } = useMemo(() => {
-    if (!positionedGraph || !dto) return { nodes: [], edges: [] };
+    if (!positionedGraph || !activeDto) return { nodes: [], edges: [] };
 
-    return mapLayoutToReactFlow(positionedGraph, dto, {
+    return mapLayoutToReactFlow(positionedGraph, activeDto, {
       selectedPersonId,
       collapsedPersonIds,
       treeId,
       canWrite,
       onSelect: (pId) => selectPerson(pId),
-      onExpandAncestors: () => handleExpandAncestors(),
-      onExpandDescendants: () => handleExpandDescendants(),
-      onToggleCollapse: (pId) => toggleCollapse(pId),
+      onExpandAncestors: (pId) => handleExpandAncestors(pId),
+      onExpandDescendants: (pId) => handleExpandDescendants(pId),
+      onToggleCollapse: (pId) => handleToggleCollapse(pId),
       onChangeCenter: (pId) => handleChangeCenter(pId),
+      onRefresh: () => handleReload(),
     });
   }, [
     positionedGraph,
-    dto,
+    activeDto,
     selectedPersonId,
     collapsedPersonIds,
     treeId,
@@ -125,31 +185,33 @@ function FamilyTreeCanvasInternal({
     selectPerson,
     handleExpandAncestors,
     handleExpandDescendants,
-    toggleCollapse,
+    handleToggleCollapse,
     handleChangeCenter,
+
+    handleReload,
   ]);
 
   // Tìm selectedPerson và centerPerson trong DTO
   const selectedPerson = useMemo(() => {
-    if (!dto || !selectedPersonId) return null;
-    return dto.persons.find((p) => p.id === selectedPersonId) || null;
-  }, [dto, selectedPersonId]);
+    if (!activeDto || !selectedPersonId) return null;
+    return activeDto.persons.find((p) => p.id === selectedPersonId) || null;
+  }, [activeDto, selectedPersonId]);
 
   const centerPerson = useMemo(() => {
-    if (!dto || !centerPersonId) return null;
-    return dto.persons.find((p) => p.id === centerPersonId) || null;
-  }, [dto, centerPersonId]);
+    if (!activeDto || !centerPersonId) return null;
+    return activeDto.persons.find((p) => p.id === centerPersonId) || null;
+  }, [activeDto, centerPersonId]);
 
-  if (!centerPersonId && !isGraphLoading) {
+  if (!centerPersonId || (activeDto && activeDto.persons.length === 0)) {
     return <TreeEmptyState treeId={treeId} canWrite={canWrite} />;
   }
 
   if (graphError) {
-    return <TreeErrorState error={graphError} onRetry={refetch} />;
+    return <TreeErrorState error={graphError} onRetry={handleReload} />;
   }
 
   if (layoutError) {
-    return <TreeErrorState error={layoutError} onRetry={refetch} />;
+    return <TreeErrorState error={layoutError} onRetry={handleReload} />;
   }
 
   return (
@@ -167,28 +229,49 @@ function FamilyTreeCanvasInternal({
         centerPerson={centerPerson}
         ancestorDepth={ancestorDepth}
         descendantDepth={descendantDepth}
-        isTruncated={dto?.truncated}
-        onResetExpansion={resetExpansion}
+        isTruncated={activeDto?.truncated}
+        onResetExpansion={handleResetExpansion}
+        onExpandFullTree={handleExpandFullTree}
+        onReload={handleReload}
+        isRefreshing={isGraphLoading}
       />
 
       {/* Vùng Canvas React Flow */}
       <div className="relative flex-1">
-        {isGraphLoading && !dto ? (
-          <TreeLoadingState message="Đang tải dữ liệu lát cắt cây gia phả..." />
+        {isGraphLoading && (!activeDto || isFullTree) ? (
+          <TreeLoadingState
+            message={
+              isFullTree
+                ? "Đang tải và dựng toàn bộ cây gia phả..."
+                : "Đang tải dữ liệu lát cắt cây gia phả..."
+            }
+          />
         ) : isLayouting && !positionedGraph ? (
           <TreeLoadingState message="Đang tính toán bố cục không gian phân tầng..." />
         ) : (
-          <FamilyTreeCanvas
-            nodes={nodes}
-            edges={edges}
-            onPaneClick={() => selectPerson(null)}
-            onZoomIn={zoomIn}
-            onZoomOut={zoomOut}
-            onFitView={fitView}
-            isFullscreen={isFullscreen}
-            isFullscreenSupported={isFullscreenSupported}
-            onToggleFullscreen={toggleFullscreen}
-          />
+          <>
+            <FamilyTreeCanvas
+              nodes={nodes}
+              edges={edges}
+              onPaneClick={() => selectPerson(null)}
+              onZoomIn={zoomIn}
+              onZoomOut={zoomOut}
+              onFitView={fitView}
+              isFullscreen={isFullscreen}
+              isFullscreenSupported={isFullscreenSupported}
+              onToggleFullscreen={toggleFullscreen}
+            />
+
+            {/* Overlay loading mượt mà khi đang tải toàn bộ cây */}
+            {(isGraphLoading || isLayouting) && (
+              <div className="pointer-events-none absolute right-4 bottom-4 z-30 flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 px-3.5 py-1.5 text-xs font-medium text-emerald-800 shadow-md backdrop-blur-xs">
+                <span className="h-2 w-2 animate-ping rounded-full bg-emerald-500" />
+                <span>
+                  {isFullTree ? "Đang dựng toàn bộ gia phả..." : "Đang cập nhật sơ đồ..."}
+                </span>
+              </div>
+            )}
+          </>
         )}
 
         {/* Desktop Side Panel */}

@@ -31,11 +31,11 @@ describe("TreeGraph Cache Key Builder Tests (P14-T15)", () => {
 
     expect(key1).toBe(key2);
     expect(key1).toBe(
-      `tree-graph:${userScope}:${treeId}:${centerPersonId}:a2:d2:s1:u1:v${TREE_GRAPH_SCHEMA_VERSION}`
+      `tree-graph:${userScope}:${treeId}:${centerPersonId}:a2:d2:s1:u1:f0:v${TREE_GRAPH_SCHEMA_VERSION}`
     );
   });
 
-  it("thay đổi cache key khi thay đổi độ sâu hoặc tùy chọn includeSpouses", () => {
+  it("thay đổi cache key khi thay đổi độ sâu hoặc tùy chọn includeSpouses hoặc fullTree", () => {
     const keyA = buildTreeGraphCacheKey(userScope, {
       treeId,
       centerPersonId,
@@ -63,8 +63,19 @@ describe("TreeGraph Cache Key Builder Tests (P14-T15)", () => {
       includeUnverified: true,
     });
 
+    const keyD = buildTreeGraphCacheKey(userScope, {
+      treeId,
+      centerPersonId,
+      ancestorDepth: 2,
+      descendantDepth: 2,
+      includeSpouses: true,
+      includeUnverified: true,
+      fullTree: true,
+    });
+
     expect(keyA).not.toBe(keyB);
     expect(keyA).not.toBe(keyC);
+    expect(keyA).not.toBe(keyD);
   });
 
   it("phân lập cache key giữa các userScope khác nhau", () => {

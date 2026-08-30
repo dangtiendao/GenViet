@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
+
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,12 +12,39 @@ export interface DialogProps {
   title: string;
   description?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 }
 
-export function Dialog({ isOpen, onClose, title, description, children, className }: DialogProps) {
+const sizeClasses: Record<string, string> = {
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  "2xl": "max-w-2xl",
+  "3xl": "max-w-3xl",
+  "4xl": "max-w-4xl",
+  "5xl": "max-w-5xl",
+};
+
+export function Dialog({
+  isOpen,
+  onClose,
+  title,
+  description,
+  children,
+  footer,
+  className,
+  size = "lg",
+}: DialogProps) {
+  const [mounted, setMounted] = React.useState(false);
   const dialogRef = React.useRef<HTMLDivElement>(null);
   const previouslyFocusedElement = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -32,6 +61,7 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
+          e.preventDefault();
           onClose();
         }
         // Focus trap
@@ -53,10 +83,10 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
         }
       };
 
-      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown, true);
       return () => {
         document.body.style.overflow = "";
-        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener("keydown", handleKeyDown, true);
         previouslyFocusedElement.current?.focus();
       };
     }
@@ -64,7 +94,7 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
 
   if (!isOpen) return null;
 
-  return (
+  const content = (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
       role="presentation"
@@ -79,32 +109,49 @@ export function Dialog({ isOpen, onClose, title, description, children, classNam
         aria-labelledby="dialog-title"
         aria-describedby={description ? "dialog-desc" : undefined}
         className={cn(
-          "relative max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-xl border border-neutral-200 bg-white p-6 shadow-2xl transition-all duration-200",
+          "relative flex max-h-[90dvh] w-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl transition-all duration-200",
+          sizeClasses[size] || "max-w-lg",
           className
         )}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none"
-          aria-label="Đóng hộp thoại"
-        >
-          <X className="h-5 w-5" aria-hidden="true" />
-        </button>
-
-        <div className="mb-4 pr-8">
-          <h2 id="dialog-title" className="text-lg font-semibold text-neutral-900">
-            {title}
-          </h2>
-          {description && (
-            <p id="dialog-desc" className="mt-1 text-sm text-neutral-600">
-              {description}
-            </p>
-          )}
+        {/* Header Cố định (Fixed Header) */}
+        <div className="flex shrink-0 items-start justify-between border-b border-neutral-100 px-6 py-4.5 sm:px-7">
+          <div className="pr-6">
+            <h2 id="dialog-title" className="text-lg font-bold text-neutral-900 sm:text-xl">
+              {title}
+            </h2>
+            {description && (
+              <p id="dialog-desc" className="mt-1 text-xs text-neutral-500 sm:text-sm">
+                {description}
+              </p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+            aria-label="Đóng hộp thoại"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
         </div>
 
-        <div>{children}</div>
+        {/* Body Cuộn (Scrollable Body) */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-7">{children}</div>
+
+        {/* Footer Cố định (Fixed Footer) */}
+        {footer && (
+          <div className="flex shrink-0 items-center justify-end gap-3 border-t border-neutral-100 bg-neutral-50/60 px-6 py-4 sm:px-7">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );
+
+  if (typeof document !== "undefined" && mounted) {
+    return createPortal(content, document.body);
+  }
+
+  return content;
 }

@@ -11,7 +11,7 @@ DECLARE
     v_payload JSONB;
     v_res JSONB;
 BEGIN
-    INSERT INTO public.profiles (id, full_name) VALUES (v_user_id, 'Tester Mapping')
+    INSERT INTO public.profiles (id, display_name) VALUES (v_user_id, 'Tester Mapping')
     ON CONFLICT (id) DO NOTHING;
 
     PERFORM set_config('request.jwt.claim.sub', v_user_id::text, true);

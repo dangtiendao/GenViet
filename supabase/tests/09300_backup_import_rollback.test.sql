@@ -8,7 +8,7 @@ DECLARE
     v_person_id UUID := 'bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb';
     v_payload JSONB;
 BEGIN
-    INSERT INTO public.profiles (id, full_name) VALUES (v_user_id, 'Tester Rollback')
+    INSERT INTO public.profiles (id, display_name) VALUES (v_user_id, 'Tester Rollback')
     ON CONFLICT (id) DO NOTHING;
 
     PERFORM set_config('request.jwt.claim.sub', v_user_id::text, true);

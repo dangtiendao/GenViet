@@ -87,6 +87,27 @@ const mockPersonDetail: PersonDetailType = {
         },
       },
     ],
+    siblings: [
+      {
+        id: "sibling-1",
+        sharedType: "full",
+        sharedParents: [
+          {
+            id: "parent-1",
+            fullName: "Nguyễn Văn Ba",
+            role: "father",
+          },
+        ],
+        sibling: {
+          id: "sibling-1",
+          fullName: "Nguyễn Văn Em",
+          gender: "male",
+          livingStatus: "living",
+          birthYear: 1985,
+          deathYear: null,
+        },
+      },
+    ],
   },
 };
 
@@ -104,6 +125,7 @@ describe("Person UI Components (P12)", () => {
     expect(html).toContain("Nguyễn Văn Ba");
     expect(html).toContain("Trần Thị Mai");
     expect(html).toContain("Nguyễn Văn Con");
+    expect(html).toContain("Nguyễn Văn Em");
   });
 
   it("renders PersonRelationshipList empty state when no relations exist", () => {
@@ -111,7 +133,7 @@ describe("Person UI Components (P12)", () => {
       <PersonRelationshipList
         treeId="t1"
         personId="p1"
-        relationships={{ parents: [], children: [], spouses: [] }}
+        relationships={{ parents: [], children: [], spouses: [], siblings: [] }}
       />
     );
 

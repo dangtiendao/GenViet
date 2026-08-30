@@ -12,6 +12,7 @@ export interface PersonNodeData extends Record<string, unknown> {
   isSelected: boolean;
   expansion?: ExpansionDto;
   isCollapsed?: boolean;
+  childCount?: number;
   treeId: string;
   canWrite?: boolean;
   onSelect?: (personId: string) => void;
@@ -19,6 +20,7 @@ export interface PersonNodeData extends Record<string, unknown> {
   onExpandDescendants?: (personId: string) => void;
   onToggleCollapse?: (personId: string) => void;
   onChangeCenter?: (personId: string) => void;
+  onRefresh?: () => void;
 }
 
 export interface UnionNodeData extends Record<string, unknown> {

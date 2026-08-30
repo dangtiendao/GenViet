@@ -4,6 +4,8 @@ import {
   linkExistingParentSchema,
   addNewChildSchema,
   linkExistingChildSchema,
+  addNewSiblingSchema,
+  linkExistingSiblingSchema,
   createUnionWithNewPersonSchema,
   createUnionWithExistingPersonSchema,
   endUnionSchema,
@@ -154,6 +156,42 @@ describe("Relationship Zod Validation Schemas", () => {
         childId: personId1,
       });
       expect(parsed.success).toBe(false);
+    });
+  });
+
+  describe("addNewSiblingSchema", () => {
+    it("chấp nhận input tạo anh/chị/em mới kèm danh sách cha mẹ", () => {
+      const parsed = addNewSiblingSchema.safeParse({
+        treeId,
+        siblingId: personId1,
+        fullName: "Trần Văn Em",
+        gender: "male",
+        parentIds: [personId2],
+      });
+      expect(parsed.success).toBe(true);
+    });
+
+    it("từ chối khi tên anh/chị/em để trống", () => {
+      const parsed = addNewSiblingSchema.safeParse({
+        treeId,
+        siblingId: personId1,
+        fullName: "   ",
+      });
+      expect(parsed.success).toBe(false);
+    });
+  });
+
+  describe("linkExistingSiblingSchema", () => {
+    it("từ chối self-sibling (siblingId === targetPersonId)", () => {
+      const parsed = linkExistingSiblingSchema.safeParse({
+        treeId,
+        siblingId: personId1,
+        targetPersonId: personId1,
+      });
+      expect(parsed.success).toBe(false);
+      if (!parsed.success) {
+        expect(parsed.error.errors[0].message).toContain("tự làm anh/em của chính mình");
+      }
     });
   });
 });
