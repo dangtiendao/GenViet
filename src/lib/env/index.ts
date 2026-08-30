@@ -7,6 +7,9 @@ export const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1).optional(),
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_VERCEL_URL: z.string().min(1).optional(),
 });
 
 /**
@@ -14,6 +17,8 @@ export const publicEnvSchema = z.object({
  */
 export const serverEnvSchema = publicEnvSchema.extend({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  VERCEL_ENV: z.enum(["development", "preview", "production"]).optional(),
+  VERCEL_URL: z.string().min(1).optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   SUPABASE_SECRET_KEY: z.string().min(1).optional(),
   DATABASE_URL: z.string().url().optional(),
@@ -53,7 +58,12 @@ export const env = serverEnvSchema.parse({
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
   NODE_ENV: process.env.NODE_ENV,
+  VERCEL_ENV: process.env.VERCEL_ENV as any,
+  VERCEL_URL: process.env.VERCEL_URL,
   SUPABASE_SERVICE_ROLE_KEY:
     process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY,
   SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
