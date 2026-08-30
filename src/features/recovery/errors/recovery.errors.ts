@@ -1,0 +1,29 @@
+export const RECOVERY_ERROR_CODES = {
+  NOT_FOUND: "RECOVERY_NOT_FOUND",
+  FORBIDDEN: "RECOVERY_FORBIDDEN",
+  TREE_DELETED: "RECOVERY_TREE_DELETED",
+  ENTITY_NOT_DELETED: "RECOVERY_ENTITY_NOT_DELETED",
+  VERSION_CONFLICT: "RECOVERY_VERSION_CONFLICT",
+  DEPENDENCY_DELETED: "RECOVERY_DEPENDENCY_DELETED",
+  DUPLICATE_CONFLICT: "RECOVERY_DUPLICATE_CONFLICT",
+  CYCLE_CONFLICT: "RECOVERY_CYCLE_CONFLICT",
+  VERIFIED_PARENT_CONFLICT: "RECOVERY_VERIFIED_PARENT_CONFLICT",
+  UNION_CONFLICT: "RECOVERY_UNION_CONFLICT",
+  WARNING_CONFIRMATION_REQUIRED: "RECOVERY_WARNING_CONFIRMATION_REQUIRED",
+  RESTORE_FAILED: "RECOVERY_RESTORE_FAILED",
+  UNKNOWN_ERROR: "RECOVERY_UNKNOWN_ERROR",
+} as const;
+
+export type RecoveryErrorCode = (typeof RECOVERY_ERROR_CODES)[keyof typeof RECOVERY_ERROR_CODES];
+
+export class RecoveryDomainError extends Error {
+  readonly code: RecoveryErrorCode;
+  readonly status: number;
+
+  constructor(code: RecoveryErrorCode, message: string, status: number = 400) {
+    super(message);
+    this.name = "RecoveryDomainError";
+    this.code = code;
+    this.status = status;
+  }
+}
