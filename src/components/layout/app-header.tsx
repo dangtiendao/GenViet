@@ -5,6 +5,8 @@ import Link from "next/link";
 import { GitFork, LogOut, User as UserIcon } from "lucide-react";
 import { signOutAction } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
+import { PwaInstallButton } from "@/features/pwa/components/pwa-install-button";
+import { clearAllPrivateCaches } from "@/features/pwa/services/private-cache-cleanup";
 
 export interface AppHeaderProps {
   displayName?: string | null;
@@ -13,6 +15,13 @@ export interface AppHeaderProps {
 }
 
 export function AppHeader({ displayName, email, children }: AppHeaderProps) {
+  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await clearAllPrivateCaches();
+    const form = e.currentTarget;
+    form.submit();
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-neutral-200 bg-white/95 px-4 backdrop-blur-xs sm:px-6">
       {/* Left side: Mobile Brand + Desktop Breadcrumbs/Slot */}
@@ -31,8 +40,10 @@ export function AppHeader({ displayName, email, children }: AppHeaderProps) {
         <div className="hidden truncate lg:block">{children}</div>
       </div>
 
-      {/* Right side: User menu & Sign out */}
+      {/* Right side: PWA Install + User menu & Sign out */}
       <div className="flex items-center space-x-3">
+        <PwaInstallButton className="hidden sm:inline-flex" />
+
         <Link
           href="/account"
           className="flex min-h-[44px] items-center space-x-2 rounded-lg p-1.5 text-sm text-neutral-700 hover:bg-neutral-100 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:outline-none"
@@ -51,7 +62,7 @@ export function AppHeader({ displayName, email, children }: AppHeaderProps) {
           </div>
         </Link>
 
-        <form action={signOutAction}>
+        <form action={signOutAction} onSubmit={handleSignOut}>
           <Button
             type="submit"
             variant="ghost"
