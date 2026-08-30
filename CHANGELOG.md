@@ -146,5 +146,13 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
   - Xây dựng Server Guard `requireUser()` xác minh trực tiếp phiên người dùng phía máy chủ và bảo vệ trang Dashboard (`/dashboard`) cùng Cài đặt tài khoản (`/account`).
   - Triển khai helper `getSafeRedirectUrl()` loại bỏ triệt để nguy cơ tấn công Open-Redirect và CRLF Injection.
   - Xây dựng bảng phân loại lỗi xác thực (`AUTH_ERROR_TAXONOMY`) với 17 mã lỗi được ánh xạ sang thông điệp tiếng Việt an toàn và thân thiện.
-  - Ban hành bộ 8 tài liệu bảo mật và vận hành xác thực tại `docs/security/`, `docs/operations/`, `docs/testing/`.
   - Hoàn thiện toàn bộ hồ sơ nghiệm thu Phase P09 tại `docs/phases/P09/` và gói bàn giao kỹ thuật cho Phase P10 & P11.
+- **Phase P10 (Khung giao diện responsive):**
+  - Xây dựng hoàn chỉnh hệ thống Design Tokens (Colors, Typography, Spacing, Breakpoints, Z-Index) trong `src/app/globals.css` và `src/config/ui.ts`.
+  - Triển khai 12 UI primitives cốt lõi: `Button`, `Input`, `Select`, `PartialDateInput`, `Dialog`, `Drawer`, `BottomSheet`, `Toast`, `Toaster`, `Skeleton`, `EmptyState`, `ErrorState`.
+  - Xây dựng bộ điều khiển chuyên dụng cho phả hệ `PartialDateInput` hỗ trợ nhập ngày không đầy đủ (chỉ biết năm, tháng/năm, không rõ) và cờ ước tính `isEstimated`, không tạo ngày 01/01 giả.
+  - Xây dựng khung giao diện `AppShell` đáp ứng: Desktop Sidebar (`w-64` cho $\ge 1024\text{px}$) và Mobile Bottom Navigation (4 tabs cho $< 1024\text{px}$), tích hợp `AppHeader` và `AppBreadcrumb`.
+  - Tạo trang trưng bày và kiểm toán component trực quan tại `/ui-preview`.
+  - Đảm bảo toàn diện tiêu chuẩn khả năng tiếp cận WCAG 2.2 AA (Keyboard Tab navigation, Focus Trap, Focus Rings, Touch targets $\ge 44\times 44\text{px}$).
+  - Xây dựng 14 Vitest unit/component tests (58 assertions) và 14 Playwright E2E tests bao phủ 100% viewport responsive và desktop/mobile shell.
+  - Ban hành bộ 12 tài liệu Design System tại `docs/design-system/` và hoàn tất hồ sơ nghiệm thu Phase P10 tại `docs/phases/P10/`.
