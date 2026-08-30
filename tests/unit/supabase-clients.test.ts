@@ -46,6 +46,7 @@ describe("Supabase Client & Schema Foundations (Phase P07)", () => {
       occupation_text: null,
       biography: "Cụ tổ đời thứ 4",
       verification_status: "verified",
+      avatar_path: null,
       created_by: null,
       updated_by: null,
       deleted_by: null,

@@ -30,6 +30,7 @@ export interface Person {
   occupationText: string | null;
   biography: string | null;
   verificationStatus: VerificationStatusType;
+  avatarPath: string | null;
   createdBy: string | null;
   updatedBy: string | null;
   deletedBy: string | null;
@@ -56,6 +57,7 @@ export interface PersonListItem {
   hometownText: string | null;
   occupationText: string | null;
   verificationStatus: VerificationStatusType;
+  avatarPath?: string | null;
   version: number;
 }
 

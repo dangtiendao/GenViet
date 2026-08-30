@@ -211,6 +211,7 @@ export type Database = {
           occupation_text: string | null;
           biography: string | null;
           verification_status: Database["public"]["Enums"]["verification_status_type"];
+          avatar_path: string | null;
           created_by: string | null;
           updated_by: string | null;
           deleted_by: string | null;
@@ -241,6 +242,7 @@ export type Database = {
           occupation_text?: string | null;
           biography?: string | null;
           verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          avatar_path?: string | null;
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -271,6 +273,7 @@ export type Database = {
           occupation_text?: string | null;
           biography?: string | null;
           verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          avatar_path?: string | null;
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -282,6 +285,78 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "persons_tree_id_fkey";
+            columns: ["tree_id"];
+            isOneToOne: false;
+            referencedRelation: "family_trees";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      person_avatars: {
+        Row: {
+          id: string;
+          tree_id: string;
+          person_id: string;
+          bucket_id: string;
+          object_path: string;
+          thumbnail_path: string;
+          original_filename: string | null;
+          mime_type: string;
+          size_bytes: number;
+          width: number | null;
+          height: number | null;
+          status: string;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          tree_id: string;
+          person_id: string;
+          bucket_id?: string;
+          object_path: string;
+          thumbnail_path: string;
+          original_filename?: string | null;
+          mime_type: string;
+          size_bytes: number;
+          width?: number | null;
+          height?: number | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          tree_id?: string;
+          person_id?: string;
+          bucket_id?: string;
+          object_path?: string;
+          thumbnail_path?: string;
+          original_filename?: string | null;
+          mime_type?: string;
+          size_bytes?: number;
+          width?: number | null;
+          height?: number | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_avatars_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "persons";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "person_avatars_tree_id_fkey";
             columns: ["tree_id"];
             isOneToOne: false;
             referencedRelation: "family_trees";

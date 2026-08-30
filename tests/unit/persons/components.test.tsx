@@ -28,6 +28,7 @@ const mockPersonDetail: PersonDetailType = {
   occupationText: "Kỹ sư phần mềm",
   biography: "Tiểu sử chi tiết của nhân vật.",
   verificationStatus: "verified",
+  avatarPath: null,
   createdBy: "u1111111-1111-4111-a111-111111111111",
   updatedBy: "u1111111-1111-4111-a111-111111111111",
   deletedBy: null,
