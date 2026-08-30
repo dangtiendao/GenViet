@@ -555,6 +555,65 @@ export type Database = {
           },
         ];
       };
+      audit_logs: {
+        Row: {
+          id: string;
+          tree_id: string;
+          actor_user_id: string | null;
+          actor_name_cached: string | null;
+          entity_type: string;
+          entity_id: string;
+          action_type: string;
+          before_data: Json | null;
+          after_data: Json | null;
+          changed_fields: string[] | null;
+          reason: string | null;
+          request_id: string | null;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          tree_id: string;
+          actor_user_id?: string | null;
+          actor_name_cached?: string | null;
+          entity_type: string;
+          entity_id: string;
+          action_type: string;
+          before_data?: Json | null;
+          after_data?: Json | null;
+          changed_fields?: string[] | null;
+          reason?: string | null;
+          request_id?: string | null;
+          source?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          tree_id?: string;
+          actor_user_id?: string | null;
+          actor_name_cached?: string | null;
+          entity_type?: string;
+          entity_id?: string;
+          action_type?: string;
+          before_data?: Json | null;
+          after_data?: Json | null;
+          changed_fields?: string[] | null;
+          reason?: string | null;
+          request_id?: string | null;
+          source?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_tree_id_fkey";
+            columns: ["tree_id"];
+            isOneToOne: false;
+            referencedRelation: "family_trees";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -756,6 +815,35 @@ export type Database = {
           p_include_unverified?: boolean;
         };
         Returns: Record<string, unknown>;
+      };
+      record_audit_event: {
+        Args: {
+          p_tree_id: string;
+          p_entity_type: string;
+          p_entity_id: string;
+          p_action_type: string;
+          p_before_data?: Json | null;
+          p_after_data?: Json | null;
+          p_changed_fields?: string[] | null;
+          p_reason?: string | null;
+          p_source?: string;
+          p_request_id?: string | null;
+        };
+        Returns: string;
+      };
+      restore_parent_child_relationship: {
+        Args: {
+          p_relationship_id: string;
+          p_expected_version?: number | null;
+        };
+        Returns: boolean;
+      };
+      restore_union: {
+        Args: {
+          p_union_id: string;
+          p_expected_version?: number | null;
+        };
+        Returns: boolean;
       };
     };
     Enums: {
