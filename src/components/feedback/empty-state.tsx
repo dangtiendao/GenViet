@@ -1,4 +1,5 @@
 import * as React from "react";
+import Link from "next/link";
 import { FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -50,19 +51,29 @@ export function EmptyState({
 
       {(primaryAction || secondaryAction) && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          {primaryAction && (
-            <Button
-              onClick={primaryAction.onClick}
-              className="bg-emerald-700 text-white hover:bg-emerald-800"
-            >
-              {primaryAction.label}
-            </Button>
-          )}
-          {secondaryAction && (
-            <Button variant="outline" onClick={secondaryAction.onClick}>
-              {secondaryAction.label}
-            </Button>
-          )}
+          {primaryAction &&
+            (primaryAction.href ? (
+              <Button asChild className="bg-emerald-700 text-white hover:bg-emerald-800">
+                <Link href={primaryAction.href}>{primaryAction.label}</Link>
+              </Button>
+            ) : (
+              <Button
+                onClick={primaryAction.onClick}
+                className="bg-emerald-700 text-white hover:bg-emerald-800"
+              >
+                {primaryAction.label}
+              </Button>
+            ))}
+          {secondaryAction &&
+            (secondaryAction.href ? (
+              <Button asChild variant="outline">
+                <Link href={secondaryAction.href}>{secondaryAction.label}</Link>
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={secondaryAction.onClick}>
+                {secondaryAction.label}
+              </Button>
+            ))}
         </div>
       )}
     </div>
