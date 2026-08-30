@@ -4,7 +4,19 @@
  * Script kiểm tra trạng thái Heartbeat định kỳ (P25-T07)
  */
 
-import { evaluateHeartbeatHealth } from "../../src/lib/observability/heartbeat-monitoring.js";
+function evaluateHeartbeatHealth(status) {
+  const STALE_HEARTBEAT_THRESHOLD_HOURS = 48;
+  if (!status.lastSuccessAt) {
+    return { isHealthy: false, isStale: true, hoursSinceLastSuccess: null };
+  }
+
+  const lastSuccessTime = new Date(status.lastSuccessAt).getTime();
+  const diffHours = (Date.now() - lastSuccessTime) / (1000 * 60 * 60);
+  const isStale = diffHours > STALE_HEARTBEAT_THRESHOLD_HOURS;
+  const isHealthy = !isStale && status.consecutiveFailures === 0;
+
+  return { isHealthy, isStale, hoursSinceLastSuccess: diffHours };
+}
 
 function inspectHeartbeat() {
   console.log("=== KIỂM TRA TRẠNG THÁI SYSTEM HEARTBEAT ===");
@@ -22,6 +34,7 @@ function inspectHeartbeat() {
 
   const health = evaluateHeartbeatHealth(mockStatus);
   console.log(`Đánh giá sức khỏe: ${health.isHealthy ? "TỐT (HEALTHY)" : "CẢNH BÁO (WARNING)"}`);
+  console.log("=== HOÀN TẤT KIỂM TRA SYSTEM HEARTBEAT ===");
 }
 
 inspectHeartbeat();

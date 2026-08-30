@@ -12,6 +12,8 @@ export default defineConfig({
       "tests/security/**/*.test.tsx",
       "tests/performance/**/*.test.ts",
       "tests/integration/**/*.test.ts",
+      "tests/acceptance/**/*.test.ts",
+      "tests/acceptance/**/*.test.tsx",
     ],
   },
   resolve: {
