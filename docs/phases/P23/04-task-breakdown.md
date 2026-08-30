@@ -1,0 +1,23 @@
+# Bảng Phân Rã Nhiệm Vụ Phase P23 (Task Breakdown)
+
+- `P23-T01`: Đặt ngân sách hiệu năng $\rightarrow$ **COMPLETED**
+- `P23-T02`: Đo thời gian tải dashboard $\rightarrow$ **COMPLETED**
+- `P23-T03`: Đo thời gian lấy graph $\rightarrow$ **COMPLETED**
+- `P23-T04`: Đo thời gian layout $\rightarrow$ **COMPLETED**
+- `P23-T05`: Đo số node render $\rightarrow$ **COMPLETED**
+- `P23-T06`: Tối ưu query graph $\rightarrow$ **COMPLETED**
+- `P23-T07`: Kiểm tra index $\rightarrow$ **COMPLETED**
+- `P23-T08`: Giới hạn độ sâu mặc định $\rightarrow$ **COMPLETED**
+- `P23-T09`: Lazy-load nhánh $\rightarrow$ **COMPLETED**
+- `P23-T10`: Cache vùng cây $\rightarrow$ **COMPLETED**
+- `P23-T11`: Invalidate cache có chọn lọc $\rightarrow$ **COMPLETED**
+- `P23-T12`: Memo hóa node $\rightarrow$ **COMPLETED**
+- `P23-T13`: Giảm dữ liệu trong node props $\rightarrow$ **COMPLETED**
+- `P23-T14`: Chuyển ELK sang Web Worker $\rightarrow$ **COMPLETED**
+- `P23-T15`: Hủy layout cũ khi input mới tới $\rightarrow$ **COMPLETED**
+- `P23-T16`: Virtualize danh sách tìm kiếm $\rightarrow$ **COMPLETED**
+- `P23-T17`: Tối ưu thumbnail $\rightarrow$ **COMPLETED**
+- `P23-T18`: Kiểm thử 100 người $\rightarrow$ **COMPLETED**
+- `P23-T19`: Kiểm thử 500 người $\rightarrow$ **COMPLETED**
+- `P23-T20`: Kiểm thử 1.000 người $\rightarrow$ **COMPLETED**
+- `P23-T21`: Ghi giới hạn đã biết $\rightarrow$ **COMPLETED**

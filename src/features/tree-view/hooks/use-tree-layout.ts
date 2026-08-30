@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import type { TreeGraphDto } from "@/features/tree-graph/types/tree-graph.types";
 import type { PositionedLayoutGraph } from "../layout/layout-graph.types";
 import { projectDtoToLayoutGraph } from "../layout/graph-projection";
-import { calculateElkLayout } from "../layout/elk-layout-adapter";
+import { ElkWorkerClient } from "@/features/tree-graph/workers/elk-worker-client";
 import { TreeViewDomainError, TREE_VIEW_ERROR_CODES } from "../errors/tree-view.errors";
 
 /**
@@ -59,12 +59,14 @@ export function useTreeLayout(
 
     lastFingerprintRef.current = currentFingerprint;
     const seq = ++layoutSeqRef.current;
+    const requestId = `layout-${dto.treeId}-${seq}`;
     setIsLayouting(true);
     setLayoutError(null);
 
     const layoutGraph = projectDtoToLayoutGraph(dto, collapsedPersonIds);
 
-    calculateElkLayout(layoutGraph)
+    ElkWorkerClient.getInstance()
+      .computeLayout(requestId, layoutGraph)
       .then((res) => {
         if (seq === layoutSeqRef.current) {
           setPositionedGraph(res);
@@ -81,6 +83,11 @@ export function useTreeLayout(
           setIsLayouting(false);
         }
       });
+
+    return () => {
+      // Hủy layout request cũ nếu component unmount hoặc effect re-run
+      ElkWorkerClient.getInstance().cancelRequest(requestId);
+    };
   }, [dto, collapsedPersonIds, positionedGraph]);
 
   return { positionedGraph, isLayouting, layoutError };
