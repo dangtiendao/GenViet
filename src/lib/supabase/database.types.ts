@@ -506,6 +506,171 @@ export type Database = {
         };
         Returns: boolean;
       };
+      create_person_with_parent_relationship: {
+        Args: {
+          p_tree_id: string;
+          p_child_id: string;
+          p_full_name: string;
+          p_gender?: Database["public"]["Enums"]["gender_type"];
+          p_living_status?: Database["public"]["Enums"]["living_status_type"];
+          p_birth_date?: string | null;
+          p_birth_year?: number | null;
+          p_birth_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_birth_is_estimated?: boolean;
+          p_death_date?: string | null;
+          p_death_year?: number | null;
+          p_death_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_death_is_estimated?: boolean;
+          p_birth_place_text?: string | null;
+          p_death_place_text?: string | null;
+          p_hometown_text?: string | null;
+          p_burial_place_text?: string | null;
+          p_occupation_text?: string | null;
+          p_biography?: string | null;
+          p_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: { person_id: string; relationship_id: string };
+      };
+      link_existing_parent: {
+        Args: {
+          p_tree_id: string;
+          p_parent_id: string;
+          p_child_id: string;
+          p_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: string;
+      };
+      create_person_with_child_relationship: {
+        Args: {
+          p_tree_id: string;
+          p_parent_id: string;
+          p_full_name: string;
+          p_gender?: Database["public"]["Enums"]["gender_type"];
+          p_living_status?: Database["public"]["Enums"]["living_status_type"];
+          p_birth_date?: string | null;
+          p_birth_year?: number | null;
+          p_birth_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_birth_is_estimated?: boolean;
+          p_death_date?: string | null;
+          p_death_year?: number | null;
+          p_death_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_death_is_estimated?: boolean;
+          p_birth_place_text?: string | null;
+          p_death_place_text?: string | null;
+          p_hometown_text?: string | null;
+          p_burial_place_text?: string | null;
+          p_occupation_text?: string | null;
+          p_biography?: string | null;
+          p_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          p_other_parent_id?: string | null;
+          p_other_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_other_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: { person_id: string; relationship_id: string; other_relationship_id?: string };
+      };
+      link_existing_child: {
+        Args: {
+          p_tree_id: string;
+          p_parent_id: string;
+          p_child_id: string;
+          p_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: string;
+      };
+      replace_parent_relationship: {
+        Args: {
+          p_tree_id: string;
+          p_old_relationship_id: string;
+          p_old_expected_version: number;
+          p_new_parent_id: string;
+          p_child_id: string;
+          p_parent_role?: Database["public"]["Enums"]["parent_role_type"];
+          p_relationship_kind?: Database["public"]["Enums"]["relationship_kind_type"];
+          p_verification_status?: Database["public"]["Enums"]["verification_status_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: string;
+      };
+      soft_delete_parent_child_relationship: {
+        Args: {
+          p_relationship_id: string;
+          p_expected_version: number;
+        };
+        Returns: boolean;
+      };
+      create_union_with_new_person: {
+        Args: {
+          p_tree_id: string;
+          p_subject_person_id: string;
+          p_full_name: string;
+          p_gender?: Database["public"]["Enums"]["gender_type"];
+          p_living_status?: Database["public"]["Enums"]["living_status_type"];
+          p_birth_date?: string | null;
+          p_birth_year?: number | null;
+          p_birth_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_birth_is_estimated?: boolean;
+          p_death_date?: string | null;
+          p_death_year?: number | null;
+          p_death_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_death_is_estimated?: boolean;
+          p_hometown_text?: string | null;
+          p_occupation_text?: string | null;
+          p_biography?: string | null;
+          p_subject_member_role?: Database["public"]["Enums"]["union_member_role_type"];
+          p_partner_member_role?: Database["public"]["Enums"]["union_member_role_type"];
+          p_union_status?: Database["public"]["Enums"]["union_status_type"];
+          p_start_date?: string | null;
+          p_start_year?: number | null;
+          p_start_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: { person_id: string; union_id: string };
+      };
+      create_union_with_existing_person: {
+        Args: {
+          p_tree_id: string;
+          p_person_1_id: string;
+          p_person_2_id: string;
+          p_member_1_role?: Database["public"]["Enums"]["union_member_role_type"];
+          p_member_2_role?: Database["public"]["Enums"]["union_member_role_type"];
+          p_union_status?: Database["public"]["Enums"]["union_status_type"];
+          p_start_date?: string | null;
+          p_start_year?: number | null;
+          p_start_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+          p_confirm_warnings?: boolean;
+        };
+        Returns: string;
+      };
+      end_union: {
+        Args: {
+          p_union_id: string;
+          p_expected_version: number;
+          p_new_status: Database["public"]["Enums"]["union_status_type"];
+          p_end_date?: string | null;
+          p_end_year?: number | null;
+          p_end_date_precision?: Database["public"]["Enums"]["date_precision_type"];
+        };
+        Returns: boolean;
+      };
+      soft_delete_union: {
+        Args: {
+          p_union_id: string;
+          p_expected_version: number;
+        };
+        Returns: boolean;
+      };
     };
     Enums: {
       tree_status: "active" | "archived";

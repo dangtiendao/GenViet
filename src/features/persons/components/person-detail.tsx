@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { formatGenealogyDate } from "../utils/partial-date-mapper";
 import { PersonRelationshipList } from "./person-relationship-list";
+import { RelationshipActionMenu } from "@/features/relationships/components/relationship-action-menu";
 import type { PersonDetail as PersonDetailType } from "../types/person.types";
 
 const GENDER_LABELS: Record<string, string> = {
@@ -102,16 +103,24 @@ export function PersonDetail({ person }: { person: PersonDetailType }) {
             </div>
           </div>
 
-          {person.canEdit && (
-            <div className="shrink-0">
-              <Button asChild variant="outline" className="min-h-[44px]">
-                <Link href={`/trees/${person.treeId}/people/${person.id}/edit`}>
-                  <Edit className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                  Chỉnh sửa hồ sơ
-                </Link>
-              </Button>
-            </div>
-          )}
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            {person.canEdit && (
+              <>
+                <RelationshipActionMenu
+                  treeId={person.treeId}
+                  personId={person.id}
+                  personName={person.fullName}
+                  canWrite={person.canEdit}
+                />
+                <Button asChild variant="outline" className="min-h-[44px]">
+                  <Link href={`/trees/${person.treeId}/people/${person.id}/edit`}>
+                    <Edit className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    Chỉnh sửa hồ sơ
+                  </Link>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Vital Dates & Location Grid */}
@@ -177,16 +186,21 @@ export function PersonDetail({ person }: { person: PersonDetailType }) {
         </div>
       </div>
 
-      {/* 2. READ-ONLY RELATIONSHIP SUMMARY */}
+      {/* 2. RELATIONSHIP SUMMARY */}
       <div className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-xs sm:p-8">
         <div>
           <h2 className="text-base font-bold text-neutral-900">Quan hệ gia đình</h2>
           <p className="mt-0.5 text-xs text-neutral-500">
-            Tóm tắt các liên kết cha mẹ, con cái và phối ngẫu trong cùng cây gia phả (Chỉ đọc).
+            Tóm tắt các liên kết cha mẹ, con cái và phối ngẫu trong cùng cây gia phả.
           </p>
         </div>
 
-        <PersonRelationshipList treeId={person.treeId} relationships={person.relationships} />
+        <PersonRelationshipList
+          treeId={person.treeId}
+          personId={person.id}
+          canWrite={person.canEdit}
+          relationships={person.relationships}
+        />
       </div>
     </div>
   );
