@@ -1,0 +1,104 @@
+name: System Heartbeat & Operations Ping
+
+on:
+  # Lịch chạy định kỳ: Chạy vào lúc 03:17 UTC mỗi 5 ngày (tránh phút 0 và giờ cao điểm)
+  schedule:
+    - cron: '17 3 */5 * *'
+  # Kích hoạt thủ công từ giao diện GitHub Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: heartbeat-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  heartbeat:
+    name: Execute Heartbeat Ping
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Perform Heartbeat Request with Bounded Retry
+        env:
+          ENDPOINT_URL: ${{ secrets.HEARTBEAT_ENDPOINT_URL }}
+          SECRET_TOKEN: ${{ secrets.HEARTBEAT_SECRET }}
+          GITHUB_RUN_ID_VAL: ${{ github.run_id }}
+        run: |
+          set +x # Tắt echo lệnh để chống lộ secret
+
+          if [ -z "$ENDPOINT_URL" ] || [ -z "$SECRET_TOKEN" ]; then
+            echo "::error::Thiếu secrets HEARTBEAT_ENDPOINT_URL hoặc HEARTBEAT_SECRET. Vui lòng cấu hình trong Repository Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          SUCCESS=0
+          START_TIME=$(date +%s)
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "source": "github_actions",
+            "runId": "$GITHUB_RUN_ID_VAL"
+          }
+          EOF
+          )
+
+          echo "🚀 Bắt đầu thực thi nhịp tim kỹ thuật (Run ID: $GITHUB_RUN_ID_VAL)..."
+
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "⏱️ Lần thử $ATTEMPT/$MAX_ATTEMPTS..."
+
+            HTTP_RESPONSE=$(curl -s -S -X POST "$ENDPOINT_URL" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $SECRET_TOKEN" \
+              -d "$PAYLOAD" \
+              --max-time 15 \
+              --write-out "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}" 2>&1) || CURL_EXIT=$?
+
+            HTTP_STATUS=$(echo "$HTTP_RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+            TIME_TOTAL=$(echo "$HTTP_RESPONSE" | grep "TIME_TOTAL:" | cut -d':' -f2)
+            BODY=$(echo "$HTTP_RESPONSE" | grep -v "HTTP_STATUS:" | grep -v "TIME_TOTAL:")
+
+            echo "📊 Kết quả HTTP Status: $HTTP_STATUS (Thời gian: ${TIME_TOTAL}s)"
+
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "✅ Ghi nhận nhịp tim thành công tại lần thử $ATTEMPT!"
+              SUCCESS=1
+              break
+            elif [ "$HTTP_STATUS" = "401" ] || [ "$HTTP_STATUS" = "403" ]; then
+              echo "❌ Xác thực không hợp lệ (HTTP $HTTP_STATUS). Dừng thử lại ngay lập tức."
+              break
+            else
+              echo "⚠️ Gặp lỗi phản hồi (HTTP $HTTP_STATUS). Chuẩn bị thử lại..."
+            fi
+
+            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+              BACKOFF=$((ATTEMPT * 10))
+              echo "⏳ Tạm dừng ${BACKOFF}s trước lần thử tiếp theo..."
+              sleep $BACKOFF
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          END_TIME=$(date +%s)
+          TOTAL_DURATION=$((END_TIME - START_TIME))
+
+          # Tạo bảng tóm tắt công việc an toàn (GitHub Step Summary)
+          echo "## Báo Cáo Nhịp Tim Kỹ Thuật (System Heartbeat Report)" >> $GITHUB_STEP_SUMMARY
+          echo "| Thuộc tính | Giá trị |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Run ID** | \`$GITHUB_RUN_ID_VAL\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Trạng thái** | $([ $SUCCESS -eq 1 ] && echo "🟢 Thành công (HTTP 200)" || echo "🔴 Thất bại (HTTP $HTTP_STATUS)") |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Số lần thử** | $ATTEMPT/$MAX_ATTEMPTS |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Tổng thời gian** | ${TOTAL_DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Thời điểm (UTC)** | $(date -u +"%Y-%m-%d %H:%M:%SZ") |" >> $GITHUB_STEP_SUMMARY
+
+          if [ $SUCCESS -ne 1 ]; then
+            echo "::error::Nhịp tim kỹ thuật thất bại sau $MAX_ATTEMPTS lần thử hoặc do lỗi xác thực (HTTP $HTTP_STATUS)."
+            exit 1
+          fi

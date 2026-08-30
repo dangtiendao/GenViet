@@ -614,11 +614,63 @@ export type Database = {
           },
         ];
       };
+      system_heartbeats: {
+        Row: {
+          id: string;
+          last_heartbeat_at: string;
+          last_source: string;
+          last_run_id: string | null;
+          last_status: string;
+          last_duration_ms: number | null;
+          last_error_code: string | null;
+          consecutive_failures: number;
+          last_success_at: string | null;
+          last_failure_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          last_heartbeat_at?: string;
+          last_source?: string;
+          last_run_id?: string | null;
+          last_status?: string;
+          last_duration_ms?: number | null;
+          last_error_code?: string | null;
+          consecutive_failures?: number;
+          last_success_at?: string | null;
+          last_failure_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          last_heartbeat_at?: string;
+          last_source?: string;
+          last_run_id?: string | null;
+          last_status?: string;
+          last_duration_ms?: number | null;
+          last_error_code?: string | null;
+          consecutive_failures?: number;
+          last_success_at?: string | null;
+          last_failure_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      record_system_heartbeat: {
+        Args: {
+          p_source?: string;
+          p_run_id?: string | null;
+          p_duration_ms?: number | null;
+          p_status?: string;
+          p_error_code?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["system_heartbeats"]["Row"];
+      };
       create_family_tree: {
         Args: {
           p_name: string;
