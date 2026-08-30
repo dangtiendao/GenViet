@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { UserPlus, Users, Trash2, ArrowRight } from "lucide-react";
+import { UserPlus, Users, Trash2, ArrowRight, Search } from "lucide-react";
 import { requireUser } from "@/lib/auth/require-user";
 import { PersonRepository } from "@/features/persons/repositories/person.repository";
 import { FamilyTreeRepository } from "@/features/family-trees/repositories/family-tree.repository";
@@ -57,8 +57,15 @@ export default async function PeoplePage({ params }: { params: Promise<{ treeId:
           </p>
         </div>
 
-        {tree.canEdit && (
-          <div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline" className="min-h-[44px] w-full sm:w-auto">
+            <Link href={`/trees/${tree.id}/people/search`}>
+              <Search className="mr-1.5 h-4 w-4" aria-hidden="true" />
+              Tìm kiếm nhân vật
+            </Link>
+          </Button>
+
+          {tree.canEdit && (
             <Button
               asChild
               className="min-h-[44px] w-full bg-emerald-700 text-white hover:bg-emerald-800 sm:w-auto"
@@ -68,8 +75,8 @@ export default async function PeoplePage({ params }: { params: Promise<{ treeId:
                 Thêm nhân vật
               </Link>
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {people.length === 0 ? (

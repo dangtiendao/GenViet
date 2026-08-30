@@ -37,6 +37,7 @@ export const PROTECTED_PATHS_PREFIXES: readonly string[] = [
   "/account",
   "/trees",
   "/admin",
+  "/search",
 ] as const;
 
 export const AUTH_COOKIE_NAMES = {

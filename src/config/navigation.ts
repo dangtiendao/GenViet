@@ -34,7 +34,7 @@ export const MAIN_NAVIGATION: NavigationItem[] = [
     label: "Tìm kiếm",
     href: "/search",
     icon: Search,
-    isImplemented: false, // Phase P16
+    isImplemented: true,
     showInMobileNav: true,
     showInDesktopSidebar: true,
   },
