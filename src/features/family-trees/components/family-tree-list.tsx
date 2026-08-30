@@ -24,7 +24,15 @@ export function FamilyTreeList({ trees }: { trees: FamilyTreeListItem[] }) {
           </p>
         </div>
 
-        <div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            asChild
+            variant="outline"
+            className="min-h-[44px] w-full text-neutral-700 sm:w-auto"
+          >
+            <Link href="/trees/import">Nhập tệp sao lưu</Link>
+          </Button>
+
           <Button
             asChild
             className="min-h-[44px] w-full bg-emerald-700 text-white hover:bg-emerald-800 sm:w-auto"

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 999,
+  "exportedAt": "2026-08-30T10:00:00.000Z",
+  "generator": {
+    "name": "GenViet",
+    "version": "9.9.9"
+  },
+  "tree": {
+    "name": "Cây Tương Lai v999"
+  },
+  "persons": [],
+  "parentChildRelationships": [],
+  "unions": [],
+  "unionMembers": [],
+  "mediaMetadata": [],
+  "manifest": {
+    "personCount": 0,
+    "relationshipCount": 0,
+    "unionCount": 0,
+    "mediaCount": 0
+  }
+}
