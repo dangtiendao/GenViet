@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/require-user";
 import { FamilyTreeRepository } from "@/features/family-trees/repositories/family-tree.repository";
 import { FamilyTreeSettingsForm } from "@/features/family-trees/components/family-tree-settings-form";
+import { BackupExportCard } from "@/features/backups/components/backup-export-card";
 import { AppBreadcrumb } from "@/components/layout/app-breadcrumb";
 
 export default async function TreeSettingsPage({
@@ -43,6 +44,8 @@ export default async function TreeSettingsPage({
       </div>
 
       <FamilyTreeSettingsForm tree={tree} people={people} />
+
+      <BackupExportCard treeId={tree.id} treeName={tree.name} />
     </div>
   );
 }

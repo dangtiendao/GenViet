@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "invalid-date",
+  "generator": {
+    "name": "WrongGenerator",
+    "version": "0.1.0"
+  },
+  "tree": {
+    "name": ""
+  },
+  "persons": "not-an-array",
+  "parentChildRelationships": [],
+  "unions": [],
+  "unionMembers": [],
+  "mediaMetadata": [],
+  "manifest": {
+    "personCount": -5,
+    "relationshipCount": 0,
+    "unionCount": 0,
+    "mediaCount": 0
+  }
+}

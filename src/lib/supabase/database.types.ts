@@ -845,6 +845,18 @@ export type Database = {
         };
         Returns: boolean;
       };
+      export_family_tree_backup: {
+        Args: {
+          p_tree_id: string;
+        };
+        Returns: Json;
+      };
+      import_family_tree_backup: {
+        Args: {
+          p_backup_data: Json;
+        };
+        Returns: Json;
+      };
     };
     Enums: {
       tree_status: "active" | "archived";

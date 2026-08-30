@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://genviet.app/schemas/genviet-backup-v1.schema.json",
+  "title": "GenViet Backup Document",
+  "description": "JSON Schema Draft 2020-12 định dạng tệp sao lưu dữ liệu cây gia phả GenViet phiên bản 1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "exportedAt",
+    "generator",
+    "tree",
+    "persons",
+    "parentChildRelationships",
+    "unions",
+    "unionMembers",
+    "mediaMetadata",
+    "manifest"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Phiên bản cấu trúc schema của tệp sao lưu (luôn là 1 đối với v1)"
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm xuất bản sao lưu theo chuẩn ISO 8601 UTC"
+    },
+    "generator": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "const": "GenViet"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 50
+        }
+      }
+    },
+    "tree": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "description": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "privacyLevel": {
+          "type": "string",
+          "enum": ["private", "public"],
+          "default": "private"
+        },
+        "generationAnchorPersonId": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "defaultPersonId": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        }
+      }
+    },
+    "persons": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "$ref": "#/$defs/Person"
+      }
+    },
+    "parentChildRelationships": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/ParentChildRelationship"
+      }
+    },
+    "unions": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "$ref": "#/$defs/Union"
+      }
+    },
+    "unionMembers": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/UnionMember"
+      }
+    },
+    "mediaMetadata": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/MediaMetadata"
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["personCount", "relationshipCount", "unionCount", "mediaCount"],
+      "additionalProperties": false,
+      "properties": {
+        "personCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relationshipCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mediaCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Person": {
+      "type": "object",
+      "required": ["sourceId", "fullName", "gender", "livingStatus"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "gender": {
+          "type": "string",
+          "enum": ["male", "female", "other", "unknown"]
+        },
+        "livingStatus": {
+          "type": "string",
+          "enum": ["living", "deceased", "unknown"]
+        },
+        "birthDate": {
+          "type": ["string", "null"]
+        },
+        "birthYear": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "birthDatePrecision": {
+          "type": "string",
+          "enum": ["exact", "year", "unknown"],
+          "default": "unknown"
+        },
+        "birthIsEstimated": {
+          "type": "boolean",
+          "default": false
+        },
+        "deathDate": {
+          "type": ["string", "null"]
+        },
+        "deathYear": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "deathDatePrecision": {
+          "type": "string",
+          "enum": ["exact", "year", "unknown"],
+          "default": "unknown"
+        },
+        "deathIsEstimated": {
+          "type": "boolean",
+          "default": false
+        },
+        "birthPlaceText": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        },
+        "deathPlaceText": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        },
+        "hometownText": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        },
+        "burialPlaceText": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        },
+        "occupationText": {
+          "type": ["string", "null"],
+          "maxLength": 255
+        },
+        "biography": {
+          "type": ["string", "null"],
+          "maxLength": 5000
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": ["unverified", "verified", "disputed"],
+          "default": "unverified"
+        },
+        "avatarPath": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "ParentChildRelationship": {
+      "type": "object",
+      "required": ["sourceId", "parentId", "childId", "parentRole", "relationshipKind"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "parentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "childId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "parentRole": {
+          "type": "string",
+          "enum": ["father", "mother", "unspecified"]
+        },
+        "relationshipKind": {
+          "type": "string",
+          "enum": ["biological", "adoptive", "step", "foster"]
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": ["unverified", "verified", "disputed"],
+          "default": "unverified"
+        }
+      }
+    },
+    "Union": {
+      "type": "object",
+      "required": ["sourceId", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "separated", "divorced", "widowed", "former"]
+        },
+        "startDate": {
+          "type": ["string", "null"]
+        },
+        "startYear": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "startDatePrecision": {
+          "type": "string",
+          "enum": ["exact", "year", "unknown"],
+          "default": "unknown"
+        },
+        "startIsEstimated": {
+          "type": "boolean",
+          "default": false
+        },
+        "endDate": {
+          "type": ["string", "null"]
+        },
+        "endYear": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "endDatePrecision": {
+          "type": "string",
+          "enum": ["exact", "year", "unknown"],
+          "default": "unknown"
+        },
+        "endIsEstimated": {
+          "type": "boolean",
+          "default": false
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "maxLength": 2000
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": ["unverified", "verified", "disputed"],
+          "default": "unverified"
+        }
+      }
+    },
+    "UnionMember": {
+      "type": "object",
+      "required": ["unionId", "personId", "memberRole"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "unionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "memberRole": {
+          "type": "string",
+          "enum": ["spouse", "partner", "unspecified"]
+        }
+      }
+    },
+    "MediaMetadata": {
+      "type": "object",
+      "required": ["sourceId", "personId", "mimeType", "binaryIncluded", "availability"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "personId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "mimeType": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "fileSizeBytes": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "binaryIncluded": {
+          "type": "boolean",
+          "const": false,
+          "description": "Trong P19, dữ liệu nhị phân của ảnh không được bao gồm trong file JSON"
+        },
+        "availability": {
+          "type": "string",
+          "enum": ["metadata_only", "unavailable", "detached"],
+          "default": "metadata_only"
+        }
+      }
+    }
+  }
+}
