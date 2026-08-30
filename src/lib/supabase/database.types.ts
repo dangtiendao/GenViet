@@ -671,6 +671,17 @@ export type Database = {
         };
         Returns: boolean;
       };
+      get_tree_graph_slice: {
+        Args: {
+          p_tree_id: string;
+          p_center_person_id: string;
+          p_ancestor_depth?: number;
+          p_descendant_depth?: number;
+          p_include_spouses?: boolean;
+          p_include_unverified?: boolean;
+        };
+        Returns: Record<string, unknown>;
+      };
     };
     Enums: {
       tree_status: "active" | "archived";
