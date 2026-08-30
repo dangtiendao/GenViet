@@ -12,6 +12,8 @@ Tài liệu này xác lập quy chuẩn ứng xử, trách nhiệm và giới h�
 4. **Không tự ý mở rộng phạm vi (Zero Scope Expansion):** Chỉ thực hiện đúng những gì được giao trong kế hoạch phase. Không tự ý viết code cho các phase sau.
 5. **Minh định Giả định (State Assumptions):** Mọi giả định kỹ thuật phát sinh trong quá trình thi công phải được ghi rõ trong kế hoạch hoặc tài liệu review.
 6. **Báo dừng khi thiếu đầu vào (`BLOCKED` Discipline):** Khi thiếu thông tin nghiệp vụ cốt lõi, khi working tree không sạch hoặc khi gặp sự cố bảo mật, AI phải dừng lại và báo trạng thái `BLOCKED`, không tự ý đoán mò.
+7. **Đồng bộ File SQL Hợp nhất (`full_schema.sql` Rule):** Khi tạo mới hoặc sửa đổi bất kỳ file migration SQL con nào trong `supabase/migrations/`, AI bắt buộc phải chạy `npm run supabase:schema:bundle` để cập nhật `supabase/full_schema.sql` và chạy kiểm tra `npm run supabase:check`.
+
 
 ---
 

@@ -11,7 +11,7 @@ DECLARE
     v_rel_id UUID := '55555555-5555-4555-a555-555555555555';
     v_error_thrown boolean := false;
 BEGIN
-    INSERT INTO public.profiles (id, full_name) VALUES (v_user_id, 'Tester Conflict')
+    INSERT INTO public.profiles (id, display_name) VALUES (v_user_id, 'Tester Conflict')
     ON CONFLICT (id) DO NOTHING;
 
     INSERT INTO public.family_trees (id, name, status, created_by, updated_by)

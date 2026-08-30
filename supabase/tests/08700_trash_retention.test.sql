@@ -9,7 +9,7 @@ DECLARE
     v_person_old_id UUID := '33333333-3333-4333-a333-333333333333';
     v_person_recent_id UUID := '44444444-4444-4444-a444-444444444444';
 BEGIN
-    INSERT INTO public.profiles (id, full_name) VALUES (v_user_id, 'Tester Retention')
+    INSERT INTO public.profiles (id, display_name) VALUES (v_user_id, 'Tester Retention')
     ON CONFLICT (id) DO NOTHING;
 
     INSERT INTO public.family_trees (id, name, status, created_by, updated_by)

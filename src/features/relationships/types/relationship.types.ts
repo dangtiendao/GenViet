@@ -13,11 +13,32 @@ export type RelationActionType =
   | "add_adoptive_parent"
   | "add_spouse"
   | "add_child"
+  | "add_sibling"
   | "link_father"
   | "link_mother"
   | "link_adoptive_parent"
   | "link_spouse"
-  | "link_child";
+  | "link_child"
+  | "link_sibling";
+
+export interface ParentWithDetails {
+  id: string;
+  parentId: string;
+  parentName: string;
+  parentRole: ParentRole;
+  gender: Database["public"]["Enums"]["gender_type"];
+  livingStatus: Database["public"]["Enums"]["living_status_type"];
+}
+
+export interface SpouseWithDetails {
+  id: string;
+  spouseId: string;
+  spouseName: string;
+  gender: Database["public"]["Enums"]["gender_type"];
+  livingStatus: Database["public"]["Enums"]["living_status_type"];
+  unionId: string;
+  unionStatus: UnionStatus;
+}
 
 export interface ParentChildRelationship {
   id: string;

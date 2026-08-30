@@ -50,11 +50,11 @@ describe("P22-T05: Layout Fingerprint & Dimensions (Layout Input)", () => {
 
   it("cấu hình layout ELK định nghĩa đúng hướng DOWN và khoảng cách chuẩn", () => {
     expect(TREE_LAYOUT_CONFIG.DEFAULT_DIRECTION).toBe("DOWN");
-    expect(TREE_LAYOUT_CONFIG.PERSON_NODE_WIDTH).toBe(220);
-    expect(TREE_LAYOUT_CONFIG.PERSON_NODE_HEIGHT).toBe(90);
+    expect(TREE_LAYOUT_CONFIG.PERSON_NODE_WIDTH).toBe(260);
+    expect(TREE_LAYOUT_CONFIG.PERSON_NODE_HEIGHT).toBe(100);
     expect(TREE_LAYOUT_CONFIG.UNION_NODE_WIDTH).toBe(16);
     expect(TREE_LAYOUT_CONFIG.UNION_NODE_HEIGHT).toBe(16);
-    expect(TREE_LAYOUT_CONFIG.LAYER_SPACING).toBe(80);
+    expect(TREE_LAYOUT_CONFIG.LAYER_SPACING).toBe(90);
   });
 
   it("fingerprint không đổi khi chỉ thay đổi selection hoặc pan/zoom state", () => {

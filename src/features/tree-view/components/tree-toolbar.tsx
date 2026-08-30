@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Users, Crown, RotateCcw, AlertTriangle } from "lucide-react";
+import { Users, Crown, RotateCcw, RotateCw, AlertTriangle, Network } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GraphPersonDto } from "@/features/tree-graph/types/tree-graph.types";
 
@@ -13,6 +13,9 @@ export interface TreeToolbarProps {
   descendantDepth: number;
   isTruncated?: boolean;
   onResetExpansion?: () => void;
+  onExpandFullTree?: () => void;
+  onReload?: () => void;
+  isRefreshing?: boolean;
 }
 
 export function TreeToolbar({
@@ -22,6 +25,9 @@ export function TreeToolbar({
   descendantDepth,
   isTruncated,
   onResetExpansion,
+  onExpandFullTree,
+  onReload,
+  isRefreshing,
 }: TreeToolbarProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 bg-white/90 px-4 py-2.5 backdrop-blur-xs">
@@ -52,6 +58,38 @@ export function TreeToolbar({
       </div>
 
       <div className="flex items-center gap-2">
+        {onExpandFullTree && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onExpandFullTree}
+            disabled={isRefreshing}
+            className="h-8 border-emerald-300 bg-emerald-50/60 text-xs font-medium text-emerald-800 shadow-2xs hover:bg-emerald-100 hover:text-emerald-900"
+            title="Hiển thị toàn bộ các đời và tất cả thành viên trong gia phả"
+          >
+            <Network className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
+            <span>Xem toàn bộ cây</span>
+          </Button>
+        )}
+
+        {onReload && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onReload}
+            disabled={isRefreshing}
+            className="h-8 text-xs text-neutral-700 hover:bg-neutral-50"
+            title="Tải lại toàn bộ dữ liệu cây gia phả"
+          >
+            <RotateCw
+              className={`mr-1.5 h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-emerald-600" : ""}`}
+            />
+            <span>Tải lại cây</span>
+          </Button>
+        )}
+
         {onResetExpansion && (
           <Button
             type="button"

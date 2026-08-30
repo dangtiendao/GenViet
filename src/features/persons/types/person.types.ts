@@ -66,8 +66,14 @@ export interface RelatedPersonSummary {
   fullName: string;
   gender: GenderType;
   livingStatus: LivingStatusType;
+  birthDate?: string | null;
   birthYear: number | null;
+  birthDatePrecision?: DatePrecisionType;
+  birthIsEstimated?: boolean;
+  deathDate?: string | null;
   deathYear: number | null;
+  deathDatePrecision?: DatePrecisionType;
+  deathIsEstimated?: boolean;
 }
 
 export interface ParentRelationshipItem {
@@ -94,10 +100,22 @@ export interface SpouseRelationshipItem {
   unionStatus: Database["public"]["Enums"]["union_status_type"];
 }
 
+export interface SiblingRelationshipItem {
+  id: string;
+  sibling: RelatedPersonSummary;
+  sharedType: "full" | "paternal" | "maternal" | "shared";
+  sharedParents: Array<{
+    id: string;
+    fullName: string;
+    role: ParentRoleType;
+  }>;
+}
+
 export interface PersonRelationshipSummary {
   parents: ParentRelationshipItem[];
   children: ChildRelationshipItem[];
   spouses: SpouseRelationshipItem[];
+  siblings: SiblingRelationshipItem[];
 }
 
 export interface PersonDetail extends Person {

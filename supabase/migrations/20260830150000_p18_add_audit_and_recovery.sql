@@ -114,7 +114,7 @@ CREATE POLICY audit_logs_select_tree_members ON public.audit_logs
     FOR SELECT
     TO authenticated
     USING (
-        _system.can_access_tree(tree_id, auth.uid())
+        _system.is_active_tree_member(tree_id, auth.uid())
     );
 
 -- Lưu ý: Tuyệt đối không tạo policy INSERT, UPDATE, DELETE cho authenticated role để đảm bảo tính bất biến (Immutability).
@@ -161,7 +161,7 @@ BEGIN
     v_actor_id := COALESCE(p_actor_user_id, auth.uid());
 
     IF v_actor_id IS NOT NULL THEN
-        SELECT full_name INTO v_actor_name
+        SELECT display_name INTO v_actor_name
         FROM public.profiles
         WHERE id = v_actor_id;
     END IF;

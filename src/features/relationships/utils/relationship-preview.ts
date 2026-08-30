@@ -83,6 +83,10 @@ export function buildRelationshipPreview(params: {
     case "link_child":
       summaryText = `«${params.relatedPersonName}» sẽ được liên kết là Con của «${params.subjectPersonName}».`;
       break;
+    case "add_sibling":
+    case "link_sibling":
+      summaryText = `«${params.relatedPersonName}» sẽ được liên kết là Anh/Chị/Em với «${params.subjectPersonName}».`;
+      break;
     default:
       summaryText = `Thiết lập quan hệ giữa «${params.subjectPersonName}» và «${params.relatedPersonName}».`;
   }

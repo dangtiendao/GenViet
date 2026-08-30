@@ -19,6 +19,10 @@ SET TIME ZONE 'UTC';
 CREATE SCHEMA IF NOT EXISTS _system;
 COMMENT ON SCHEMA _system IS 'Internal system schema for infrastructure tracking and migration verification';
 
+GRANT USAGE ON SCHEMA _system TO postgres, authenticated, anon, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA _system GRANT EXECUTE ON FUNCTIONS TO postgres, authenticated, anon, service_role;
+
+
 -- 4. Bảng kỹ thuật theo dõi trạng thái hạ tầng hệ thống
 CREATE TABLE IF NOT EXISTS _system.infrastructure_status (
     id TEXT PRIMARY KEY DEFAULT 'genviet_foundation',

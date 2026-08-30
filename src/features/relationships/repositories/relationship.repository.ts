@@ -5,10 +5,89 @@ import type {
   RelatedPersonCandidate,
   ParentChildRelationship,
   UnionEntity,
+  ParentWithDetails,
+  SpouseWithDetails,
 } from "../types/relationship.types";
 import { normalizePersonName } from "@/features/persons/utils/normalize-person-name";
 
 export class RelationshipRepository {
+  /**
+   * Lấy danh sách vợ/chồng (phối ngẫu) hiện có của nhân vật kèm thông tin chi tiết
+   */
+  static async getSpousesWithDetails(
+    treeId: string,
+    personId: string
+  ): Promise<SpouseWithDetails[]> {
+    const supabase = await createClient();
+
+    // 1. Lấy tất cả union_id mà personId tham gia
+    const { data: myMemberships, error: mErr } = await supabase
+      .from("union_members")
+      .select("union_id")
+      .eq("tree_id", treeId)
+      .eq("person_id", personId)
+      .is("deleted_at", null);
+
+    if (mErr || !myMemberships || myMemberships.length === 0) {
+      return [];
+    }
+
+    const unionIds = myMemberships.map((m) => m.union_id);
+
+    // 2. Lấy tất cả thành viên khác trong các union này
+    const { data: otherMembers, error: oErr } = await supabase
+      .from("union_members")
+      .select("id, union_id, person_id")
+      .eq("tree_id", treeId)
+      .in("union_id", unionIds)
+      .neq("person_id", personId)
+      .is("deleted_at", null);
+
+    if (oErr || !otherMembers || otherMembers.length === 0) {
+      return [];
+    }
+
+    const spousePersonIds = Array.from(new Set(otherMembers.map((m) => m.person_id)));
+
+    // 3. Lấy thông tin chi tiết người phối ngẫu và union
+    const [personsRes, unionsRes] = await Promise.all([
+      supabase
+        .from("persons")
+        .select("id, full_name, gender, living_status")
+        .eq("tree_id", treeId)
+        .in("id", spousePersonIds)
+        .is("deleted_at", null),
+      supabase
+        .from("unions")
+        .select("id, status")
+        .eq("tree_id", treeId)
+        .in("id", unionIds)
+        .is("deleted_at", null),
+    ]);
+
+    const personMap = new Map((personsRes.data || []).map((p) => [p.id, p]));
+    const unionMap = new Map((unionsRes.data || []).map((u) => [u.id, u]));
+
+    const result: SpouseWithDetails[] = [];
+    for (const mem of otherMembers) {
+      const p = personMap.get(mem.person_id);
+      const u = unionMap.get(mem.union_id);
+      if (p) {
+        result.push({
+          id: mem.id,
+          spouseId: p.id,
+          spouseName: p.full_name,
+          gender: p.gender,
+          livingStatus: p.living_status,
+          unionId: mem.union_id,
+          unionStatus: u?.status || "active",
+        });
+      }
+    }
+
+    return result;
+  }
+
   /**
    * Tìm danh sách các ứng viên trong cùng cây gia phả để liên kết
    */
@@ -81,6 +160,55 @@ export class RelationshipRepository {
       updatedAt: row.updated_at,
       deletedAt: row.deleted_at,
     }));
+  }
+
+  /**
+   * Lấy danh sách cha/mẹ kèm thông tin hiển thị (tên, vai trò, giới tính)
+   */
+  static async getParentsWithDetails(
+    treeId: string,
+    childId: string
+  ): Promise<ParentWithDetails[]> {
+    const supabase = await createClient();
+    const { data: rels, error: rErr } = await supabase
+      .from("parent_child_relationships")
+      .select("id, parent_id, parent_role")
+      .eq("tree_id", treeId)
+      .eq("child_id", childId)
+      .is("deleted_at", null);
+
+    if (rErr || !rels || rels.length === 0) {
+      return [];
+    }
+
+    const parentIds = rels.map((r) => r.parent_id);
+    const { data: persons, error: pErr } = await supabase
+      .from("persons")
+      .select("id, full_name, gender, living_status")
+      .eq("tree_id", treeId)
+      .in("id", parentIds)
+      .is("deleted_at", null);
+
+    if (pErr || !persons) {
+      return [];
+    }
+
+    const personMap = new Map(persons.map((p) => [p.id, p]));
+
+    return rels
+      .map((r) => {
+        const p = personMap.get(r.parent_id);
+        if (!p) return null;
+        return {
+          id: r.id,
+          parentId: r.parent_id,
+          parentName: p.full_name,
+          parentRole: r.parent_role,
+          gender: p.gender,
+          livingStatus: p.living_status,
+        };
+      })
+      .filter((item): item is ParentWithDetails => item !== null);
   }
 
   /**
@@ -254,6 +382,9 @@ export class RelationshipRepository {
     parentRole?: Database["public"]["Enums"]["parent_role_type"];
     relationshipKind?: Database["public"]["Enums"]["relationship_kind_type"];
     verificationStatus?: Database["public"]["Enums"]["verification_status_type"];
+    otherParentId?: string | null;
+    otherParentRole?: Database["public"]["Enums"]["parent_role_type"];
+    otherRelationshipKind?: Database["public"]["Enums"]["relationship_kind_type"];
     confirmWarnings?: boolean;
   }): Promise<string> {
     const supabase = await createClient();
@@ -269,6 +400,22 @@ export class RelationshipRepository {
 
     if (error) {
       throw error;
+    }
+
+    if (args.otherParentId) {
+      try {
+        await supabase.rpc("link_existing_child", {
+          p_tree_id: args.treeId,
+          p_parent_id: args.otherParentId,
+          p_child_id: args.childId,
+          p_parent_role: args.otherParentRole || "unspecified",
+          p_relationship_kind: args.otherRelationshipKind || "biological",
+          p_verification_status: args.verificationStatus || "unverified",
+          p_confirm_warnings: args.confirmWarnings || false,
+        });
+      } catch (err) {
+        console.warn("[linkExistingChild] Warning linking other parent:", err);
+      }
     }
 
     return data as string;
@@ -473,5 +620,79 @@ export class RelationshipRepository {
     }
 
     return data as string;
+  }
+
+  /**
+   * Tự động kiểm tra và thiết lập quan hệ vợ chồng (Spousal Union) giữa các cha mẹ của cùng một người con
+   */
+  static async ensureSpouseUnionForParents(
+    treeId: string,
+    childId: string,
+    newParentId: string
+  ): Promise<string | null> {
+    const supabase = await createClient();
+
+    // 1. Tìm các cha/mẹ khác của childId
+    const { data: otherParents, error: pErr } = await supabase
+      .from("parent_child_relationships")
+      .select("parent_id, parent_role")
+      .eq("tree_id", treeId)
+      .eq("child_id", childId)
+      .neq("parent_id", newParentId)
+      .is("deleted_at", null);
+
+    if (pErr || !otherParents || otherParents.length === 0) {
+      return null;
+    }
+
+    for (const other of otherParents) {
+      const otherParentId = other.parent_id;
+
+      // 2. Tìm xem newParentId và otherParentId đã có union chung chưa
+      const { data: myUnions } = await supabase
+        .from("union_members")
+        .select("union_id")
+        .eq("tree_id", treeId)
+        .eq("person_id", newParentId)
+        .is("deleted_at", null);
+
+      const myUnionIds = (myUnions || []).map((u) => u.union_id);
+
+      let hasExistingUnion = false;
+      if (myUnionIds.length > 0) {
+        const { data: partnerInSameUnion } = await supabase
+          .from("union_members")
+          .select("id")
+          .eq("tree_id", treeId)
+          .in("union_id", myUnionIds)
+          .eq("person_id", otherParentId)
+          .is("deleted_at", null)
+          .limit(1);
+
+        if (partnerInSameUnion && partnerInSameUnion.length > 0) {
+          hasExistingUnion = true;
+        }
+      }
+
+      // 3. Nếu chưa có union chung, gọi RPC tạo union active giữa 2 người
+      if (!hasExistingUnion) {
+        try {
+          const unionId = await this.createUnionWithExistingPerson({
+            treeId,
+            person1Id: newParentId,
+            person2Id: otherParentId,
+            member1Role: "spouse",
+            member2Role: "spouse",
+            unionStatus: "active",
+            confirmWarnings: true,
+          });
+          return unionId;
+        } catch (uErr) {
+          console.warn("[ensureSpouseUnionForParents] Warning creating spousal union:", uErr);
+        }
+      }
+    }
+
+    return null;
   }
 }

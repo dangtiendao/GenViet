@@ -24,7 +24,8 @@ BEGIN
     NEW.updated_at = timezone('utc'::text, now());
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, _system, pg_temp;
+
 
 COMMENT ON FUNCTION _system.set_updated_at() IS 'Trigger function automatically updating updated_at timestamp in UTC';
 
@@ -263,7 +264,8 @@ BEGIN
     NEW.normalized_name = _system.normalize_person_name(NEW.full_name);
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, _system, extensions, pg_temp;
+
 
 CREATE TRIGGER trg_persons_maintain_normalized_name
 BEFORE INSERT OR UPDATE OF full_name ON public.persons

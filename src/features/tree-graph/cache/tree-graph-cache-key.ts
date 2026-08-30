@@ -15,8 +15,9 @@ export function buildTreeGraphCacheKey(
   const dDepth = input.descendantDepth;
   const spouses = input.includeSpouses ? 1 : 0;
   const unverified = input.includeUnverified ? 1 : 0;
+  const full = input.fullTree ? 1 : 0;
 
-  return `tree-graph:${userScope}:${input.treeId}:${input.centerPersonId}:a${aDepth}:d${dDepth}:s${spouses}:u${unverified}:v${schemaVersion}`;
+  return `tree-graph:${userScope}:${input.treeId}:${input.centerPersonId}:a${aDepth}:d${dDepth}:s${spouses}:u${unverified}:f${full}:v${schemaVersion}`;
 }
 
 /**

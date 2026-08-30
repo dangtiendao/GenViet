@@ -11,16 +11,22 @@ export interface UseTreeGraphParams {
   descendantDepth: number;
   includeSpouses?: boolean;
   includeUnverified?: boolean;
+  fullTree?: boolean;
 }
 
 export function useTreeGraph(params: UseTreeGraphParams) {
   const [data, setData] = useState<TreeGraphDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => Boolean(params.treeId && params.centerPersonId));
   const [error, setError] = useState<TreeViewDomainError | null>(null);
   const reqSeqRef = useRef(0);
 
   const fetchGraph = useCallback(async () => {
-    if (!params.treeId || !params.centerPersonId) return;
+    if (!params.treeId || !params.centerPersonId) {
+      setIsLoading(false);
+      setData(null);
+      setError(null);
+      return;
+    }
 
     const seq = ++reqSeqRef.current;
     setIsLoading(true);
@@ -32,6 +38,7 @@ export function useTreeGraph(params: UseTreeGraphParams) {
       descendantDepth: String(params.descendantDepth),
       includeSpouses: String(params.includeSpouses ?? true),
       includeUnverified: String(params.includeUnverified ?? true),
+      fullTree: String(params.fullTree ?? false),
     });
 
     try {
@@ -81,6 +88,7 @@ export function useTreeGraph(params: UseTreeGraphParams) {
     params.descendantDepth,
     params.includeSpouses,
     params.includeUnverified,
+    params.fullTree,
   ]);
 
   useEffect(() => {

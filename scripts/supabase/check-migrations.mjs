@@ -65,7 +65,77 @@ if (hasErrors) {
   process.exit(1);
 }
 
+// ==============================================================================
+// Check full_schema.sql Freshness & Synchronization
+// ==============================================================================
+const fullSchemaPath = path.resolve(__dirname, "../../supabase/full_schema.sql");
+
+if (!fs.existsSync(fullSchemaPath)) {
+  console.error("❌ Missing unified deployment file: supabase/full_schema.sql");
+  console.error("👉 Please run: npm run supabase:schema:bundle to generate it.");
+  process.exit(1);
+}
+
+const existingFullSchema = fs.readFileSync(fullSchemaPath, "utf-8").replace(/\r\n/g, "\n").trim();
+
+// Generate expected bundle content
+let expectedContent = "";
+expectedContent +=
+  "-- ==============================================================================\n";
+expectedContent += "-- PROJECT: GenViet - Responsive Web App Quản Lý Cây Gia Phả\n";
+expectedContent += "-- FILE: supabase/full_schema.sql\n";
+expectedContent +=
+  "-- MỤC ĐÍCH: Hợp nhất toàn bộ các file migration SQL để triển khai 1 lần duy nhất.\n";
+expectedContent +=
+  "-- GHI CHÚ: File này được tổng hợp tuần tự từ tất cả migration trong supabase/migrations/.\n";
+expectedContent +=
+  "--          Các file migration gốc vẫn được giữ nguyên đầy đủ để quản lý theo version.\n";
+expectedContent += `-- TỔNG SỐ MIGRATION: ${files.length}\n`;
+expectedContent +=
+  "-- ==============================================================================\n\n";
+
+expectedContent +=
+  "-- ==============================================================================\n";
+expectedContent += "-- DANH SÁCH CÁC MIGRATION ĐƯỢC HỢP NHẤT (THEO THỨ TỰ THỜI GIAN):\n";
+files.forEach((file, idx) => {
+  expectedContent += `--   ${String(idx + 1).padStart(2, "0")}. ${file}\n`;
+});
+expectedContent +=
+  "-- ==============================================================================\n\n";
+
+files.forEach((file, idx) => {
+  const filePath = path.join(migrationsDir, file);
+  const fileContent = fs.readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n");
+
+  expectedContent +=
+    "/*******************************************************************************\n";
+  expectedContent += ` * [${String(idx + 1).padStart(2, "0")}/${String(files.length).padStart(2, "0")}] MIGRATION: ${file}\n`;
+  expectedContent +=
+    " *******************************************************************************/\n\n";
+
+  expectedContent += fileContent.trim() + "\n\n";
+});
+
+expectedContent +=
+  "-- ==============================================================================\n";
+expectedContent += "-- HOÀN TẤT TRIỂN KHAI TOÀN BỘ SCHEMA GENVIET\n";
+expectedContent +=
+  "-- ==============================================================================";
+
+if (existingFullSchema !== expectedContent.trim()) {
+  console.error(
+    "❌ STALE_FULL_SCHEMA: supabase/full_schema.sql is out of sync with migration files!"
+  );
+  console.error(
+    "👉 Changes in supabase/migrations/ were detected that are not reflected in full_schema.sql."
+  );
+  console.error(
+    "👉 Run 'npm run supabase:schema:bundle' to re-bundle and synchronize full_schema.sql."
+  );
+  process.exit(1);
+}
+
 console.log(
-  `✅ All ${files.length} migration file(s) passed naming, structure, and security verification!`
+  `✅ All ${files.length} migration file(s) and supabase/full_schema.sql passed naming, structure, sync, and security verification!`
 );
 process.exit(0);

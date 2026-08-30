@@ -41,3 +41,16 @@ $$\text{YYYYMMDDHHMMSS\_<action>\_<entity>\_<purpose>.sql}$$
    - Cấm ghi API keys, token, mật khẩu hoặc dữ liệu họ tên người thật vào migration SQL.
 4. **Không kết hợp tùy tiện DDL và DML nặng:**
    - Thay đổi cấu trúc bảng (DDL) và nạp dữ liệu chuyển đổi lớn (Data backfill) nên được tách biệt thành các bước độc lập khi áp dụng môi trường production.
+
+---
+
+## 4. Quy tắc Đồng bộ File Triển khai Hợp nhất (`supabase/full_schema.sql`)
+
+1. **Bắt buộc luôn đồng bộ 100%:** File `supabase/full_schema.sql` là bản hợp nhất toàn diện phục vụ triển khai toàn bộ CSDL trong một lần duy nhất. **Bất kỳ khi nào tạo mới, sửa đổi hoặc cập nhật bất kỳ file SQL migration con nào trong `supabase/migrations/`, BẮT BUỘC phải chạy lệnh tái tạo bundle:**
+   ```bash
+   npm run supabase:schema:bundle
+   ```
+2. **Kiểm tra tự động bắt buộc (CI/CD Quality Gate):**
+   - Script `npm run supabase:migrations:check` tự động so khớp nội dung của `supabase/full_schema.sql` với toàn bộ chuỗi migration con.
+   - Nếu `full_schema.sql` bị cũ (stale) hoặc thiếu bất kỳ câu lệnh nào từ các file migration con, quy trình kiểm tra CI/CD sẽ báo lỗi và chặn build ngay lập tức.
+

@@ -109,7 +109,7 @@ EXCEPTION
     WHEN OTHERS THEN
         RETURN NULL;
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER SET search_path = public, _system, extensions, pg_temp;
 
 CREATE OR REPLACE FUNCTION _system.extract_person_id_from_avatar_path(name text)
 RETURNS uuid AS $$
@@ -127,8 +127,8 @@ BEGIN
     IF array_length(v_parts, 1) >= 4 AND v_parts[1] = 'trees' AND v_parts[3] = 'persons' THEN
         v_person_str := v_parts[4];
     -- Pattern 2: temporary/trees/{tree_id}/persons/{person_id}/...
-    ELSIF array_length(v_parts, 1) >= 5 AND v_parts[1] = 'temporary' AND v_parts[2] = 'trees' AND v_parts[3] = 'persons' THEN
-        v_person_str := v_parts[4];
+    ELSIF array_length(v_parts, 1) >= 5 AND v_parts[1] = 'temporary' AND v_parts[2] = 'trees' AND v_parts[4] = 'persons' THEN
+        v_person_str := v_parts[5];
     ELSE
         RETURN NULL;
     END IF;
@@ -142,7 +142,11 @@ EXCEPTION
     WHEN OTHERS THEN
         RETURN NULL;
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER SET search_path = public, _system, extensions, pg_temp;
+
+GRANT EXECUTE ON FUNCTION _system.extract_tree_id_from_avatar_path(text) TO authenticated, anon, service_role;
+GRANT EXECUTE ON FUNCTION _system.extract_person_id_from_avatar_path(text) TO authenticated, anon, service_role;
+
 
 -- ------------------------------------------------------------------------------
 -- 5. RLS POLICIES CHO BẢNG METADATA (public.person_avatars)
@@ -292,3 +296,40 @@ USING (
           AND tm.role IN ('owner', 'admin', 'editor')
     )
 );
+
+-- 6.4. UPDATE POLICY (UPDATE / OVERWRITE)
+CREATE POLICY person_avatars_storage_update_policy
+ON storage.objects
+FOR UPDATE
+TO authenticated
+USING (
+    bucket_id = 'person-avatars'
+    AND EXISTS (
+        SELECT 1
+        FROM public.tree_memberships tm
+        JOIN public.persons p ON p.id = _system.extract_person_id_from_avatar_path(name)
+        WHERE tm.tree_id = _system.extract_tree_id_from_avatar_path(name)
+          AND tm.user_id = auth.uid()
+          AND tm.deleted_at IS NULL
+          AND tm.status = 'active'
+          AND tm.role IN ('owner', 'admin', 'editor')
+          AND p.tree_id = tm.tree_id
+          AND p.deleted_at IS NULL
+    )
+)
+WITH CHECK (
+    bucket_id = 'person-avatars'
+    AND EXISTS (
+        SELECT 1
+        FROM public.tree_memberships tm
+        JOIN public.persons p ON p.id = _system.extract_person_id_from_avatar_path(name)
+        WHERE tm.tree_id = _system.extract_tree_id_from_avatar_path(name)
+          AND tm.user_id = auth.uid()
+          AND tm.deleted_at IS NULL
+          AND tm.status = 'active'
+          AND tm.role IN ('owner', 'admin', 'editor')
+          AND p.tree_id = tm.tree_id
+          AND p.deleted_at IS NULL
+    )
+);
+

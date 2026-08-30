@@ -7,6 +7,8 @@ import type { PersonRelationshipSummary } from "../types/person.types";
 import { DeleteRelationshipDialog } from "@/features/relationships/components/delete-relationship-dialog";
 import { EndUnionDialog } from "@/features/relationships/components/end-union-dialog";
 
+import { formatGenealogyDate } from "../utils/partial-date-mapper";
+
 const PARENT_ROLE_LABELS: Record<string, string> = {
   father: "Cha",
   mother: "Mẹ",
@@ -20,6 +22,39 @@ const UNION_STATUS_LABELS: Record<string, string> = {
   widowed: "Góa",
   former: "Cựu phối ngẫu",
 };
+
+function renderPersonLifespan(person: {
+  birthDate?: string | null;
+  birthYear: number | null;
+  birthDatePrecision?: any;
+  birthIsEstimated?: boolean;
+  deathDate?: string | null;
+  deathYear: number | null;
+  deathDatePrecision?: any;
+  deathIsEstimated?: boolean;
+}) {
+  const birthStr = formatGenealogyDate(
+    person.birthDate ?? null,
+    person.birthYear ?? null,
+    person.birthDatePrecision ??
+      (person.birthDate ? "exact" : person.birthYear ? "year" : "unknown"),
+    Boolean(person.birthIsEstimated)
+  );
+
+  const deathStr = formatGenealogyDate(
+    person.deathDate ?? null,
+    person.deathYear ?? null,
+    person.deathDatePrecision ??
+      (person.deathDate ? "exact" : person.deathYear ? "year" : "unknown"),
+    Boolean(person.deathIsEstimated)
+  );
+
+  const birthPart =
+    birthStr !== "Chưa rõ" ? `Sinh ${birthStr.replace(/^Năm\s+/i, "")}` : "Năm sinh chưa rõ";
+  const deathPart = deathStr !== "Chưa rõ" ? ` - Mất ${deathStr.replace(/^Năm\s+/i, "")}` : "";
+
+  return `${birthPart}${deathPart}`;
+}
 
 export function PersonRelationshipList({
   treeId,
@@ -48,7 +83,8 @@ export function PersonRelationshipList({
   const hasParents = relationships.parents.length > 0;
   const hasChildren = relationships.children.length > 0;
   const hasSpouses = relationships.spouses.length > 0;
-  const hasAny = hasParents || hasChildren || hasSpouses;
+  const hasSiblings = Boolean(relationships.siblings && relationships.siblings.length > 0);
+  const hasAny = hasParents || hasChildren || hasSpouses || hasSiblings;
 
   if (!hasAny) {
     return (
@@ -56,8 +92,8 @@ export function PersonRelationshipList({
         <Users className="mx-auto mb-2 h-8 w-8 text-neutral-400" aria-hidden="true" />
         <h4 className="text-xs font-semibold text-neutral-800">Chưa có liên kết quan hệ</h4>
         <p className="mt-0.5 text-[11px] text-neutral-500">
-          Nhân vật này chưa được liên kết với cha mẹ, con cái hoặc vợ chồng. Sử dụng nút &quot;Thêm
-          người thân&quot; để thiết lập quan hệ.
+          Nhân vật này chưa được liên kết với cha mẹ, con cái, anh chị em hoặc vợ chồng. Sử dụng nút
+          &quot;Thêm người thân&quot; để thiết lập quan hệ.
         </p>
       </div>
     );
@@ -97,8 +133,7 @@ export function PersonRelationshipList({
                       </Link>
                     </div>
                     <div className="mt-1 text-[11px] text-neutral-500">
-                      {item.parent.birthYear ? `Sinh ${item.parent.birthYear}` : "Năm sinh chưa rõ"}
-                      {item.parent.deathYear ? ` - Mất ${item.parent.deathYear}` : ""}
+                      {renderPersonLifespan(item.parent)}
                     </div>
                   </div>
 
@@ -158,8 +193,7 @@ export function PersonRelationshipList({
                       </Link>
                     </div>
                     <div className="mt-1 text-[11px] text-neutral-500">
-                      {item.spouse.birthYear ? `Sinh ${item.spouse.birthYear}` : "Năm sinh chưa rõ"}
-                      {item.spouse.deathYear ? ` - Mất ${item.spouse.deathYear}` : ""}
+                      {renderPersonLifespan(item.spouse)}
                     </div>
                   </div>
 
@@ -241,8 +275,7 @@ export function PersonRelationshipList({
                       </Link>
                     </div>
                     <div className="mt-1 text-[11px] text-neutral-500">
-                      {item.child.birthYear ? `Sinh ${item.child.birthYear}` : "Năm sinh chưa rõ"}
-                      {item.child.deathYear ? ` - Mất ${item.child.deathYear}` : ""}
+                      {renderPersonLifespan(item.child)}
                     </div>
                   </div>
 
@@ -268,6 +301,60 @@ export function PersonRelationshipList({
             </div>
           ) : (
             <p className="text-xs text-neutral-400 italic">Chưa có thông tin con cái.</p>
+          )}
+        </div>
+
+        {/* 4. ANH / CHỊ / EM */}
+        <div className="space-y-2.5">
+          <h4 className="flex items-center text-xs font-bold tracking-wider text-neutral-900 uppercase">
+            <Users className="mr-1.5 h-3.5 w-3.5 text-indigo-700" aria-hidden="true" />
+            Anh / Chị / Em ({relationships.siblings?.length || 0})
+          </h4>
+
+          {hasSiblings ? (
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {relationships.siblings.map((item) => {
+                let badgeLabel = "Anh/Chị/Em";
+                if (item.sharedType === "full") badgeLabel = "Ruột (Cùng cha & mẹ)";
+                else if (item.sharedType === "paternal") badgeLabel = "Cùng cha khác mẹ";
+                else if (item.sharedType === "maternal") badgeLabel = "Cùng mẹ khác cha";
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-3 shadow-2xs transition-colors hover:border-indigo-300"
+                  >
+                    <div>
+                      <div className="flex items-center space-x-1.5">
+                        <span className="inline-flex items-center rounded border border-indigo-200/50 bg-indigo-50 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-800">
+                          {badgeLabel}
+                        </span>
+                        <Link
+                          href={`/trees/${treeId}/people/${item.sibling.id}`}
+                          className="inline-flex items-center rounded text-xs font-semibold text-neutral-900 hover:text-indigo-700 focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:outline-none"
+                        >
+                          {item.sibling.fullName}
+                          <ArrowUpRight
+                            className="ml-0.5 h-3 w-3 text-neutral-400"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </div>
+                      <div className="mt-1 text-[11px] text-neutral-500">
+                        {renderPersonLifespan(item.sibling)}
+                      </div>
+                      {item.sharedParents.length > 0 && (
+                        <div className="mt-0.5 text-[10px] text-neutral-400">
+                          Cha/Mẹ chung: {item.sharedParents.map((p) => p.fullName).join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-xs text-neutral-400 italic">Chưa có thông tin anh chị em.</p>
           )}
         </div>
       </div>

@@ -12,7 +12,7 @@
 -- Helper: Check if a user has an active membership in a given Family Tree
 CREATE OR REPLACE FUNCTION _system.is_active_tree_member(
     p_tree_id UUID,
-    p_user_id UUID DEFAULT (select auth.uid())
+    p_user_id UUID DEFAULT auth.uid()
 )
 RETURNS BOOLEAN
 LANGUAGE sql
@@ -33,7 +33,7 @@ $$;
 -- Helper: Check if a user is an active Owner of a given Family Tree
 CREATE OR REPLACE FUNCTION _system.is_tree_owner(
     p_tree_id UUID,
-    p_user_id UUID DEFAULT (select auth.uid())
+    p_user_id UUID DEFAULT auth.uid()
 )
 RETURNS BOOLEAN
 LANGUAGE sql
@@ -55,7 +55,7 @@ $$;
 -- Helper: Check if a user has write permission in a given Family Tree (Owner, Admin, Editor)
 CREATE OR REPLACE FUNCTION _system.can_write_tree(
     p_tree_id UUID,
-    p_user_id UUID DEFAULT (select auth.uid())
+    p_user_id UUID DEFAULT auth.uid()
 )
 RETURNS BOOLEAN
 LANGUAGE sql
@@ -74,6 +74,30 @@ AS $$
     );
 $$;
 
+-- Helper: Check if a user has read permission in a given Family Tree (Active member or Public tree)
+CREATE OR REPLACE FUNCTION _system.can_read_tree(
+    p_tree_id UUID,
+    p_user_id UUID DEFAULT auth.uid()
+)
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, _system, pg_temp
+AS $$
+    SELECT (
+        _system.is_active_tree_member(p_tree_id, p_user_id)
+        OR EXISTS (
+            SELECT 1
+            FROM public.family_trees ft
+            WHERE ft.id = p_tree_id
+              AND ft.privacy_level = 'public'::tree_privacy_level
+              AND ft.status = 'active'::tree_status
+              AND ft.deleted_at IS NULL
+        )
+    );
+$$;
+
 -- Revoke execute from PUBLIC and anon, grant to authenticated and service_role
 REVOKE EXECUTE ON FUNCTION _system.is_active_tree_member(UUID, UUID) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION _system.is_active_tree_member(UUID, UUID) TO authenticated, service_role;
@@ -83,6 +107,9 @@ GRANT EXECUTE ON FUNCTION _system.is_tree_owner(UUID, UUID) TO authenticated, se
 
 REVOKE EXECUTE ON FUNCTION _system.can_write_tree(UUID, UUID) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION _system.can_write_tree(UUID, UUID) TO authenticated, service_role;
+
+GRANT EXECUTE ON FUNCTION _system.can_read_tree(UUID, UUID) TO authenticated, anon, service_role;
+
 
 -- ------------------------------------------------------------------------------
 -- 2. Trigger Function: Prevent Immutable Columns Mutation (P08-T16)
@@ -204,6 +231,12 @@ REVOKE DELETE ON TABLE public.persons FROM authenticated;
 REVOKE DELETE ON TABLE public.parent_child_relationships FROM authenticated;
 REVOKE DELETE ON TABLE public.unions FROM authenticated;
 REVOKE DELETE ON TABLE public.union_members FROM authenticated;
+
+-- Grant schema usage on _system to authenticated and service_role so RLS policies and triggers can execute helper functions
+GRANT USAGE ON SCHEMA _system TO authenticated, anon, service_role;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA _system TO authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA _system GRANT EXECUTE ON FUNCTIONS TO authenticated, service_role;
+
 
 -- ------------------------------------------------------------------------------
 -- 4. Row Level Security Policies
