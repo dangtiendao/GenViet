@@ -20,6 +20,7 @@ export const serverEnvSchema = publicEnvSchema.extend({
   SUPABASE_DB_URL: z.string().url().optional(),
   SUPABASE_PROJECT_REF: z.string().min(1).optional(),
   CRON_SECRET: z.string().min(1).optional(),
+  HEARTBEAT_SECRET: z.string().min(1).optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -60,4 +61,5 @@ export const env = serverEnvSchema.parse({
   SUPABASE_DB_URL: process.env.SUPABASE_DB_URL || process.env.DATABASE_URL,
   SUPABASE_PROJECT_REF: process.env.SUPABASE_PROJECT_REF,
   CRON_SECRET: process.env.CRON_SECRET,
+  HEARTBEAT_SECRET: process.env.HEARTBEAT_SECRET || process.env.CRON_SECRET,
 });
