@@ -5,7 +5,11 @@ import { AccountForms } from "./account-forms";
 export default async function AccountPage() {
   const { user, profile } = await requireUser();
 
-  const currentDisplayName = profile?.display_name || "";
+  const currentDisplayName =
+    profile?.display_name ||
+    (user.user_metadata?.display_name as string) ||
+    (user.user_metadata?.full_name as string) ||
+    "";
 
   return (
     <div className="max-w-2xl space-y-6">

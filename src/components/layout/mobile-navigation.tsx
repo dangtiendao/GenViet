@@ -14,7 +14,7 @@ export function MobileNavigation() {
   return (
     <nav
       aria-label="Điều hướng dưới màn hình"
-      className="safe-area-bottom fixed right-0 bottom-0 left-0 z-40 flex h-16 w-full items-center justify-around border-t border-neutral-200 bg-white/95 backdrop-blur-xs lg:hidden"
+      className="fixed right-0 bottom-0 left-0 z-40 flex h-16 w-full items-center justify-around border-t border-neutral-200 bg-white/95 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur-xs lg:hidden"
     >
       {mobileItems.map((item: NavigationItem) => {
         const isActive =

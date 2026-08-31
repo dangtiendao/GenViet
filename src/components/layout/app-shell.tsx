@@ -28,9 +28,15 @@ export function AppShell({ displayName, email, children }: AppShellProps) {
 
       {/* Main App Layout Container */}
       <div className="flex min-w-0 flex-1 flex-col">
+        {/* Top Header */}
         <AppHeader displayName={displayName} email={email} />
 
-        <main id="main-content" tabIndex={-1} className="flex-1 p-4 pb-24 sm:p-6 lg:p-8 lg:pb-8">
+        {/* Main Content Area - Full Body Visible with Generous Bottom Padding for Mobile Nav */}
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 p-4 pb-36 sm:p-6 sm:pb-36 lg:p-8 lg:pb-8"
+        >
           <div className="mx-auto max-w-7xl">{children}</div>
         </main>
       </div>

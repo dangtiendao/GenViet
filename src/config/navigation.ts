@@ -1,4 +1,4 @@
-import { Home, GitFork, Search, User, Settings } from "lucide-react";
+import { Home, GitFork, Search, User } from "lucide-react";
 
 export interface NavigationItem {
   key: string;
@@ -45,15 +45,6 @@ export const MAIN_NAVIGATION: NavigationItem[] = [
     icon: User,
     isImplemented: true,
     showInMobileNav: true,
-    showInDesktopSidebar: true,
-  },
-  {
-    key: "settings",
-    label: "Cài đặt",
-    href: "/account",
-    icon: Settings,
-    isImplemented: true,
-    showInMobileNav: false,
     showInDesktopSidebar: true,
   },
 ];
