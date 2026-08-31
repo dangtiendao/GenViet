@@ -42,6 +42,11 @@ export interface FamilyTreeSettings {
   version: number;
   generationAnchorPersonId: string | null;
   role: MembershipRole;
+  publicSlug?: string | null;
+  publishedAt?: string | null;
+  publicationVersion?: number;
+  livingPersonPolicy?: "REDACTED" | "STRICT";
+  searchEngineVisibility?: "NOINDEX" | "INDEX";
 }
 
 export interface TreePersonOption {

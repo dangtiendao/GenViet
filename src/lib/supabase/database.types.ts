@@ -87,6 +87,13 @@ export type Database = {
           status: Database["public"]["Enums"]["tree_status"];
           privacy_level: Database["public"]["Enums"]["tree_privacy_level"];
           generation_anchor_person_id: string | null;
+          public_slug: string | null;
+          published_at: string | null;
+          public_updated_at: string | null;
+          publication_version: number;
+          privacy_projection_version: number;
+          search_engine_visibility: "NOINDEX" | "INDEX";
+          living_person_policy: "REDACTED" | "STRICT";
           created_by: string | null;
           updated_by: string | null;
           deleted_by: string | null;
@@ -102,6 +109,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["tree_status"];
           privacy_level?: Database["public"]["Enums"]["tree_privacy_level"];
           generation_anchor_person_id?: string | null;
+          public_slug?: string | null;
+          published_at?: string | null;
+          public_updated_at?: string | null;
+          publication_version?: number;
+          privacy_projection_version?: number;
+          search_engine_visibility?: "NOINDEX" | "INDEX";
+          living_person_policy?: "REDACTED" | "STRICT";
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -117,6 +131,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["tree_status"];
           privacy_level?: Database["public"]["Enums"]["tree_privacy_level"];
           generation_anchor_person_id?: string | null;
+          public_slug?: string | null;
+          published_at?: string | null;
+          public_updated_at?: string | null;
+          publication_version?: number;
+          privacy_projection_version?: number;
+          search_engine_visibility?: "NOINDEX" | "INDEX";
+          living_person_policy?: "REDACTED" | "STRICT";
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -212,6 +233,7 @@ export type Database = {
           biography: string | null;
           verification_status: Database["public"]["Enums"]["verification_status_type"];
           avatar_path: string | null;
+          public_visibility: "INHERIT_TREE" | "PRIVATE" | "PUBLIC_REDACTED" | "PUBLIC";
           created_by: string | null;
           updated_by: string | null;
           deleted_by: string | null;
@@ -243,6 +265,7 @@ export type Database = {
           biography?: string | null;
           verification_status?: Database["public"]["Enums"]["verification_status_type"];
           avatar_path?: string | null;
+          public_visibility?: "INHERIT_TREE" | "PRIVATE" | "PUBLIC_REDACTED" | "PUBLIC";
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -274,6 +297,7 @@ export type Database = {
           biography?: string | null;
           verification_status?: Database["public"]["Enums"]["verification_status_type"];
           avatar_path?: string | null;
+          public_visibility?: "INHERIT_TREE" | "PRIVATE" | "PUBLIC_REDACTED" | "PUBLIC";
           created_by?: string | null;
           updated_by?: string | null;
           deleted_by?: string | null;
@@ -906,6 +930,49 @@ export type Database = {
       import_family_tree_backup: {
         Args: {
           p_backup_data: Json;
+        };
+        Returns: Json;
+      };
+      publish_family_tree: {
+        Args: {
+          p_tree_id: string;
+          p_slug: string;
+          p_living_person_policy?: string;
+          p_search_engine_visibility?: string;
+          p_expected_version?: number | null;
+        };
+        Returns: Json;
+      };
+      unpublish_family_tree: {
+        Args: {
+          p_tree_id: string;
+          p_expected_version?: number | null;
+        };
+        Returns: Json;
+      };
+      get_public_tree_summary: {
+        Args: {
+          p_slug: string;
+        };
+        Returns: Json;
+      };
+      get_public_tree_graph_slice: {
+        Args: {
+          p_slug: string;
+          p_center_person_id?: string | null;
+          p_ancestor_depth?: number;
+          p_descendant_depth?: number;
+          p_include_spouses?: boolean;
+          p_include_unverified?: boolean;
+          p_descendant_traversal_mode?: string;
+          p_branch_boundary_person_id?: string | null;
+        };
+        Returns: Json;
+      };
+      get_public_person_profile: {
+        Args: {
+          p_slug: string;
+          p_person_id: string;
         };
         Returns: Json;
       };

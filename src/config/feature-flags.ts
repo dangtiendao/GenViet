@@ -24,6 +24,8 @@ export interface FeatureFlags {
   enableLargeTreePrint: boolean;
   storageProvider: "supabase" | "r2";
   enableCloudflareStaging: boolean;
+  enablePublicGuestView: boolean;
+  enableAllDescendantsPublic: boolean;
 }
 
 export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
@@ -46,6 +48,8 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
   enableLargeTreePrint: true,
   storageProvider: "supabase", // Mặc định sử dụng Supabase Storage Private Bucket
   enableCloudflareStaging: false,
+  enablePublicGuestView: true,
+  enableAllDescendantsPublic: false, // Mặc định OFF, đồ thị công khai dùng PATERNAL_LINE
 };
 
 export function getFeatureFlags(): FeatureFlags {
@@ -57,5 +61,7 @@ export function getFeatureFlags(): FeatureFlags {
     enableAddressTerms: process.env.NEXT_PUBLIC_ENABLE_ADDRESS_TERMS === "true",
     storageProvider: process.env.STORAGE_PROVIDER === "r2" ? "r2" : "supabase",
     enableCloudflareStaging: process.env.ENABLE_CLOUDFLARE_STAGING === "true",
+    enablePublicGuestView: process.env.NEXT_PUBLIC_ENABLE_PUBLIC_GUEST_VIEW !== "false",
+    enableAllDescendantsPublic: process.env.NEXT_PUBLIC_ENABLE_ALL_DESCENDANTS_PUBLIC === "true",
   };
 }

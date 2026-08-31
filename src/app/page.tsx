@@ -12,8 +12,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { listPublicTrees } from "@/features/public-trees/services/list-public-trees";
+import { PublicTreesShowcase } from "@/features/public-trees/components/public-trees-showcase";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const publicTrees = await listPublicTrees(6);
+
   return (
     <div className="flex min-h-screen flex-col bg-white text-neutral-900">
       {/* Top Header / Navigation */}
@@ -38,6 +42,11 @@ export default function HomePage() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden items-center space-x-8 text-sm font-medium text-neutral-600 md:flex">
+            {publicTrees.length > 0 && (
+              <a href="#gia-pha-cong-khai" className="transition-colors hover:text-emerald-800">
+                Gia phả công khai
+              </a>
+            )}
             <a href="#tinh-nang" className="transition-colors hover:text-emerald-800">
               Tính năng nổi bật
             </a>
@@ -212,6 +221,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Public Trees Showcase Section */}
+        <PublicTreesShowcase trees={publicTrees} />
 
         {/* Core Features Grid */}
         <section

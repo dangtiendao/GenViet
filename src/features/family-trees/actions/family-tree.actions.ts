@@ -232,3 +232,82 @@ export async function restoreFamilyTreeAction(
     };
   }
 }
+
+/**
+ * Server Action: Công khai cây gia phả (Publish)
+ */
+export async function publishFamilyTreeAction(
+  prevState: ActionResponse | null,
+  formData: FormData
+): Promise<ActionResponse> {
+  try {
+    await requireUser();
+
+    const treeId = formData.get("treeId") as string;
+    const slug = formData.get("slug") as string;
+    const livingPersonPolicy =
+      (formData.get("livingPersonPolicy") as "REDACTED" | "STRICT") || "REDACTED";
+    const searchEngineVisibility =
+      (formData.get("searchEngineVisibility") as "NOINDEX" | "INDEX") || "NOINDEX";
+    const expectedVersion = Number(formData.get("expectedVersion"));
+
+    const { publishFamilyTree } = await import("@/features/public-trees/publication/publish-tree");
+    await publishFamilyTree({
+      treeId,
+      slug,
+      livingPersonPolicy,
+      searchEngineVisibility,
+      expectedVersion: isNaN(expectedVersion) ? undefined : expectedVersion,
+    });
+
+    revalidatePath(`/trees/${treeId}`);
+    revalidatePath(`/trees/${treeId}/settings`);
+    revalidatePath(`/public/trees/${slug}`);
+    return { success: true };
+  } catch (err: unknown) {
+    const error = err as Error & { code?: string };
+    return {
+      success: false,
+      error: error.message || "Không thể công khai cây gia phả.",
+      errorCode: error.code,
+    };
+  }
+}
+
+/**
+ * Server Action: Chuyển cây gia phả về riêng tư (Unpublish)
+ */
+export async function unpublishFamilyTreeAction(
+  prevState: ActionResponse | null,
+  formData: FormData
+): Promise<ActionResponse> {
+  try {
+    await requireUser();
+
+    const treeId = formData.get("treeId") as string;
+    const currentSlug = (formData.get("currentSlug") as string) || undefined;
+    const expectedVersion = Number(formData.get("expectedVersion"));
+
+    const { unpublishFamilyTree } =
+      await import("@/features/public-trees/publication/unpublish-tree");
+    await unpublishFamilyTree({
+      treeId,
+      currentSlug,
+      expectedVersion: isNaN(expectedVersion) ? undefined : expectedVersion,
+    });
+
+    revalidatePath(`/trees/${treeId}`);
+    revalidatePath(`/trees/${treeId}/settings`);
+    if (currentSlug) {
+      revalidatePath(`/public/trees/${currentSlug}`);
+    }
+    return { success: true };
+  } catch (err: unknown) {
+    const error = err as Error & { code?: string };
+    return {
+      success: false,
+      error: error.message || "Không thể chuyển cây gia phả về riêng tư.",
+      errorCode: error.code,
+    };
+  }
+}
