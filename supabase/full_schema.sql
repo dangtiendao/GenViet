@@ -723,7 +723,7 @@ REVOKE ALL ON TABLE public.unions FROM anon;
 REVOKE ALL ON TABLE public.union_members FROM anon;
 
 -- Grant selective privileges to authenticated role
-GRANT SELECT, UPDATE ON TABLE public.profiles TO authenticated;
+GRANT SELECT, INSERT, UPDATE ON TABLE public.profiles TO authenticated;
 GRANT SELECT, INSERT, UPDATE ON TABLE public.family_trees TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.tree_memberships TO authenticated;
 GRANT SELECT, INSERT, UPDATE ON TABLE public.persons TO authenticated;
@@ -755,6 +755,13 @@ CREATE POLICY profiles_select_own
     FOR SELECT
     TO authenticated
     USING (id = (select auth.uid()));
+
+DROP POLICY IF EXISTS profiles_insert_own ON public.profiles;
+CREATE POLICY profiles_insert_own
+    ON public.profiles
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (id = (select auth.uid()));
 
 DROP POLICY IF EXISTS profiles_update_own ON public.profiles;
 CREATE POLICY profiles_update_own

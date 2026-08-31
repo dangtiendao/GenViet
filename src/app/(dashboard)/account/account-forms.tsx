@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState } from "react";
+import React, { useActionState, useState, useEffect } from "react";
 import {
   updateDisplayNameAction,
   changePasswordAction,
@@ -24,6 +24,12 @@ export function AccountForms({
     changePasswordAction,
     null
   );
+
+  const [displayName, setDisplayName] = useState(initialDisplayName);
+
+  useEffect(() => {
+    setDisplayName(initialDisplayName);
+  }, [initialDisplayName]);
 
   return (
     <div className="space-y-8">
@@ -77,7 +83,8 @@ export function AccountForms({
               name="displayName"
               type="text"
               required
-              defaultValue={initialDisplayName}
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Nhập tên hiển thị của bạn"
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             />

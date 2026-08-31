@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import {
   loginSchema,
@@ -277,28 +278,63 @@ export async function updateDisplayNameAction(
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (authError || !user) {
     redirect(AUTH_ROUTES.LOGIN);
   }
 
-  // Update profile under RLS policy `profiles_update_own`
-  const { error } = await supabase
+  // 1. Sync Supabase Auth user metadata so session/metadata updates immediately
+  const { error: updateUserError } = await supabase.auth.updateUser({
+    data: {
+      display_name: displayName,
+      full_name: displayName,
+    },
+  });
+
+  if (updateUserError) {
+    console.error("Failed to update auth user metadata:", updateUserError);
+  }
+
+  // 2. Update profile under RLS policy `profiles_update_own`
+  const now = new Date().toISOString();
+  const { data: updatedRows, error: updateError } = await supabase
     .from("profiles")
     .update({
       display_name: displayName,
-      updated_at: new Date().toISOString(),
+      updated_at: now,
     })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select("id");
 
-  if (error) {
+  if (updateError) {
+    console.error("Failed to update public.profiles:", updateError);
     return {
       success: false,
       message: "Không thể cập nhật tên hiển thị. Vui lòng thử lại sau.",
       errorCode: AUTH_ERROR_CODES.AUTH_PROFILE_PROVISION_FAILED,
     };
   }
+
+  // 3. If no rows were updated (e.g. initial profile row was missing), insert/upsert it
+  if (!updatedRows || updatedRows.length === 0) {
+    const { error: upsertError } = await supabase.from("profiles").upsert({
+      id: user.id,
+      display_name: displayName,
+      created_at: now,
+      updated_at: now,
+    });
+
+    if (upsertError) {
+      console.warn("Profile upsert notice:", upsertError);
+    }
+  }
+
+  // 4. Invalidate Next.js cache so layout header, dashboard, and account page re-render immediately
+  revalidatePath(AUTH_ROUTES.ACCOUNT);
+  revalidatePath(AUTH_ROUTES.DASHBOARD);
+  revalidatePath("/", "layout");
 
   return {
     success: true,

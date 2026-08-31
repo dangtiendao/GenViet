@@ -86,7 +86,7 @@ export function AppSidebar() {
 
       {/* Sidebar Footer */}
       <div className="border-t border-neutral-200 p-4 text-center text-xs text-neutral-500">
-        <span>GenViet v0.1-baseline</span>
+        <span>GenViet • Gìn giữ cội nguồn</span>
       </div>
     </aside>
   );
