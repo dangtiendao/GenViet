@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { TreeGraphDto } from "@/features/tree-graph/types/tree-graph.types";
+import type {
+  TreeGraphDto,
+  DescendantTraversalMode,
+} from "@/features/tree-graph/types/tree-graph.types";
 import { TreeViewDomainError, TREE_VIEW_ERROR_CODES } from "../errors/tree-view.errors";
 
 export interface UseTreeGraphParams {
@@ -11,6 +14,8 @@ export interface UseTreeGraphParams {
   descendantDepth: number;
   includeSpouses?: boolean;
   includeUnverified?: boolean;
+  descendantTraversalMode?: DescendantTraversalMode;
+  branchBoundaryPersonId?: string;
   fullTree?: boolean;
 }
 
@@ -38,8 +43,13 @@ export function useTreeGraph(params: UseTreeGraphParams) {
       descendantDepth: String(params.descendantDepth),
       includeSpouses: String(params.includeSpouses ?? true),
       includeUnverified: String(params.includeUnverified ?? true),
+      descendantTraversalMode: params.descendantTraversalMode ?? "PATERNAL_LINE",
       fullTree: String(params.fullTree ?? false),
     });
+
+    if (params.branchBoundaryPersonId) {
+      searchParams.set("branchBoundaryPersonId", params.branchBoundaryPersonId);
+    }
 
     try {
       const res = await fetch(`/api/trees/${params.treeId}/graph?${searchParams.toString()}`, {
@@ -88,6 +98,8 @@ export function useTreeGraph(params: UseTreeGraphParams) {
     params.descendantDepth,
     params.includeSpouses,
     params.includeUnverified,
+    params.descendantTraversalMode,
+    params.branchBoundaryPersonId,
     params.fullTree,
   ]);
 

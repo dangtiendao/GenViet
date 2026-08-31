@@ -43,6 +43,8 @@ export async function GET(request: NextRequest, props: { params: Promise<{ treeI
     const rawIncludeSpouses = searchParams.get("includeSpouses");
     const rawIncludeUnverified = searchParams.get("includeUnverified");
     const rawFullTree = searchParams.get("fullTree");
+    const rawTraversalMode = searchParams.get("descendantTraversalMode");
+    const rawBoundary = searchParams.get("branchBoundaryPersonId");
 
     const queryInput = {
       treeId,
@@ -51,6 +53,8 @@ export async function GET(request: NextRequest, props: { params: Promise<{ treeI
       descendantDepth: rawDescendantDepth !== null ? Number(rawDescendantDepth) : undefined,
       includeSpouses: rawIncludeSpouses !== null ? rawIncludeSpouses !== "false" : true,
       includeUnverified: rawIncludeUnverified !== null ? rawIncludeUnverified !== "false" : true,
+      descendantTraversalMode: rawTraversalMode || undefined,
+      branchBoundaryPersonId: rawBoundary || undefined,
       fullTree: rawFullTree === "true",
     };
 

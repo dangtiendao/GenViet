@@ -7,6 +7,7 @@ export const PdfExportOptionsSchema = z.object({
   hideDates: z.boolean().default(false),
   hideAvatars: z.boolean().default(false),
   maxPages: z.number().int().min(1).max(100).default(50),
+  descendantTraversalMode: z.enum(["PATERNAL_LINE", "ALL_DESCENDANTS"]).default("PATERNAL_LINE"),
 });
 
 export type PdfExportOptions = z.infer<typeof PdfExportOptionsSchema>;

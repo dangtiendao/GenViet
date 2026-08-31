@@ -16,9 +16,11 @@ export interface PrintablePersonRecord {
 export function generatePrintableHtml(
   treeName: string,
   persons: PrintablePersonRecord[],
-  options: PdfExportOptions
+  options: Partial<PdfExportOptions> = {}
 ): string {
   const filteredPersons = persons.filter((p) => !(options.hideLivingPersons && p.isLiving));
+  const pageSize = options.pageSize || "A4";
+  const orientation = options.orientation || "portrait";
 
   const rowsHtml = filteredPersons
     .map(
@@ -47,13 +49,20 @@ export function generatePrintableHtml(
         th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
         th { background-color: #f1f5f9; font-weight: bold; }
         @media print {
-          @page { size: ${options.pageSize} ${options.orientation}; margin: 15mm; }
+          @page { size: ${pageSize} ${orientation}; margin: 15mm; }
         }
       </style>
     </head>
     <body>
       <h1>${treeName}</h1>
-      <p style="text-align: center; color: #64748b;">Xuất dữ liệu từ nền tảng GenViet - Ngày: ${new Date().toLocaleDateString("vi-VN")}</p>
+      <p style="text-align: center; color: #64748b; margin-bottom: 2px;">Xuất dữ liệu từ nền tảng GenViet - Ngày: ${new Date().toLocaleDateString("vi-VN")}</p>
+      ${
+        options.descendantTraversalMode === "PATERNAL_LINE"
+          ? `<p style="text-align: center; color: #047857; font-size: 12px; font-weight: 500; margin-top: 2px;">Phạm vi hiển thị: Chế độ dòng họ mặc định (hậu duệ qua nhánh nữ không mở rộng)</p>`
+          : options.descendantTraversalMode === "ALL_DESCENDANTS"
+            ? `<p style="text-align: center; color: #047857; font-size: 12px; font-weight: 500; margin-top: 2px;">Phạm vi hiển thị: Toàn bộ con cháu (dòng nội & dòng ngoại)</p>`
+            : ""
+      }
       <table>
         <thead>
           <tr>

@@ -1,6 +1,18 @@
-import type { TreeGraphQueryInput } from "../schemas/tree-graph-query.schema";
+import type { DescendantTraversalMode } from "../contracts/descendant-traversal-mode";
 
 export const TREE_GRAPH_SCHEMA_VERSION = 1;
+
+export interface TreeGraphCacheKeyInput {
+  treeId: string;
+  centerPersonId: string;
+  ancestorDepth?: number;
+  descendantDepth?: number;
+  includeSpouses?: boolean;
+  includeUnverified?: boolean;
+  descendantTraversalMode?: DescendantTraversalMode;
+  branchBoundaryPersonId?: string | null;
+  fullTree?: boolean;
+}
 
 /**
  * Xây dựng Cache Key tất định cho truy vấn lát cắt đồ thị.
@@ -8,16 +20,18 @@ export const TREE_GRAPH_SCHEMA_VERSION = 1;
  */
 export function buildTreeGraphCacheKey(
   userScope: string,
-  input: TreeGraphQueryInput,
+  input: TreeGraphCacheKeyInput,
   schemaVersion: number = TREE_GRAPH_SCHEMA_VERSION
 ): string {
-  const aDepth = input.ancestorDepth;
-  const dDepth = input.descendantDepth;
-  const spouses = input.includeSpouses ? 1 : 0;
-  const unverified = input.includeUnverified ? 1 : 0;
+  const aDepth = input.ancestorDepth ?? 2;
+  const dDepth = input.descendantDepth ?? 2;
+  const spouses = input.includeSpouses !== false ? 1 : 0;
+  const unverified = input.includeUnverified !== false ? 1 : 0;
   const full = input.fullTree ? 1 : 0;
+  const mode = input.descendantTraversalMode || "PATERNAL_LINE";
+  const boundary = input.branchBoundaryPersonId || "none";
 
-  return `tree-graph:${userScope}:${input.treeId}:${input.centerPersonId}:a${aDepth}:d${dDepth}:s${spouses}:u${unverified}:f${full}:v${schemaVersion}`;
+  return `tree-graph:${userScope}:${input.treeId}:${input.centerPersonId}:a${aDepth}:d${dDepth}:s${spouses}:u${unverified}:f${full}:m${mode}:b${boundary}:v${schemaVersion}`;
 }
 
 /**

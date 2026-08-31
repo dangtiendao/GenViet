@@ -76,6 +76,13 @@ export interface UnionMemberDto {
   memberRole: UnionMemberRole;
 }
 
+import type {
+  DescendantTraversalMode,
+  TruncationReason,
+} from "../contracts/descendant-traversal-mode";
+
+export type { DescendantTraversalMode, TruncationReason };
+
 /**
  * Metadata mở rộng đồ thị cho từng Person trong slice.
  */
@@ -88,6 +95,9 @@ export interface ExpansionDto {
   canExpandDescendants: boolean;
   hasVerifiedBiologicalFather: boolean;
   hasVerifiedBiologicalMother: boolean;
+  hasHiddenDescendants?: boolean;
+  descendantsTruncated?: boolean;
+  truncationReason?: TruncationReason | null;
 }
 
 /**
@@ -117,6 +127,7 @@ export interface TreeGraphDto {
   schemaVersion: number;
   treeId: string;
   centerPersonId: string;
+  descendantTraversalMode?: DescendantTraversalMode;
   persons: GraphPersonDto[];
   parentChildRelationships: ParentChildRelationshipDto[];
   unions: UnionDto[];
