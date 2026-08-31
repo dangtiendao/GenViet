@@ -177,7 +177,12 @@ export class FamilyTreeRepository {
           status,
           privacy_level,
           version,
-          generation_anchor_person_id
+          generation_anchor_person_id,
+          public_slug,
+          published_at,
+          publication_version,
+          living_person_policy,
+          search_engine_visibility
         )
       `
       )
@@ -200,6 +205,11 @@ export class FamilyTreeRepository {
       privacy_level: FamilyTreeSettings["privacyLevel"];
       version: number;
       generation_anchor_person_id: string | null;
+      public_slug: string | null;
+      published_at: string | null;
+      publication_version: number;
+      living_person_policy: "REDACTED" | "STRICT";
+      search_engine_visibility: "NOINDEX" | "INDEX";
     };
 
     return {
@@ -211,6 +221,11 @@ export class FamilyTreeRepository {
       version: tree.version,
       generationAnchorPersonId: tree.generation_anchor_person_id,
       role: data.role,
+      publicSlug: tree.public_slug,
+      publishedAt: tree.published_at,
+      publicationVersion: tree.publication_version,
+      livingPersonPolicy: tree.living_person_policy,
+      searchEngineVisibility: tree.search_engine_visibility,
     };
   }
 
