@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { AUTH_ERROR_CODES, AUTH_ERROR_MAP, mapAuthError } from "@/features/auth/errors";
 
-describe("Auth Error Taxonomy Tests (P09-T14 / AC-P09-133..141)", () => {
-  it("should have all 17 error codes defined with user-safe Vietnamese messages", () => {
+describe("Auth Error Taxonomy Tests (P09-T14, P29-T05 / AC-P09-133..141, AC-P29-023)", () => {
+  it("should have all defined error codes mapped with user-safe Vietnamese messages", () => {
     const errorCodes = Object.keys(AUTH_ERROR_CODES);
-    expect(errorCodes.length).toBe(17);
+    expect(errorCodes.length).toBe(37);
 
     errorCodes.forEach((code) => {
       const detail = AUTH_ERROR_MAP[code as keyof typeof AUTH_ERROR_CODES];
@@ -31,6 +31,12 @@ describe("Auth Error Taxonomy Tests (P09-T14 / AC-P09-133..141)", () => {
     const error = mapAuthError(new Error("Too many requests / rate limit exceeded"));
     expect(error.code).toBe(AUTH_ERROR_CODES.AUTH_RATE_LIMITED);
     expect(error.messageVi).toContain("quá nhiều yêu cầu");
+  });
+
+  it("should map OAuth cancelled safely", () => {
+    const error = mapAuthError(new Error("User access_denied by user_cancelled"));
+    expect(error.code).toBe(AUTH_ERROR_CODES.AUTH_OAUTH_CANCELLED);
+    expect(error.messageVi).toContain("hủy");
   });
 
   it("should fallback to unknown error for unrecognized error", () => {

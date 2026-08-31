@@ -9,6 +9,16 @@ Toàn bộ các thay đổi đáng chú ý của dự án **GenViet** sẽ đư�
 ## [Unreleased]
 
 ### Added
+- **Phase P29 (Đăng nhập bằng Google OAuth):**
+  - Tích hợp phương thức xác thực "Tiếp tục với Google" (Google OAuth via Supabase Auth SSR PKCE flow).
+  - Định nghĩa typed provider allowlist (`OAUTH_PROVIDERS = ['google']`) và phạm vi tối thiểu (`openid email profile`).
+  - Triển khai `startOAuthSignIn` (client) và `handleOAuthCallback` (server) với cơ chế bảo vệ Open-Redirect và CRLF Injection qua `getSafeRedirectUrl`.
+  - Thiết lập header `Cache-Control: no-store` trên Route Handler `/auth/callback` ngăn chặn lưu cache trung gian.
+  - Bổ sung component nút `GoogleSignInButton` và bảng phân loại 37 mã lỗi xác thực song ngữ an toàn.
+  - Bảo toàn 100% cơ chế đăng nhập Email/Password, phân quyền Tree Membership, RLS, Account-Person linking và Invitation workflow.
+  - Xây dựng tiện ích dọn dẹp phiên và cache riêng tư toàn diện `performClientSessionCleanup` khi đăng xuất.
+  - Hoàn thiện bộ 5 test suites mới cho P29 (100% PASS) và toàn bộ hồ sơ nghiệm thu tại `docs/phases/P29/`.
+
 - **Phase P00 (Quản trị dự án):**
   - Thiết lập Hiến chương dự án (`docs/project-charter.md`) xác định tầm nhìn, phạm vi MVP, nguyên tắc bảo mật và các quyết định đã khóa.
   - Thiết lập Quy trình Git và phân nhánh chuẩn (`docs/git-workflow.md`, `CONTRIBUTING.md`) với cam kết an toàn cho AI.

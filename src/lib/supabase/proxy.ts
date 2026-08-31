@@ -47,8 +47,16 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  const isGetRequest = request.method === "GET";
+  const isServerAction = request.headers.has("next-action") || request.headers.has("x-action");
 
-  // 1. Unauthenticated users trying to access protected routes -> redirect to login with next param
+  // NOTE: If request is a Server Action or non-GET mutation, never intercept with a middleware redirect.
+  // Next.js App Router Server Action dispatcher handles execution, errors, and redirects internally.
+  if (isServerAction || !isGetRequest) {
+    return supabaseResponse;
+  }
+
+  // 1. Unauthenticated users trying to access protected routes via GET -> redirect to login with next param
   const isProtectedPath = PROTECTED_PATHS_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   if (!user && isProtectedPath) {
     const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url);
@@ -57,7 +65,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Authenticated users opening login or sign-up -> redirect to dashboard
+  // 2. Authenticated users opening login or sign-up via GET -> redirect to dashboard
   const isAuthEntryPage = pathname === AUTH_ROUTES.LOGIN || pathname === AUTH_ROUTES.SIGN_UP;
   if (user && isAuthEntryPage) {
     const nextParam = request.nextUrl.searchParams.get("next");

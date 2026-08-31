@@ -6,7 +6,7 @@ import { GitFork, LogOut, User as UserIcon } from "lucide-react";
 import { signOutAction } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { PwaInstallButton } from "@/features/pwa/components/pwa-install-button";
-import { clearAllPrivateCaches } from "@/features/pwa/services/private-cache-cleanup";
+import { performClientSessionCleanup } from "@/lib/auth/session-cleanup";
 
 export interface AppHeaderProps {
   displayName?: string | null;
@@ -15,11 +15,26 @@ export interface AppHeaderProps {
 }
 
 export function AppHeader({ displayName, email, children }: AppHeaderProps) {
-  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await clearAllPrivateCaches();
-    const form = e.currentTarget;
-    form.submit();
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleSignOut = () => {
+    if (isPending) return;
+
+    startTransition(async () => {
+      try {
+        // 1. Clean up client sessionStorage, Service Worker private cache, and client auth state
+        await performClientSessionCleanup();
+
+        // 2. Destroy server session via Server Action
+        await signOutAction();
+      } catch (err) {
+        console.warn("[app-header] Server signOut fallback triggered:", err);
+        // Direct browser fallback navigation to login page
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
+    });
   };
 
   return (
@@ -62,18 +77,18 @@ export function AppHeader({ displayName, email, children }: AppHeaderProps) {
           </div>
         </Link>
 
-        <form action={signOutAction} onSubmit={handleSignOut}>
-          <Button
-            type="submit"
-            variant="ghost"
-            size="sm"
-            className="min-h-[44px] min-w-[44px] text-neutral-600 hover:bg-red-50 hover:text-red-700"
-            aria-label="Đăng xuất khỏi tài khoản"
-          >
-            <LogOut className="h-4 w-4 sm:mr-1.5" aria-hidden="true" />
-            <span className="hidden sm:inline">Đăng xuất</span>
-          </Button>
-        </form>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={handleSignOut}
+          disabled={isPending}
+          className="min-h-[44px] min-w-[44px] text-neutral-600 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+          aria-label="Đăng xuất khỏi tài khoản"
+        >
+          <LogOut className="h-4 w-4 sm:mr-1.5" aria-hidden="true" />
+          <span className="hidden sm:inline">{isPending ? "Đang xử lý..." : "Đăng xuất"}</span>
+        </Button>
       </div>
     </header>
   );

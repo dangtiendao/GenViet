@@ -1,11 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { AUTH_ROUTES, DEFAULT_LOGIN_REDIRECT } from "@/lib/auth/constants";
-import { getSafeRedirectUrl } from "@/lib/auth/redirects";
-import { AUTH_ERROR_CODES } from "@/features/auth/errors";
+import { handleOAuthCallback } from "@/features/auth/services/handle-oauth-callback";
 
 /**
- * PKCE & OAuth Auth Callback Route Handler (P09-T02, P09-T15, P09-T18)
+ * PKCE & OAuth Auth Callback Route Handler (P09-T02, P09-T15, P09-T18, P29-T07)
+ *
+ * Security:
+ * - Emits `Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate` to prevent any intermediary/PWA caching.
+ * - Exchanges authorization code via server-side Supabase client.
+ * - Protects against open-redirect vulnerabilities by validating `next` destination path.
  */
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -14,32 +16,20 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get("error");
   const errorDescription = requestUrl.searchParams.get("error_description");
 
-  // Handle provider error callback (e.g. user canceled OAuth)
-  if (error) {
-    const errorUrl = new URL(AUTH_ROUTES.AUTH_ERROR, request.url);
-    errorUrl.searchParams.set("code", AUTH_ERROR_CODES.AUTH_PROVIDER_ERROR);
-    return NextResponse.redirect(errorUrl);
-  }
+  const result = await handleOAuthCallback({
+    code,
+    next,
+    error,
+    errorDescription,
+    requestUrl: request.url,
+  });
 
-  // If code is missing, redirect to auth error
-  if (!code) {
-    const errorUrl = new URL(AUTH_ROUTES.AUTH_ERROR, request.url);
-    errorUrl.searchParams.set("code", AUTH_ERROR_CODES.AUTH_CALLBACK_INVALID);
-    return NextResponse.redirect(errorUrl);
-  }
+  const response = NextResponse.redirect(new URL(result.redirectUrl, request.url));
 
-  const supabase = await createClient();
-  const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+  // Enforce no-cache policy on auth callback responses (AC-P29-019, AC-P29-079)
+  response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
 
-  if (exchangeError) {
-    const errorUrl = new URL(AUTH_ROUTES.AUTH_ERROR, request.url);
-    errorUrl.searchParams.set("code", AUTH_ERROR_CODES.AUTH_CALLBACK_INVALID);
-    return NextResponse.redirect(errorUrl);
-  }
-
-  // Safe redirect destination (prevents open-redirect)
-  const destination = getSafeRedirectUrl(next, DEFAULT_LOGIN_REDIRECT);
-  const redirectUrl = new URL(destination, request.url);
-
-  return NextResponse.redirect(redirectUrl);
+  return response;
 }
