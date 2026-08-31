@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro } from "next/font/google";
+import { NavigationProgressBar } from "@/components/feedback/navigation-progress-bar";
 import { ServiceWorkerRegistration } from "@/features/pwa/components/service-worker-registration";
 import { OfflineStatusBanner } from "@/features/pwa/components/offline-status-banner";
 import { PwaUpdateBanner } from "@/features/pwa/components/pwa-update-banner";
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body
         className={`${beVietnamPro.className} min-h-screen bg-neutral-50 text-neutral-900 antialiased`}
       >
+        <NavigationProgressBar />
         <ServiceWorkerRegistration />
         <OfflineStatusBanner />
         {children}
