@@ -46,6 +46,14 @@ export function TreeToolbar({
           <span>Hậu duệ: {descendantDepth} đời</span>
         </div>
 
+        <div
+          className="inline-flex items-center gap-1 rounded-lg border border-neutral-200/80 bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700"
+          title="Chế độ hiển thị: Dòng họ mặc định (hậu duệ qua nhánh nữ không tự động mở rộng)"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+          <span>Dòng họ (Mặc định)</span>
+        </div>
+
         {isTruncated && (
           <div
             className="inline-flex items-center gap-1 rounded-lg border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700"

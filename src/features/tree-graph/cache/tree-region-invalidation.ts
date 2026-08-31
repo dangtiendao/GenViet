@@ -19,12 +19,8 @@ export function handleSelectiveCacheInvalidation(payload: InvalidationPayload): 
     case "person.updated":
     case "person.soft_deleted":
     case "person.restored":
-      if (payload.personId) {
-        // Vô hiệu hóa vùng liên quan đến nhân vật
-        cache.invalidatePerson(payload.treeId, payload.personId);
-      } else {
-        cache.invalidateTree(payload.treeId);
-      }
+      // Nếu là thay đổi nhân vật (đặc biệt là giới tính hoặc sống/mất), vô hiệu hóa toàn bộ cache cây để đảm bảo không lưu giữ cấu trúc phả hệ cũ
+      cache.invalidateTree(payload.treeId);
       break;
 
     case "relationship.created":

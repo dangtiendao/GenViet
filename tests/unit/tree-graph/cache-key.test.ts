@@ -31,8 +31,59 @@ describe("TreeGraph Cache Key Builder Tests (P14-T15)", () => {
 
     expect(key1).toBe(key2);
     expect(key1).toBe(
-      `tree-graph:${userScope}:${treeId}:${centerPersonId}:a2:d2:s1:u1:f0:v${TREE_GRAPH_SCHEMA_VERSION}`
+      `tree-graph:${userScope}:${treeId}:${centerPersonId}:a2:d2:s1:u1:f0:mPATERNAL_LINE:bnone:v${TREE_GRAPH_SCHEMA_VERSION}`
     );
+  });
+
+  it("phân lập cache key giữa PATERNAL_LINE và ALL_DESCENDANTS", () => {
+    const keyPaternal = buildTreeGraphCacheKey(userScope, {
+      treeId,
+      centerPersonId,
+      ancestorDepth: 2,
+      descendantDepth: 2,
+      includeSpouses: true,
+      includeUnverified: true,
+      descendantTraversalMode: "PATERNAL_LINE",
+    });
+
+    const keyAll = buildTreeGraphCacheKey(userScope, {
+      treeId,
+      centerPersonId,
+      ancestorDepth: 2,
+      descendantDepth: 2,
+      includeSpouses: true,
+      includeUnverified: true,
+      descendantTraversalMode: "ALL_DESCENDANTS",
+    });
+
+    expect(keyPaternal).not.toBe(keyAll);
+    expect(keyPaternal).toContain(":mPATERNAL_LINE:");
+    expect(keyAll).toContain(":mALL_DESCENDANTS:");
+  });
+
+  it("phân lập cache key khi có branchBoundaryPersonId", () => {
+    const boundaryId = "33333333-3333-3333-3333-333333333333";
+    const keyNoBoundary = buildTreeGraphCacheKey(userScope, {
+      treeId,
+      centerPersonId,
+      ancestorDepth: 2,
+      descendantDepth: 2,
+      includeSpouses: true,
+      includeUnverified: true,
+    });
+
+    const keyWithBoundary = buildTreeGraphCacheKey(userScope, {
+      treeId,
+      centerPersonId,
+      ancestorDepth: 2,
+      descendantDepth: 2,
+      includeSpouses: true,
+      includeUnverified: true,
+      branchBoundaryPersonId: boundaryId,
+    });
+
+    expect(keyNoBoundary).not.toBe(keyWithBoundary);
+    expect(keyWithBoundary).toContain(`:b${boundaryId}:`);
   });
 
   it("thay đổi cache key khi thay đổi độ sâu hoặc tùy chọn includeSpouses hoặc fullTree", () => {

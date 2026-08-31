@@ -4,6 +4,7 @@ export interface LargeTreeExportConfig {
   format: "pdf_tiled" | "poster_single";
   pageSize: "A4" | "A3" | "A0";
   includeLegend: boolean;
+  descendantTraversalMode?: "PATERNAL_LINE" | "ALL_DESCENDANTS";
 }
 
 export const DEFAULT_LARGE_TREE_CONFIG: LargeTreeExportConfig = {
@@ -12,4 +13,5 @@ export const DEFAULT_LARGE_TREE_CONFIG: LargeTreeExportConfig = {
   format: "pdf_tiled",
   pageSize: "A4",
   includeLegend: true,
+  descendantTraversalMode: "PATERNAL_LINE",
 };

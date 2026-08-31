@@ -5,6 +5,7 @@ import type { ReactFlowPersonNode } from "../types/tree-presentation.types";
 import { TREE_LAYOUT_CONFIG } from "../config/tree-layout.config";
 import { RelationshipActionMenu } from "@/features/relationships/components/relationship-action-menu";
 import { AvatarThumbnail } from "@/features/media/components/avatar-thumbnail";
+import { HiddenDescendantsIndicator } from "./hidden-descendants-indicator";
 
 export const PersonNode = memo(
   function PersonNode({ data, selected }: NodeProps<ReactFlowPersonNode>) {
@@ -253,8 +254,16 @@ export const PersonNode = memo(
           </button>
         )}
 
-        {/* Nút tải thêm con cháu từ DB nếu người này chưa có con nào trong slice */}
-        {expansion?.hasMoreDescendants && childCount === 0 && (
+        {/* Chỉ báo nhánh con gái có hậu duệ đang ẩn (PATERNAL_LINE) */}
+        {expansion?.hasHiddenDescendants && childCount === 0 && (
+          <HiddenDescendantsIndicator
+            personName={person.fullName || "Thành viên"}
+            className="absolute -bottom-3 left-1/2 z-20 -translate-x-1/2"
+          />
+        )}
+
+        {/* Nút tải thêm con cháu từ DB nếu người này chưa có con nào trong slice và không bị ẩn nhánh */}
+        {expansion?.hasMoreDescendants && !expansion?.hasHiddenDescendants && childCount === 0 && (
           <button
             type="button"
             aria-label={`Tải thêm con cháu của ${person.fullName}`}
@@ -291,7 +300,9 @@ export const PersonNode = memo(
       prev.data.person.verificationStatus === next.data.person.verificationStatus &&
       prev.data.person.avatarPath === next.data.person.avatarPath &&
       prev.data.expansion?.hasMoreAncestors === next.data.expansion?.hasMoreAncestors &&
-      prev.data.expansion?.hasMoreDescendants === next.data.expansion?.hasMoreDescendants
+      prev.data.expansion?.hasMoreDescendants === next.data.expansion?.hasMoreDescendants &&
+      prev.data.expansion?.hasHiddenDescendants === next.data.expansion?.hasHiddenDescendants &&
+      prev.data.expansion?.truncationReason === next.data.expansion?.truncationReason
     );
   }
 );

@@ -40,6 +40,15 @@ export const treeGraphQuerySchema = z
     includeUnverified: z
       .boolean({ invalid_type_error: "Tùy chọn includeUnverified phải là boolean." })
       .default(true),
+    descendantTraversalMode: z
+      .enum(["PATERNAL_LINE", "ALL_DESCENDANTS"], {
+        invalid_type_error: "Chế độ duyệt hậu duệ không hợp lệ.",
+      })
+      .default("PATERNAL_LINE"),
+    branchBoundaryPersonId: z
+      .string({ invalid_type_error: "Mã nhân vật biên nhánh phải là chuỗi UUID." })
+      .uuid({ message: "Mã nhân vật biên nhánh không đúng định dạng UUID." })
+      .optional(),
     fullTree: z.boolean({ invalid_type_error: "Tùy chọn fullTree phải là boolean." }).optional(),
   })
   .strict({ message: "Không chấp nhận các trường truy vấn không xác định." });

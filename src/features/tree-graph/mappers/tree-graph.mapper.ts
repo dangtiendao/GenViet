@@ -190,9 +190,17 @@ export class TreeGraphMapper {
           canAddFather: Boolean(exp.canAddFather),
           canAddMother: Boolean(exp.canAddMother),
           canExpandAncestors: Boolean(exp.canExpandAncestors),
-          canExpandDescendants: Boolean(exp.canExpandDescendants),
+          canExpandDescendants:
+            exp.canExpandDescendants !== undefined
+              ? Boolean(exp.canExpandDescendants)
+              : Boolean(exp.hasMoreDescendants),
           hasVerifiedBiologicalFather: Boolean(exp.hasVerifiedBiologicalFather),
           hasVerifiedBiologicalMother: Boolean(exp.hasVerifiedBiologicalMother),
+          hasHiddenDescendants: Boolean(exp.hasHiddenDescendants),
+          descendantsTruncated: Boolean(exp.descendantsTruncated),
+          truncationReason: exp.truncationReason
+            ? (String(exp.truncationReason) as ExpansionDto["truncationReason"])
+            : null,
         };
       }
     }
@@ -216,11 +224,14 @@ export class TreeGraphMapper {
     };
 
     const warnings: string[] = Array.isArray(raw.warnings) ? raw.warnings.map(String) : [];
+    const descendantTraversalMode =
+      raw.descendantTraversalMode === "ALL_DESCENDANTS" ? "ALL_DESCENDANTS" : "PATERNAL_LINE";
 
     return {
       schemaVersion,
       treeId,
       centerPersonId,
+      descendantTraversalMode,
       persons,
       parentChildRelationships,
       unions,

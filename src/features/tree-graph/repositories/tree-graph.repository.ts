@@ -22,6 +22,8 @@ export class TreeGraphRepository {
       p_descendant_depth: input.descendantDepth,
       p_include_spouses: input.includeSpouses,
       p_include_unverified: input.includeUnverified,
+      p_descendant_traversal_mode: input.descendantTraversalMode || "PATERNAL_LINE",
+      p_branch_boundary_person_id: input.branchBoundaryPersonId || null,
     });
 
     if (error) {
@@ -45,6 +47,12 @@ export class TreeGraphRepository {
       }
       if (msg.includes("TREE_GRAPH_DEPTH_INVALID") || code === "22023") {
         throw new TreeGraphDomainError(TREE_GRAPH_ERROR_CODES.DEPTH_INVALID);
+      }
+      if (msg.includes("GRAPH_TRAVERSAL_MODE_INVALID")) {
+        throw new TreeGraphDomainError(TREE_GRAPH_ERROR_CODES.TRAVERSAL_MODE_INVALID);
+      }
+      if (msg.includes("GRAPH_BRANCH_BOUNDARY_CROSS_TREE")) {
+        throw new TreeGraphDomainError(TREE_GRAPH_ERROR_CODES.BRANCH_BOUNDARY_CROSS_TREE);
       }
       if (msg.includes("TREE_GRAPH_NOT_FOUND") || code === "P0002") {
         throw new TreeGraphDomainError(TREE_GRAPH_ERROR_CODES.NOT_FOUND);
