@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { GitFork, ChevronDown, Check, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FamilyTreeListItem } from "../types/family-tree.types";
@@ -13,7 +13,6 @@ export function FamilyTreeSwitcher({
   currentTreeId?: string;
   trees: FamilyTreeListItem[];
 }) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -62,13 +61,10 @@ export function FamilyTreeSwitcher({
               const isSelected = tree.id === currentTreeId;
 
               return (
-                <button
+                <Link
                   key={tree.id}
-                  type="button"
-                  onClick={() => {
-                    setIsOpen(false);
-                    router.push(`/trees/${tree.id}`);
-                  }}
+                  href={`/trees/${tree.id}`}
+                  onClick={() => setIsOpen(false)}
                   className={cn(
                     "flex min-h-[40px] w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs font-medium transition-colors hover:bg-neutral-100",
                     isSelected ? "bg-emerald-50 font-semibold text-emerald-900" : "text-neutral-700"
@@ -79,24 +75,21 @@ export function FamilyTreeSwitcher({
                   {isSelected && (
                     <Check className="h-3.5 w-3.5 shrink-0 text-emerald-700" aria-hidden="true" />
                   )}
-                </button>
+                </Link>
               );
             })}
           </div>
 
           <div className="mt-1 border-t border-neutral-100 pt-1">
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false);
-                router.push("/trees/new");
-              }}
+            <Link
+              href="/trees/new"
+              onClick={() => setIsOpen(false)}
               className="flex min-h-[40px] w-full items-center space-x-2 rounded-lg px-2.5 py-2 text-left text-xs font-semibold text-emerald-700 hover:bg-emerald-50"
               role="menuitem"
             >
               <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Tạo cây gia phả mới</span>
-            </button>
+            </Link>
           </div>
         </div>
       )}
