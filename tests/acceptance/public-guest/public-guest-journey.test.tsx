@@ -14,6 +14,8 @@ describe("P30-T50, AC-P30-089..109: Public Guest View Component & Journey Tests"
 
     expect(html).toContain("Chế độ xem công khai");
     expect(html).toContain("Dữ liệu nhân vật còn sống đã được tự động bảo vệ quyền riêng tư");
+    expect(html).toContain("Trang chủ");
+    expect(html).toContain('href="/"');
     expect(html).toContain("Đăng nhập");
     expect(html).toContain("returnTo=%2Fpublic%2Ftrees%2Fho-nguyen");
   });

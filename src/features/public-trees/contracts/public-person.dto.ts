@@ -38,4 +38,11 @@ export interface PublicPersonProfileDto extends PublicPersonDto {
     livingState: string;
     birthYear?: number | null;
   }>;
+  siblings?: Array<{
+    id: string;
+    displayName: string;
+    gender: string;
+    livingState: string;
+    birthYear?: number | null;
+  }>;
 }
