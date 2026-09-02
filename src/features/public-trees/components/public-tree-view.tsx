@@ -15,6 +15,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
+import Link from "next/link";
 import { PublicModeBanner } from "./public-mode-banner";
 import { PublicPersonDetailSheet } from "./public-person-detail-sheet";
 import { PrivateBranchIndicator } from "./private-branch-indicator";
@@ -29,6 +30,7 @@ import {
   Lock,
   User,
   Info,
+  Home,
 } from "lucide-react";
 import type { PublicGraphDto } from "../contracts/public-graph.dto";
 import type { PublicPersonDto, PublicPersonProfileDto } from "../contracts/public-person.dto";
@@ -129,6 +131,117 @@ function publicGraphToTreeGraphDto(graph: PublicGraphDto): TreeGraphDto {
     },
     truncated: graph.limits.truncated,
     warnings: [],
+  };
+}
+
+function computePublicPersonProfile(
+  graph: PublicGraphDto,
+  personId: string,
+  slug: string
+): PublicPersonProfileDto | null {
+  const person = graph.persons.find((p) => p.id === personId);
+  if (!person) return null;
+
+  const personMap = new Map(graph.persons.map((p) => [p.id, p]));
+
+  // Find father and mother
+  const parentRels = graph.parentChildRelationships.filter((r) => r.childId === personId);
+  let father: { id: string; displayName: string } | null = null;
+  let mother: { id: string; displayName: string } | null = null;
+
+  for (const rel of parentRels) {
+    const parentPerson = personMap.get(rel.parentId);
+    if (!parentPerson) continue;
+
+    if (rel.parentRole === "father" || parentPerson.gender === "male") {
+      father = { id: parentPerson.id, displayName: parentPerson.displayName };
+    } else if (rel.parentRole === "mother" || parentPerson.gender === "female") {
+      mother = { id: parentPerson.id, displayName: parentPerson.displayName };
+    }
+  }
+
+  // Find spouses
+  const myUnionIds = new Set(
+    graph.unionMembers.filter((um) => um.personId === personId).map((um) => um.unionId)
+  );
+  const spousePersonIds = Array.from(
+    new Set(
+      graph.unionMembers
+        .filter((um) => myUnionIds.has(um.unionId) && um.personId !== personId)
+        .map((um) => um.personId)
+    )
+  );
+  const spouses = spousePersonIds
+    .map((spId) => {
+      const sp = personMap.get(spId);
+      if (!sp) return null;
+      return {
+        id: sp.id,
+        displayName: sp.displayName,
+        gender: sp.gender,
+        livingState: sp.livingState,
+      };
+    })
+    .filter(Boolean) as { id: string; displayName: string; gender: any; livingState: any }[];
+
+  // Find children
+  const childRels = graph.parentChildRelationships.filter((r) => r.parentId === personId);
+  const childPersonIds = Array.from(new Set(childRels.map((r) => r.childId)));
+  const children = childPersonIds
+    .map((cId) => {
+      const ch = personMap.get(cId);
+      if (!ch) return null;
+      return {
+        id: ch.id,
+        displayName: ch.displayName,
+        gender: ch.gender,
+        livingState: ch.livingState,
+        birthYear: ch.birthYear,
+      };
+    })
+    .filter(Boolean) as {
+    id: string;
+    displayName: string;
+    gender: any;
+    livingState: any;
+    birthYear?: number | null;
+  }[];
+
+  // Find siblings (sharing at least one parent)
+  const myParentIds = new Set(parentRels.map((r) => r.parentId));
+  const siblingRels = graph.parentChildRelationships.filter(
+    (r) => myParentIds.has(r.parentId) && r.childId !== personId
+  );
+  const siblingPersonIds = Array.from(new Set(siblingRels.map((r) => r.childId)));
+  const siblings = siblingPersonIds
+    .map((sId) => {
+      const sib = personMap.get(sId);
+      if (!sib) return null;
+      return {
+        id: sib.id,
+        displayName: sib.displayName,
+        gender: sib.gender,
+        livingState: sib.livingState,
+        birthYear: sib.birthYear,
+      };
+    })
+    .filter(Boolean) as {
+    id: string;
+    displayName: string;
+    gender: any;
+    livingState: any;
+    birthYear?: number | null;
+  }[];
+
+  return {
+    ...person,
+    treeSlug: slug,
+    treeName: graph.tree.name,
+    father,
+    mother,
+    spouses,
+    children,
+    siblings,
   };
 }
 
@@ -348,15 +461,12 @@ function PublicTreeCanvasInternal({
               person,
               isCenter: person.id === graph.centerPersonId,
               hiddenReason: expansion?.hiddenReason,
-              onSelect: async (p: PublicPersonDto) => {
-                setSelectedPerson({
-                  ...p,
-                  treeSlug: slug,
-                  treeName: graph.tree.name,
-                  spouses: [],
-                  children: [],
-                });
-                setIsDetailOpen(true);
+              onSelect: (p: PublicPersonDto) => {
+                const profile = computePublicPersonProfile(graph, p.id, slug);
+                if (profile) {
+                  setSelectedPerson(profile);
+                  setIsDetailOpen(true);
+                }
               },
             },
           });
@@ -416,14 +526,11 @@ function PublicTreeCanvasInternal({
           isCenter: person.id === graph.centerPersonId,
           hiddenReason: graph.expansion[person.id]?.hiddenReason,
           onSelect: (p: PublicPersonDto) => {
-            setSelectedPerson({
-              ...p,
-              treeSlug: slug,
-              treeName: graph.tree.name,
-              spouses: [],
-              children: [],
-            });
-            setIsDetailOpen(true);
+            const profile = computePublicPersonProfile(graph, p.id, slug);
+            if (profile) {
+              setSelectedPerson(profile);
+              setIsDetailOpen(true);
+            }
           },
         },
       });
@@ -468,11 +575,25 @@ function PublicTreeCanvasInternal({
       />
 
       {/* 2. Top Family Tree Header Info */}
-      <div className="absolute top-14 left-4 z-10 max-w-sm rounded-xl border border-neutral-200/80 bg-white/90 p-4 shadow-sm backdrop-blur-xs sm:left-6">
-        <h1 className="text-sm font-bold text-neutral-900 sm:text-base">{graph.tree.name}</h1>
-        <p className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
-          {graph.persons.length} nhân vật hiển thị • Chế độ dòng họ nội tộc
-        </p>
+      <div className="absolute top-14 left-4 z-10 max-w-sm rounded-xl border border-neutral-200/80 bg-white/90 p-3.5 shadow-sm backdrop-blur-xs sm:left-6">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-sm font-bold text-neutral-900 sm:text-base">
+              {graph.tree.name}
+            </h1>
+            <p className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
+              {graph.persons.length} nhân vật hiển thị • Chế độ dòng họ nội tộc
+            </p>
+          </div>
+          <Link
+            href="/"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-600 transition-colors hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:outline-none"
+            title="Quay lại trang chủ GenViet"
+            aria-label="Quay lại trang chủ GenViet"
+          >
+            <Home className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
       </div>
 
       {/* 3. React Flow Canvas */}
@@ -546,15 +667,16 @@ function PublicTreeCanvasInternal({
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
         onSelectPerson={(personId) => {
-          const target = graph.persons.find((p) => p.id === personId);
-          if (target) {
-            setSelectedPerson({
-              ...target,
-              treeSlug: slug,
-              treeName: graph.tree.name,
-              spouses: [],
-              children: [],
-            });
+          const profile = computePublicPersonProfile(graph, personId, slug);
+          if (profile) {
+            setSelectedPerson(profile);
+            const targetNode = nodes.find((n) => n.id === personId);
+            if (targetNode) {
+              reactFlow.setCenter(targetNode.position.x + 130, targetNode.position.y + 50, {
+                zoom: 1,
+                duration: 400,
+              });
+            }
           }
         }}
       />
